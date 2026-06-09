@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Commandes — lecture/écriture libre (pas d'auth dans cette app)
+    match /orders/{orderId} {
+      allow read, write: if true;
+    }
+
+    // Tokens FCM — lecture/écriture libre
+    match /fcm_tokens/{tokenId} {
+      allow read, write: if true;
+    }
+  }
+}
