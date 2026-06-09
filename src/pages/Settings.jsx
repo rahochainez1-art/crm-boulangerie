@@ -15,11 +15,13 @@ const ROLE_ICONS = {
   manager: '◉',
 }
 
+function safeNotifPermission() {
+  try { return Notification?.permission ?? 'default' } catch { return 'default' }
+}
+
 export default function Settings() {
   const { role, clearRole } = useRole()
-  const [notifStatus, setNotifStatus] = useState(
-    Notification?.permission ?? 'default'
-  )
+  const [notifStatus, setNotifStatus] = useState(safeNotifPermission)
   const [loading, setLoading] = useState(false)
 
   const handleEnableNotifs = async () => {

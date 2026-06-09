@@ -36,6 +36,7 @@ export default {
           done:       '#F5F4F2',
         },
         // Rétrocompat
+        vanilla:  '#EFF0A3',
         eerie:    '#1A1A1A',
         ghost:    '#FAFAF7',
       },
