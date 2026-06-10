@@ -9,39 +9,39 @@ import { subscribeOrders, setStatus } from '../../lib/orders'
 import StatusBadge from '../../components/ui/StatusBadge'
 import BottomNav from '../../components/layout/BottomNav'
 
-// ── Blague / devinette / fait rigolo du jour (index = jour du mois - 1) ──
+// ── Culture boulangerie · Culture G · Devinettes · Blagues (index = jour du mois - 1) ──
 const BLAGUES = [
-  "Pourquoi les plongeurs plongent-ils toujours en arrière ? Parce que sinon ils tomberaient dans le bateau. 😄",
-  "Qu'est-ce qu'un canif ? Un petit fien. 😅",
-  "Comment appelle-t-on un chat tombé dans un pot de peinture le jour de Noël ? Un chat-peint de Noël. 🎄",
-  "Qu'est-ce qu'un crocodile qui surveille la cour d'école ? Un sac à dents. 🐊",
-  "Pourquoi les fantômes sont-ils de mauvais menteurs ? On voit à travers eux. 👻",
-  "Le saviez-vous ? Les pieuvres ont 3 cœurs. Deux pompent le sang vers les branchies, un vers le reste du corps. 🐙",
-  "Qu'est-ce qu'un boomerang qui ne revient pas ? Un bâton. 🪃",
-  "Pourquoi les vaches portent-elles des cloches ? Parce que leurs cornes ne fonctionnent pas. 🐄",
-  "Comment appelle-t-on un chat qui tombe d'un immeuble ? Un chat-ssis. 😸",
-  "Le saviez-vous ? Le miel ne se périme jamais — on en a retrouvé dans des tombes égyptiennes vieilles de 3 000 ans, encore comestible. 🍯",
-  "Qu'est-ce qu'un Lapon qui fait la vaisselle ? Un Lapon qui fait la vaisselle. (T'attendais quoi ?) 😆",
-  "Pourquoi est-ce difficile de jouer aux cartes dans la jungle ? Parce qu'il y a trop de tricheurs. 🃏",
-  "Comment appelle-t-on un chat qui fait de la musique ? Un chat-nteur. 🎵",
-  "Le saviez-vous ? Les dauphins dorment avec un seul hémisphère du cerveau à la fois. L'autre reste éveillé pour respirer. 🐬",
-  "Qu'est-ce qu'un caniche qui se noie ? Un cake. 🎂",
-  "Pourquoi les professeurs portent-ils des lunettes ? Pour mieux contrôler leurs classes. 👓",
-  "Comment appelle-t-on un chien magicien ? Un labracadabrador. 🐕",
-  "Le saviez-vous ? Les chats ont 32 muscles dans chaque oreille — c'est pour ça qu'ils les orientent dans tous les sens. 🐱",
-  "Qu'est-ce qu'un boa constructeur ? Un serpent qui fait du bricolage. 🐍",
-  "Pourquoi les squelettes ne se battent-ils pas entre eux ? Ils n'ont pas le courage. 💀",
-  "Comment appelle-t-on un dinosaure avec un grand vocabulaire ? Un Thésaurus. 🦕",
-  "Le saviez-vous ? Les abeilles peuvent reconnaître les visages humains en utilisant le même processus que nous. 🐝",
-  "Qu'est-ce qu'une fourmi sur un chewing-gum ? Une fourmi collante. 🐜",
-  "Pourquoi les plantes ne peuvent-elles pas utiliser les ordinateurs ? Parce qu'elles ont peur des octets. 🌿",
-  "Comment appelle-t-on un escargot sur un bateau ? Un nau-tilus. 🐌",
-  "Le saviez-vous ? Les humains et les bananes partagent 50 % de leur ADN. Rassurez-vous, vous restez plus humain que banane. 🍌",
-  "Qu'est-ce qu'un Schtroumpf qui tombe dans un puits ? Un fond-Schtroumpf. 😄",
-  "Comment appelle-t-on un cerf à la plage ? Un cerf-fins. 🏖️",
-  "Pourquoi les livres de maths sont-ils tristes ? Parce qu'ils ont trop de problèmes. 📚",
-  "Le saviez-vous ? Une journée sur Vénus est plus longue qu'une année sur Vénus. La planète tourne plus lentement sur elle-même qu'autour du Soleil. 🪐",
-  "Qu'est-ce qu'un crocodile qui surveille une cour de prison ? Un sac à barreaux. 😂",
+  "🥐 Boulangerie — Le croissant n'est pas français à l'origine ! Il vient de Vienne (Autriche). Marie-Antoinette l'aurait popularisé en France au XVIIIᵉ siècle. La forme en lune croissante rappelait le drapeau ottoman après la victoire de Vienne en 1683.",
+  "🧩 Devinette — Je suis fabriqué avec de la farine, de l'eau et du sel. Je suis long, doré, croustillant. On me retrouve sous le bras de presque tous les Français. Qui suis-je ? (La baguette !)",
+  "🌍 Culture G — La France est le pays qui consomme le plus de pain par habitant en Europe. Un Français mange en moyenne 130 g de pain par jour, soit une demi-baguette. 🥖",
+  "🥐 Boulangerie — Un vrai croissant au beurre contient entre 25 et 30 % de beurre dans sa pâte. C'est ce qui lui donne ses couches feuilletées et son goût incomparable. Un croissant ordinaire est souvent fait à la margarine.",
+  "🧩 Devinette — Je me compose de mille couches (enfin, 729 en théorie !), je suis crème et feuilleté. Mon nom signifie littéralement ce que je suis. Qui suis-je ? (Le mille-feuille !)",
+  "🌍 Culture G — Le chocolat chaud a été inventé par les Mayas il y a plus de 3 000 ans. Ils le buvaient froid et épicé, sans sucre. C'est l'arrivée en Europe au XVIᵉ siècle qui l'a transformé en boisson sucrée. ☕",
+  "🥐 Boulangerie — Le Paris-Brest a été créé en 1910 par le pâtissier Louis Durand, sur la demande du journal L'Auto, pour célébrer la course cycliste Paris-Brest-Paris. Sa forme ronde imite une roue de vélo. 🚴",
+  "🧩 Devinette — Plus je sèche, plus je suis dure. Je commence tendre et dorée, mais je vieillis vite. La soupe m'aime encore quand personne d'autre ne veut de moi. Qui suis-je ? (La baguette rassis !)",
+  "🌍 Culture G — La tour Eiffel mesure 6 cm de plus en été qu'en hiver. La chaleur dilate le métal. À 324 mètres, elle se dilate de quelques centimètres selon la température. 🗼",
+  "🥐 Boulangerie — Le macaron parisien tel qu'on le connaît (deux coques avec une ganache) a été inventé par la maison Ladurée au début du XXᵉ siècle. Le macaron simple, lui, vient d'Italie et fut apporté par Catherine de Médicis au XVIᵉ siècle. 🫐",
+  "🧩 Devinette — Je suis ronde, je parfume toute la boulangerie, je suis feuilletée et je viens de Bretagne. Je suis beurrée, sucrée, et un peu caramélisée. Qui suis-je ? (Le kouign-amann !)",
+  "🌍 Culture G — Le mot 'boulanger' vient du flamand 'boulenc', qui désignait celui qui faisait des pains ronds. Avant, on appelait ça un 'talmelier' ou 'panetier'. Le terme boulanger s'impose en France vers le XIIIᵉ siècle. 🍞",
+  "🥐 Boulangerie — La pâte à choux n'a pas de levure. Elle gonfle uniquement grâce à la vapeur d'eau emprisonnée dans la pâte lors de la cuisson. C'est pour ça que le four ne doit jamais être ouvert pendant la cuisson ! 💨",
+  "🧩 Devinette — Je suis léger comme l'air, je fonds en bouche, et mon nom évoque la vitesse de l'éclair. On me garnit de crème et on me recouvre de fondant. Qui suis-je ? (L'éclair !)",
+  "🌍 Culture G — Les abeilles visitent environ 2 millions de fleurs pour produire 500 g de miel. Une ruche entière ne produit qu'une cuillère à soupe de miel par abeille sur toute sa vie. 🐝",
+  "🥐 Boulangerie — Saint Honoré est le patron des boulangers et pâtissiers. Sa fête est le 16 mai. La légende raconte qu'il était évêque d'Amiens au VIᵉ siècle et qu'une pelle à enfourner fleurit miraculeusement pour annoncer sa vocation. 🙏",
+  "🧩 Devinette — On me pétrit, on me laisse reposer, on me façonne, on me cuit. Je suis l'âme de la boulangerie, la base de tout. Sans moi, pas d'éclair, pas de brioche, pas de baguette. Qui suis-je ? (La pâte !)",
+  "🌍 Culture G — La France compte environ 33 000 boulangeries artisanales, soit plus que n'importe quel autre type de commerce alimentaire. Chaque jour, les Français achètent environ 6 millions de baguettes. 🇫🇷",
+  "🥐 Boulangerie — La brioche doit son nom au verbe 'brier', qui signifie pétrir en normand. Elle contient une grande quantité de beurre et d'œufs — jusqu'à autant de beurre que de farine dans les recettes riches. C'est pour ça qu'elle est si filante et moelleuse. 🧈",
+  "🧩 Devinette — Je suis petit, doré, rectangulaire, et je dois mon nom aux financiers de la Bourse de Paris qui me mangeaient sans se salir les mains entre deux transactions. Qui suis-je ? (Le financier !)",
+  "🌍 Culture G — Le Groenland est techniquement une île, mais c'est la plus grande île du monde (non continentale). Sa superficie est 5 fois celle de la France métropolitaine. 🗺️",
+  "🥐 Boulangerie — La loi française encadre strictement la baguette de tradition : elle doit être faite sur place, sans additif, uniquement avec de la farine, de l'eau, du sel et de la levure ou du levain. Une boulangerie qui vend du pain surgelé n'a pas le droit de s'appeler 'boulangerie'. 🏆",
+  "🧩 Devinette — Plus on me chauffe, plus je deviens solide. Je suis la preuve que la cuisine peut défier la logique. Les pâtissiers me sont très reconnaissants. Qui suis-je ? (L'œuf en cuisson !)",
+  "🌍 Culture G — Une banane n'est pas un fruit au sens botanique du terme — c'est une baie ! Et de même, les fraises ne sont pas des fruits : ce sont des 'faux-fruits'. Le vrai fruit de la fraisier, ce sont les petits points noirs à sa surface. 🍓",
+  "🥐 Boulangerie — Le feuilletage d'un croissant classique compte 27 couches de pâte et autant de beurre, obtenues par 3 tours doubles. C'est le 'tourage' qui crée ces feuillets si légers et croustillants. 🧈",
+  "🧩 Devinette — Je suis composée de 3 boules de tailles différentes, je suis beurrée et moelleuse, et ma tête a tendance à tomber. On me mange au petit-déjeuner avec confiture. Qui suis-je ? (La brioche à tête !)",
+  "🌍 Culture G — Le mot 'salaire' vient du latin 'salarium', car les soldats romains étaient parfois payés en sel — une denrée très précieuse à l'époque. D'où l'expression 'ne pas valoir son sel'. 🧂",
+  "🥐 Boulangerie — L'Opéra est un gâteau parisien inventé par la maison Dalloyau dans les années 1950-60. Il doit son nom à l'Opéra Garnier, dont il rappelle l'élégance. Ses couches sont : génoise café, crème au beurre café, ganache chocolat. 🎭",
+  "🧩 Devinette — Je suis blanc, je viens de la mer, je suis indispensable en boulangerie mais en excès je suis dangereux. Sans moi, le pain est fade. Trop de moi, et il ne lève pas. Qui suis-je ? (Le sel !)",
+  "🌍 Culture G — Le cacao est originaire d'Amérique centrale. Les fèves de cacao étaient si précieuses chez les Aztèques qu'elles servaient de monnaie d'échange. Un esclave pouvait s'acheter contre 100 fèves. 🍫",
+  "🥐 Boulangerie — Le levain est vivant ! C'est une colonie de bactéries lactiques et de levures sauvages qu'on nourrit chaque jour avec de la farine et de l'eau. Certaines boulangeries entretiennent le même levain depuis des décennies. Un levain peut se transmettre comme un héritage. 🌱",
 ]
 
 const TABS = [
@@ -177,7 +177,7 @@ export default function VendeurDashboard() {
         <div className="px-4 pt-4">
           <div className="rounded-2xl px-4 py-3.5" style={{ backgroundColor: '#FFF3E0' }}>
             <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#C67B2A' }}>
-              Le saviez-vous ? 😄
+              Du jour ✨
             </p>
             <p className="text-sm font-medium leading-relaxed" style={{ color: '#7B4A1A' }}>
               {blague}
