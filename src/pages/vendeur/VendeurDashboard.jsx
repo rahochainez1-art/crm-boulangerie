@@ -182,21 +182,21 @@ export default function VendeurDashboard() {
                       ? 'shadow-md'
                       : 'bg-white border border-warm/70 shadow-sm'
                   }`}
-                  style={isSelected ? { backgroundColor: '#C8A96E' } : {}}
+                  style={isSelected ? { backgroundColor: '#1A1A1A' } : {}}
                 >
                   <span className={`text-xl font-bold leading-none ${
-                    isSelected ? 'text-white' : isToday ? 'text-[#C8A96E]' : 'text-[#C8A96E]'
+                    isSelected ? 'text-white' : 'text-ink'
                   }`}>
                     {format(day, 'd')}
                   </span>
                   <span className={`text-[11px] font-semibold mt-1 capitalize ${
-                    isSelected ? 'text-white/80' : 'text-dust'
+                    isSelected ? 'text-white/70' : 'text-dust'
                   }`}>
                     {format(day, 'EEE', { locale: fr })}
                   </span>
                   <span className={`w-1.5 h-1.5 rounded-full mt-1.5 ${
                     hasOrders
-                      ? isSelected ? 'bg-white/60' : 'bg-[#C8A96E]/70'
+                      ? isSelected ? 'bg-white/60' : 'bg-ink/40'
                       : 'bg-transparent'
                   }`} />
                 </button>
