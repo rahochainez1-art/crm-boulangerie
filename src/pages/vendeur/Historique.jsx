@@ -7,6 +7,7 @@ import BottomNav from '../../components/layout/BottomNav'
 
 const TABS = [
   { id: 'all',       label: 'Toutes' },
+  { id: 'active',    label: 'En cours' },
   { id: 'done',      label: 'Récupérées' },
   { id: 'cancelled', label: 'Annulées' },
 ]
@@ -17,23 +18,29 @@ export default function Historique() {
 
   useEffect(() => subscribeOrders(setOrders), [])
 
-  const pastOrders = useMemo(() =>
-    [...orders.filter(o => o.status === 'done' || o.status === 'cancelled')]
-      .sort((a, b) => new Date(b.pickupDate) - new Date(a.pickupDate)),
+  // Toutes les commandes, les plus récemment créées en premier
+  const allOrders = useMemo(() =>
+    [...orders].sort((a, b) => {
+      const sa = a.createdAt?.seconds ?? 0
+      const sb = b.createdAt?.seconds ?? 0
+      return sb - sa
+    }),
     [orders]
   )
 
   const counts = useMemo(() => ({
-    all:       pastOrders.length,
-    done:      pastOrders.filter(o => o.status === 'done').length,
-    cancelled: pastOrders.filter(o => o.status === 'cancelled').length,
-  }), [pastOrders])
+    all:       allOrders.length,
+    active:    allOrders.filter(o => ['todo','inprogress','ready'].includes(o.status)).length,
+    done:      allOrders.filter(o => o.status === 'done').length,
+    cancelled: allOrders.filter(o => o.status === 'cancelled').length,
+  }), [allOrders])
 
   const filtered = useMemo(() => {
-    if (tab === 'done')      return pastOrders.filter(o => o.status === 'done')
-    if (tab === 'cancelled') return pastOrders.filter(o => o.status === 'cancelled')
-    return pastOrders
-  }, [pastOrders, tab])
+    if (tab === 'active')    return allOrders.filter(o => ['todo','inprogress','ready'].includes(o.status))
+    if (tab === 'done')      return allOrders.filter(o => o.status === 'done')
+    if (tab === 'cancelled') return allOrders.filter(o => o.status === 'cancelled')
+    return allOrders
+  }, [allOrders, tab])
 
   return (
     <div className="min-h-dvh bg-cream flex flex-col max-w-lg mx-auto">
@@ -53,7 +60,7 @@ export default function Historique() {
       </header>
 
       {/* Filtres */}
-      <div className="flex gap-1.5 px-4 pt-4 pb-1">
+      <div className="flex gap-1.5 px-4 pt-4 pb-1 overflow-x-auto scrollbar-none">
         {TABS.map(t => (
           <button
             key={t.id}
@@ -77,11 +84,9 @@ export default function Historique() {
         {filtered.length === 0 ? (
           <div className="bg-chalk border border-warm rounded-2xl px-5 py-16 text-center mt-2">
             <p className="text-2xl mb-3">◷</p>
-            <p className="font-bold text-ink">Aucune commande passée</p>
+            <p className="font-bold text-ink">Aucune commande</p>
             <p className="text-sm text-dust mt-1">
-              {tab === 'all'
-                ? 'Les commandes récupérées et annulées apparaîtront ici'
-                : tab === 'done' ? 'Aucune commande récupérée' : 'Aucune commande annulée'}
+              Les commandes enregistrées apparaîtront ici
             </p>
           </div>
         ) : (
@@ -100,22 +105,22 @@ function HistoriqueCard({ order }) {
 
   return (
     <div className={`bg-chalk border rounded-2xl p-4 ${
-      order.status === 'cancelled' ? 'border-red-100 opacity-70' : 'border-warm'
+      order.status === 'cancelled' ? 'border-red-100 opacity-60' : 'border-warm'
     }`}>
       <div className="flex items-start justify-between gap-2 mb-1.5">
         <p className="font-semibold text-ink">{order.clientName}</p>
         <StatusBadge status={order.status} />
       </div>
 
-      <p className="text-sm text-dust mb-2">{order.articles}</p>
+      <p className="text-sm text-dust mb-2 leading-snug">{order.articles}</p>
 
       <div className="flex items-center gap-3 text-xs text-dust flex-wrap">
-        <span>📅 {format(pickupDate, 'dd MMM yyyy à HH:mm', { locale: fr })}</span>
+        <span>📅 {format(pickupDate, 'dd MMM à HH:mm', { locale: fr })}</span>
         {order.totalAmount > 0 && (
           <span className="font-semibold text-ink">{order.totalAmount} €</span>
         )}
-        {order.createdBy && (
-          <span className="text-dust/60">par {order.createdBy}</span>
+        {reste > 0 && order.status !== 'cancelled' && (
+          <span className="text-amber-700 font-semibold">{reste} € à encaisser</span>
         )}
       </div>
 
