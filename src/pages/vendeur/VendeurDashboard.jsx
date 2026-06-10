@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
-import { subscribeTodayOrders, advanceStatus } from '../../lib/orders'
+import { subscribeTodayOrders, setStatus } from '../../lib/orders'
 import StatusBadge from '../../components/ui/StatusBadge'
 import BottomNav from '../../components/layout/BottomNav'
 
@@ -135,14 +135,31 @@ export default function VendeurDashboard() {
                     </div>
                   </div>
 
-                  {/* Bouton récupération — uniquement quand la commande est prête */}
-                  {order.status === 'ready' && (
-                    <button
-                      onClick={() => advanceStatus(order.id, order.status).then(() => toast.success(`${order.clientName} a récupéré sa commande`))}
-                      className="w-full py-3 text-sm font-bold text-green-800 bg-green-50 border-t border-green-100 active:bg-green-100 transition-colors"
-                    >
-                      Commande récupérée ✓
-                    </button>
+                  {/* Toggle récupération — visible dès que la commande est prête, réversible */}
+                  {(order.status === 'ready' || order.status === 'done') && (
+                    <div className="flex border-t border-warm">
+                      <button
+                        onClick={() => setStatus(order.id, 'ready').then(() => toast('Statut annulé'))}
+                        className={`flex-1 py-3 text-xs font-bold transition-colors ${
+                          order.status !== 'done'
+                            ? 'bg-parchment text-ink'
+                            : 'text-dust bg-chalk active:bg-parchment'
+                        }`}
+                      >
+                        Pas encore récupérée
+                      </button>
+                      <div className="w-px bg-warm" />
+                      <button
+                        onClick={() => setStatus(order.id, 'done').then(() => toast.success(`${order.clientName} — commande récupérée`))}
+                        className={`flex-1 py-3 text-xs font-bold transition-colors ${
+                          order.status === 'done'
+                            ? 'bg-green-50 text-green-800'
+                            : 'text-dust bg-chalk active:bg-green-50'
+                        }`}
+                      >
+                        Récupérée ✓
+                      </button>
+                    </div>
                   )}
                 </div>
               )
