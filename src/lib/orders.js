@@ -2,6 +2,7 @@ import {
   collection, addDoc, updateDoc, deleteDoc,
   doc, query, orderBy, onSnapshot, serverTimestamp, where, arrayUnion
 } from 'firebase/firestore'
+import { parseISO } from 'date-fns'
 import { db } from './firebase'
 
 export const STATUS = {
@@ -110,20 +111,23 @@ export const subscribeOrders = (callback) => {
   })
 }
 
-// Commandes du jour (vendeur)
+// Commandes du jour (vendeur) — filtre côté client pour éviter les problèmes de fuseau horaire
 export const subscribeTodayOrders = (callback) => {
-  const start = new Date()
-  start.setHours(0, 0, 0, 0)
-  const end = new Date()
-  end.setHours(23, 59, 59, 999)
-  const q = query(
-    collection(db, 'orders'),
-    where('pickupDate', '>=', start.toISOString()),
-    where('pickupDate', '<=', end.toISOString()),
-    orderBy('pickupDate', 'asc')
-  )
+  const q = query(collection(db, 'orders'), orderBy('pickupDate', 'asc'))
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
+    const today = new Date()
+    const all = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+    const todayOrders = all.filter((o) => {
+      try {
+        const d = parseISO(o.pickupDate)
+        return (
+          d.getFullYear()  === today.getFullYear() &&
+          d.getMonth()     === today.getMonth() &&
+          d.getDate()      === today.getDate()
+        )
+      } catch { return false }
+    })
+    callback(todayOrders)
   })
 }
 

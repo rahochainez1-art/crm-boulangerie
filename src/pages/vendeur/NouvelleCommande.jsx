@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { format, addDays } from 'date-fns'
+import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { createOrder } from '../../lib/orders'
@@ -12,20 +12,18 @@ const ARTICLES_SUGGERES = [
   'Mille-feuille', 'Paris-Brest', 'Forêt noire', 'Chou craquelin',
 ]
 
-const today = format(new Date(), 'yyyy-MM-dd')
-const defaultDate = format(addDays(new Date(), 1), 'yyyy-MM-dd')
-
-const emptyForm = {
+const makeEmptyForm = () => ({
   clientName: '', clientPhone: '',
-  pickupDate: defaultDate, pickupTime: '10:00',
+  pickupDate: format(new Date(), 'yyyy-MM-dd'),
+  pickupTime: '10:00',
   articles: '', deposit: '', totalAmount: '',
   notes: '', assignedTo: 'patissiere',
-}
+})
 
 export default function NouvelleCommande() {
   const navigate = useNavigate()
   const { vendeurName } = useRole()
-  const [form, setForm] = useState(emptyForm)
+  const [form, setForm] = useState(makeEmptyForm)
   const [loading, setLoading] = useState(false)
   const set = (f) => (e) => setForm((p) => ({ ...p, [f]: e.target.value }))
   const addArticle = (a) => setForm((p) => ({ ...p, articles: p.articles ? `${p.articles}, ${a}` : a }))
@@ -82,7 +80,7 @@ export default function NouvelleCommande() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <p className="text-xs text-dust mb-1">Date *</p>
-                <input type="date" min={today} value={form.pickupDate} onChange={set('pickupDate')} className="field" required />
+                <input type="date" min={format(new Date(), 'yyyy-MM-dd')} value={form.pickupDate} onChange={set('pickupDate')} className="field" required />
               </div>
               <div>
                 <p className="text-xs text-dust mb-1">Heure</p>
