@@ -9,6 +9,7 @@ import Calendrier from './pages/Calendrier'
 import VendeurDashboard from './pages/vendeur/VendeurDashboard'
 import NouvelleCommande from './pages/vendeur/NouvelleCommande'
 import Historique from './pages/vendeur/Historique'
+import Profil from './pages/vendeur/Profil'
 
 import PatissiereDashboard from './pages/patissiere/Dashboard'
 
@@ -40,6 +41,7 @@ function AppRoutes() {
       <Route path="/vendeur" element={<VendeurDashboard />} />
       <Route path="/vendeur/nouvelle-commande" element={<NouvelleCommande />} />
       <Route path="/vendeur/historique" element={<Historique />} />
+      <Route path="/vendeur/profil" element={<Profil />} />
 
       {/* ── Pâtissière */}
       <Route path="/patissiere" element={<PatissiereDashboard />} />

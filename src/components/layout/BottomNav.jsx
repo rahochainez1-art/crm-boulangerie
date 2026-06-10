@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { useRole } from '../../context/RoleContext'
 
 // ── Icônes vendeur ────────────────────────────────────────────────────────
@@ -38,6 +39,41 @@ function NavItem({ to, label, Icon }) {
   )
 }
 
+function AvatarIcon({ isActive }) {
+  const [avatar, setAvatar] = useState(() => localStorage.getItem('agj_profil_avatar'))
+
+  // Rafraîchit l'avatar si changé depuis la page Profil
+  useEffect(() => {
+    const sync = () => setAvatar(localStorage.getItem('agj_profil_avatar'))
+    window.addEventListener('storage', sync)
+    window.addEventListener('agj_avatar_updated', sync)
+    return () => {
+      window.removeEventListener('storage', sync)
+      window.removeEventListener('agj_avatar_updated', sync)
+    }
+  }, [])
+
+  if (avatar) {
+    return (
+      <img
+        src={avatar}
+        alt=""
+        className="rounded-full object-cover"
+        style={{
+          width: 26, height: 26,
+          border: isActive ? '2px solid #C8A96E' : '2px solid transparent',
+        }}
+      />
+    )
+  }
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+  )
+}
+
 function VendeurNav() {
   const navigate = useNavigate()
 
@@ -50,16 +86,13 @@ function VendeurNav() {
         boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
       }}
     >
-      {/*
-        Accueil(flex-1) + Historique(flex-1) + [+56px] + Réglages(flex-2)
-        → 2 unités gauche = 2 unités droite = bouton + parfaitement centré
-      */}
+      {/* 2 + center + 2 : symétrie parfaite */}
       <div className="flex items-end pt-2 pb-2">
 
         <NavItem to="/vendeur"            label="Accueil"    Icon={IconHome} />
         <NavItem to="/vendeur/historique" label="Historique" Icon={IconClock} />
 
-        {/* Bouton + surélevé */}
+        {/* Bouton + central surélevé */}
         <button
           onClick={() => navigate('/vendeur/nouvelle-commande')}
           className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform"
@@ -76,18 +109,22 @@ function VendeurNav() {
           </svg>
         </button>
 
-        {/* flex-2 = même largeur que Accueil + Historique → + centré */}
-        <NavLink to="/settings" end style={{ flex: 2 }} className="flex flex-col items-center gap-0.5 pb-1 transition-colors">
+        {/* Profil avec avatar */}
+        <NavLink to="/vendeur/profil" end className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors">
           {({ isActive }) => (
             <>
-              <span style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}><IconSettings /></span>
+              <span style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}>
+                <AvatarIcon isActive={isActive} />
+              </span>
               <span className="text-[10px] font-semibold mt-0.5" style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}>
-                Réglages
+                Profil
               </span>
               {isActive && <span className="w-1 h-1 rounded-full mt-0.5" style={{ backgroundColor: '#C8A96E' }} />}
             </>
           )}
         </NavLink>
+
+        <NavItem to="/settings" label="Réglages" Icon={IconSettings} />
 
       </div>
     </nav>
