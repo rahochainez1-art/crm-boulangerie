@@ -4,7 +4,6 @@ import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { subscribeTodayOrders, advanceStatus } from '../../lib/orders'
-import { useRole } from '../../context/RoleContext'
 import StatusBadge from '../../components/ui/StatusBadge'
 import BottomNav from '../../components/layout/BottomNav'
 
@@ -19,7 +18,6 @@ export default function VendeurDashboard() {
   const [tab, setTab] = useState('all')
   const [prevReady, setPrevReady] = useState(new Set())
   const navigate = useNavigate()
-  const { vendeurName } = useRole()
 
   useEffect(() => {
     return subscribeTodayOrders((newOrders) => {
@@ -54,9 +52,7 @@ export default function VendeurDashboard() {
       >
         <p className="label-xs mb-2">Au Grand Jour · {today}</p>
         <div className="flex items-end justify-between">
-          <h1 className="text-2xl font-bold text-ink">
-            Bonjour{vendeurName ? `, ${vendeurName}` : ''} 👋
-          </h1>
+          <h1 className="text-2xl font-bold text-ink">Bonjour 👋</h1>
           {ready > 0 && (
             <span className="bg-lime text-ink text-xs font-bold px-3 py-1.5 rounded-full">
               {ready} prête{ready > 1 ? 's' : ''} ✓

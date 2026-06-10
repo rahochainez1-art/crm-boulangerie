@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useRole } from '../context/RoleContext'
 
 function IconBag() {
@@ -69,64 +68,13 @@ const ROLES = [
 ]
 
 export default function RoleSelector() {
-  const { setRole, setVendeurName } = useRole()
-  const [nameStep, setNameStep] = useState(false)
-  const [name, setName]         = useState('')
-
-  const handleRoleClick = (id) => {
-    if (id === 'vendeur') { setNameStep(true); return }
-    setRole(id)
-  }
-
-  const handleVendeurSubmit = (e) => {
-    e.preventDefault()
-    const trimmed = name.trim()
-    if (!trimmed) return
-    setVendeurName(trimmed)
-    setRole('vendeur')
-  }
-
-  if (nameStep) {
-    return (
-      <div
-        className="min-h-dvh flex flex-col px-5 max-w-lg mx-auto justify-center"
-        style={{ paddingTop: 'max(72px, env(safe-area-inset-top))', paddingBottom: 48 }}
-      >
-        <button
-          onClick={() => setNameStep(false)}
-          className="text-sm font-semibold text-dust mb-8 self-start"
-        >
-          ← Retour
-        </button>
-        <h1 className="font-serif text-[2.4rem] font-bold text-ink leading-tight mb-2">
-          Votre prénom ?
-        </h1>
-        <p className="text-dust text-base mb-8">
-          Pour retrouver vos commandes facilement.
-        </p>
-        <form onSubmit={handleVendeurSubmit} className="space-y-4">
-          <input
-            autoFocus
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ex : Sophie"
-            className="field text-lg"
-            required
-          />
-          <button type="submit" className="btn-primary" disabled={!name.trim()}>
-            Commencer →
-          </button>
-        </form>
-      </div>
-    )
-  }
+  const { setRole } = useRole()
 
   return (
     <div
       className="min-h-dvh flex flex-col px-5 max-w-lg mx-auto"
       style={{ paddingTop: 'max(72px, env(safe-area-inset-top))', paddingBottom: 48 }}
     >
-      {/* Branding */}
       <div className="mb-10">
         <p className="label-xs mb-5">Boulangerie · Au Grand Jour</p>
         <h1 className="font-serif text-[2.8rem] font-bold text-ink leading-[1.05] tracking-tight">
@@ -137,17 +85,13 @@ export default function RoleSelector() {
         </p>
       </div>
 
-      {/* Rôles */}
       <div className="space-y-3 flex-1">
         {ROLES.map((r) => (
           <button
             key={r.id}
-            onClick={() => handleRoleClick(r.id)}
+            onClick={() => setRole(r.id)}
             className="w-full rounded-2xl p-5 text-left active:scale-[0.985] transition-transform flex items-center gap-5 overflow-hidden relative"
-            style={{
-              backgroundColor: r.cardBg,
-              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-            }}
+            style={{ backgroundColor: r.cardBg, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
           >
             <div
               className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center"
@@ -156,17 +100,12 @@ export default function RoleSelector() {
               <r.Icon />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-serif font-bold text-ink text-[1.35rem] leading-tight">
-                {r.label}
-              </p>
-              <p className="text-sm mt-1 leading-snug whitespace-pre-line"
-                style={{ color: r.iconColor, opacity: 0.7 }}>
+              <p className="font-serif font-bold text-ink text-[1.35rem] leading-tight">{r.label}</p>
+              <p className="text-sm mt-1 leading-snug whitespace-pre-line" style={{ color: r.iconColor, opacity: 0.7 }}>
                 {r.description}
               </p>
             </div>
-            <span className="text-xl flex-shrink-0 font-light" style={{ color: r.iconColor, opacity: 0.5 }}>
-              →
-            </span>
+            <span className="text-xl flex-shrink-0 font-light" style={{ color: r.iconColor, opacity: 0.5 }}>→</span>
           </button>
         ))}
       </div>
