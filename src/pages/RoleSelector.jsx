@@ -37,6 +37,17 @@ function IconChart() {
   )
 }
 
+function IconBread() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 10a5 5 0 0 1 5-5h8a5 5 0 0 1 0 10H6l-3 3V10z"/>
+      <path d="M9 10h.01"/>
+      <path d="M13 10h.01"/>
+      <path d="M17 10h.01"/>
+    </svg>
+  )
+}
+
 const ROLES = [
   {
     id: 'vendeur',
@@ -64,6 +75,15 @@ const ROLES = [
     iconBg:   '#F5E6C8',
     iconColor:'#5C3D0A',
     Icon: IconChart,
+  },
+  {
+    id: 'boulangerie',
+    label: 'Boulangerie',
+    description: 'Commandes assignées au\npôle boulangerie',
+    cardBg:   '#FFF0D9',
+    iconBg:   '#FFE4B5',
+    iconColor:'#7B4F1C',
+    Icon: IconBread,
   },
 ]
 

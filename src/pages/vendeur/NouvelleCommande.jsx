@@ -22,13 +22,12 @@ const makeEmptyForm = () => ({
   pickupDate: format(new Date(), 'yyyy-MM-dd'),
   pickupTime: '10:00',
   articles: '', deposit: '', totalAmount: '',
-  notes: '', assignedTo: 'patissiere',
+  notes: '', assignedTo: ['patissiere'],
 })
 
-const ASSIGNED_LABELS = {
+const POLE_LABELS = {
   patissiere:  '🍰 Pâtisserie',
   boulangerie: '🥖 Boulangerie',
-  vendeur:     '🛍️ Vendeur·se',
 }
 
 export default function NouvelleCommande() {
@@ -39,6 +38,14 @@ export default function NouvelleCommande() {
 
   const set = (f) => (e) => setForm((p) => ({ ...p, [f]: e.target.value }))
   const prefillArticle = (a) => setForm((p) => ({ ...p, articles: a }))
+  const togglePole = (pole) => setForm(p => {
+    const cur = Array.isArray(p.assignedTo) ? p.assignedTo : [p.assignedTo]
+    if (cur.includes(pole)) {
+      if (cur.length === 1) return p  // au moins un pôle requis
+      return { ...p, assignedTo: cur.filter(x => x !== pole) }
+    }
+    return { ...p, assignedTo: [...cur, pole] }
+  })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -63,6 +70,8 @@ export default function NouvelleCommande() {
   if (confirmed) {
     const pickup  = parseISO(confirmed.pickupDate)
     const reste   = confirmed.totalAmount - confirmed.deposit
+    const polesLabel = (Array.isArray(confirmed.assignedTo) ? confirmed.assignedTo : [confirmed.assignedTo])
+      .map(p => POLE_LABELS[p] ?? p).join(' + ')
 
     return (
       <div className="min-h-dvh bg-cream flex flex-col max-w-lg mx-auto">
@@ -81,7 +90,7 @@ export default function NouvelleCommande() {
             <span className="text-2xl font-bold text-ink">✓</span>
             <div>
               <p className="font-bold text-ink">Commande bien enregistrée</p>
-              <p className="text-sm text-dust">Transmise à {ASSIGNED_LABELS[confirmed.assignedTo]}</p>
+              <p className="text-sm text-dust">Transmise à {polesLabel}</p>
             </div>
           </div>
 
@@ -243,12 +252,27 @@ export default function NouvelleCommande() {
 
           <Section label="Détails">
             <div>
-              <p className="text-xs text-dust mb-1">Assignée à</p>
-              <select value={form.assignedTo} onChange={set('assignedTo')} className="field">
-                <option value="patissiere">🍰 Pâtisserie</option>
-                <option value="boulangerie">🥖 Boulangerie</option>
-                <option value="vendeur">🛍️ Vendeur·se</option>
-              </select>
+              <p className="text-xs text-dust mb-2">Envoyer à</p>
+              <div className="flex gap-2">
+                {Object.entries(POLE_LABELS).map(([id, label]) => {
+                  const checked = (Array.isArray(form.assignedTo) ? form.assignedTo : [form.assignedTo]).includes(id)
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => togglePole(id)}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border font-semibold text-sm transition-colors ${
+                        checked
+                          ? 'bg-ink text-chalk border-ink'
+                          : 'bg-parchment text-dust border-warm active:bg-ink active:text-chalk active:border-ink'
+                      }`}
+                    >
+                      {label}
+                      {checked && <span className="text-xs opacity-70">✓</span>}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
             <textarea placeholder="Allergies, inscriptions, instructions spéciales..."
               value={form.notes} onChange={set('notes')} rows={3} className="field resize-none" />

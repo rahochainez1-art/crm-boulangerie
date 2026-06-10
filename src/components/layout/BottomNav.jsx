@@ -137,6 +137,10 @@ const navByRole = {
     { to: '/patissiere', label: 'Production', icon: '◈', end: true },
     { to: '/calendrier', label: 'Calendrier', icon: '▦', end: true },
   ],
+  boulangerie: [
+    { to: '/boulangerie', label: 'Production', icon: '◈', end: true },
+    { to: '/calendrier',  label: 'Calendrier', icon: '▦', end: true },
+  ],
   manager: [
     { to: '/manager',        label: 'Dashboard', icon: '◉', end: true },
     { to: '/manager/toutes', label: 'Toutes',    icon: '≡', end: true },

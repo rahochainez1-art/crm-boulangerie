@@ -12,6 +12,7 @@ import Historique from './pages/vendeur/Historique'
 import Profil from './pages/vendeur/Profil'
 
 import PatissiereDashboard from './pages/patissiere/Dashboard'
+import BoulangerieDashboard from './pages/boulangerie/Dashboard'
 
 import ManagerDashboard from './pages/manager/ManagerDashboard'
 import ToutesCommandes from './pages/manager/ToutesCommandes'
@@ -21,6 +22,7 @@ function DefaultRedirect() {
   if (role === 'vendeur') return <Navigate to="/vendeur" replace />
   if (role === 'patissiere') return <Navigate to="/patissiere" replace />
   if (role === 'manager') return <Navigate to="/manager" replace />
+  if (role === 'boulangerie') return <Navigate to="/boulangerie" replace />
   return <Navigate to="/choisir-role" replace />
 }
 
@@ -45,6 +47,9 @@ function AppRoutes() {
 
       {/* ── Pâtissière */}
       <Route path="/patissiere" element={<PatissiereDashboard />} />
+
+      {/* ── Boulangerie */}
+      <Route path="/boulangerie" element={<BoulangerieDashboard />} />
 
       {/* ── Manager */}
       <Route path="/manager" element={<ManagerDashboard />} />

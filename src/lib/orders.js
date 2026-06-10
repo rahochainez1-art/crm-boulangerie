@@ -70,6 +70,12 @@ export const setStatus = (id, newStatus) =>
 
 export const deleteOrder = (id) => deleteDoc(doc(db, 'orders', id))
 
+// Backward-compatible : assignedTo peut être string (ancien) ou array (nouveau)
+export const isAssignedTo = (order, pole) =>
+  Array.isArray(order.assignedTo)
+    ? order.assignedTo.includes(pole)
+    : order.assignedTo === pole
+
 export const seedFakeOrders = async () => {
   // Heures relatives à maintenant pour être sûr qu'elles sont visibles
   const fromNow = (offsetMinutes) => {
@@ -81,12 +87,13 @@ export const seedFakeOrders = async () => {
     return dt.toISOString()
   }
   const orders = [
-    { clientName: 'Marie Lefebvre',  clientPhone: '06 12 34 56 78', articles: 'Gâteau anniversaire chocolat — 8 parts',             notes: 'Sans gluten, écrire "Joyeux 30 ans Marie"', pickupDate: fromNow(30),   deposit: 20, totalAmount: 55, status: 'todo',       assignedTo: 'patissiere' },
-    { clientName: 'Thomas Renard',   clientPhone: '07 65 43 21 09', articles: '2 Paris-Brest + 6 éclairs café',                      notes: '',                                          pickupDate: fromNow(90),   deposit: 0,  totalAmount: 32, status: 'inprogress', assignedTo: 'patissiere' },
-    { clientName: 'Sophie Martin',   clientPhone: '',               articles: 'Bûche framboise — 6 parts',                           notes: 'Allergie fruits à coque',                   pickupDate: fromNow(150),  deposit: 15, totalAmount: 45, status: 'ready',      assignedTo: 'patissiere' },
-    { clientName: 'Lucas Bernard',   clientPhone: '06 55 66 77 88', articles: 'Tarte aux fraises + 4 choux craquelin',               notes: '',                                          pickupDate: tomorrow(-60), deposit: 10, totalAmount: 38, status: 'todo',       assignedTo: 'patissiere' },
-    { clientName: 'Emma Dupont',     clientPhone: '07 11 22 33 44', articles: 'Mille-feuille 8 parts — inscription "Félicitations"', notes: 'Crème allégée si possible',                 pickupDate: tomorrow(30),  deposit: 25, totalAmount: 60, status: 'todo',       assignedTo: 'patissiere' },
-    { clientName: 'Pierre Fontaine', clientPhone: '06 98 76 54 32', articles: '1 Forêt noire + 12 macarons assortis',                notes: '',                                          pickupDate: tomorrow(120), deposit: 30, totalAmount: 72, status: 'inprogress', assignedTo: 'patissiere' },
+    { clientName: 'Marie Lefebvre',  clientPhone: '06 12 34 56 78', articles: 'Gâteau anniversaire chocolat — 8 parts',             notes: 'Sans gluten, écrire "Joyeux 30 ans Marie"', pickupDate: fromNow(30),   deposit: 20, totalAmount: 55, status: 'todo',       assignedTo: ['patissiere'] },
+    { clientName: 'Thomas Renard',   clientPhone: '07 65 43 21 09', articles: '2 Paris-Brest + 6 éclairs café',                      notes: '',                                          pickupDate: fromNow(90),   deposit: 0,  totalAmount: 32, status: 'inprogress', assignedTo: ['patissiere'] },
+    { clientName: 'Sophie Martin',   clientPhone: '',               articles: 'Bûche framboise — 6 parts',                           notes: 'Allergie fruits à coque',                   pickupDate: fromNow(150),  deposit: 15, totalAmount: 45, status: 'ready',      assignedTo: ['patissiere'] },
+    { clientName: 'Lucas Bernard',   clientPhone: '06 55 66 77 88', articles: 'Fraisier 8 pers',                                     notes: '',                                          pickupDate: fromNow(60),   deposit: 10, totalAmount: 38, status: 'todo',       assignedTo: ['boulangerie'] },
+    { clientName: 'Emma Dupont',     clientPhone: '07 11 22 33 44', articles: 'Baguettes norvégiennes x6',                           notes: '',                                          pickupDate: fromNow(120),  deposit: 0,  totalAmount: 18, status: 'inprogress', assignedTo: ['boulangerie'] },
+    { clientName: 'Claire Moreau',   clientPhone: '06 77 88 99 00', articles: 'Casse-noisette 4 pers + Flan',                        notes: 'Commande pour mariage',                     pickupDate: tomorrow(30),  deposit: 25, totalAmount: 60, status: 'todo',       assignedTo: ['patissiere', 'boulangerie'] },
+    { clientName: 'Pierre Fontaine', clientPhone: '06 98 76 54 32', articles: '1 Forêt noire + 12 macarons assortis',                notes: '',                                          pickupDate: tomorrow(120), deposit: 30, totalAmount: 72, status: 'inprogress', assignedTo: ['patissiere'] },
   ]
   console.log('[seed] Injection de', orders.length, 'commandes test...')
   const results = await Promise.all(
