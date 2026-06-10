@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useRole } from '../context/RoleContext'
 
 function IconBag() {
@@ -68,7 +69,57 @@ const ROLES = [
 ]
 
 export default function RoleSelector() {
-  const { setRole } = useRole()
+  const { setRole, setVendeurName } = useRole()
+  const [nameStep, setNameStep] = useState(false)
+  const [name, setName]         = useState('')
+
+  const handleRoleClick = (id) => {
+    if (id === 'vendeur') { setNameStep(true); return }
+    setRole(id)
+  }
+
+  const handleVendeurSubmit = (e) => {
+    e.preventDefault()
+    const trimmed = name.trim()
+    if (!trimmed) return
+    setVendeurName(trimmed)
+    setRole('vendeur')
+  }
+
+  if (nameStep) {
+    return (
+      <div
+        className="min-h-dvh flex flex-col px-5 max-w-lg mx-auto justify-center"
+        style={{ paddingTop: 'max(72px, env(safe-area-inset-top))', paddingBottom: 48 }}
+      >
+        <button
+          onClick={() => setNameStep(false)}
+          className="text-sm font-semibold text-dust mb-8 self-start"
+        >
+          ← Retour
+        </button>
+        <h1 className="font-serif text-[2.4rem] font-bold text-ink leading-tight mb-2">
+          Votre prénom ?
+        </h1>
+        <p className="text-dust text-base mb-8">
+          Pour retrouver vos commandes facilement.
+        </p>
+        <form onSubmit={handleVendeurSubmit} className="space-y-4">
+          <input
+            autoFocus
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ex : Sophie"
+            className="field text-lg"
+            required
+          />
+          <button type="submit" className="btn-primary" disabled={!name.trim()}>
+            Commencer →
+          </button>
+        </form>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -91,22 +142,19 @@ export default function RoleSelector() {
         {ROLES.map((r) => (
           <button
             key={r.id}
-            onClick={() => setRole(r.id)}
+            onClick={() => handleRoleClick(r.id)}
             className="w-full rounded-2xl p-5 text-left active:scale-[0.985] transition-transform flex items-center gap-5 overflow-hidden relative"
             style={{
               backgroundColor: r.cardBg,
               boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
             }}
           >
-            {/* Icône */}
             <div
               className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center"
               style={{ backgroundColor: r.iconBg, color: r.iconColor }}
             >
               <r.Icon />
             </div>
-
-            {/* Texte */}
             <div className="flex-1 min-w-0">
               <p className="font-serif font-bold text-ink text-[1.35rem] leading-tight">
                 {r.label}
@@ -116,12 +164,7 @@ export default function RoleSelector() {
                 {r.description}
               </p>
             </div>
-
-            {/* Flèche */}
-            <span
-              className="text-xl flex-shrink-0 font-light"
-              style={{ color: r.iconColor, opacity: 0.5 }}
-            >
+            <span className="text-xl flex-shrink-0 font-light" style={{ color: r.iconColor, opacity: 0.5 }}>
               →
             </span>
           </button>

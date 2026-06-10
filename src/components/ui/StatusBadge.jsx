@@ -3,6 +3,7 @@ const CONFIG = {
   inprogress: { label: 'En cours', cls: 'bg-status-inprogress text-amber-800' },
   ready:      { label: 'Prêt',     cls: 'bg-status-ready text-green-800' },
   done:       { label: 'Récupéré', cls: 'bg-status-done text-ink/40' },
+  cancelled:  { label: 'Annulée',  cls: 'bg-red-50 text-red-500' },
 }
 
 export default function StatusBadge({ status }) {

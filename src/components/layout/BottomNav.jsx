@@ -3,8 +3,9 @@ import { useRole } from '../../context/RoleContext'
 
 const navByRole = {
   vendeur: [
-    { to: '/vendeur',                  label: 'Accueil',   icon: '◎', end: true },
+    { to: '/vendeur',                   label: 'Accueil',   icon: '◎', end: true },
     { to: '/vendeur/nouvelle-commande', label: 'Commander', icon: '✦', end: true },
+    { to: '/vendeur/mes-commandes',     label: 'Les miennes', icon: '◷', end: true },
   ],
   patissiere: [
     { to: '/patissiere', label: 'Production', icon: '◈', end: true },

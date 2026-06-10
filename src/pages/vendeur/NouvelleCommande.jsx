@@ -4,6 +4,7 @@ import { format, addDays } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { createOrder } from '../../lib/orders'
+import { useRole } from '../../context/RoleContext'
 import BottomNav from '../../components/layout/BottomNav'
 
 const ARTICLES_SUGGERES = [
@@ -23,6 +24,7 @@ const emptyForm = {
 
 export default function NouvelleCommande() {
   const navigate = useNavigate()
+  const { vendeurName } = useRole()
   const [form, setForm] = useState(emptyForm)
   const [loading, setLoading] = useState(false)
   const set = (f) => (e) => setForm((p) => ({ ...p, [f]: e.target.value }))
@@ -38,6 +40,7 @@ export default function NouvelleCommande() {
         pickupDate: `${form.pickupDate}T${form.pickupTime}:00`,
         deposit: Number(form.deposit) || 0,
         totalAmount: Number(form.totalAmount) || 0,
+        createdBy: vendeurName || 'inconnu',
       })
       toast.success('Commande enregistrée !')
       navigate('/vendeur')

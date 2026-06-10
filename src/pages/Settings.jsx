@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useRole } from '../context/RoleContext'
 import { registerFCMToken, getDeviceId } from '../lib/notifications'
+import { seedFakeOrders } from '../lib/orders'
 import AppLayout from '../components/layout/AppLayout'
 
 const ROLE_LABELS = {
@@ -23,6 +24,14 @@ export default function Settings() {
   const { role, clearRole } = useRole()
   const [notifStatus, setNotifStatus] = useState(safeNotifPermission)
   const [loading, setLoading] = useState(false)
+  const [seeding, setSeeding] = useState(false)
+
+  const handleSeed = async () => {
+    setSeeding(true)
+    try { await seedFakeOrders(); alert('7 commandes test ajoutées ✓') }
+    catch (e) { alert('Erreur : ' + e.message) }
+    finally { setSeeding(false) }
+  }
 
   const handleEnableNotifs = async () => {
     setLoading(true)
@@ -92,6 +101,23 @@ export default function Settings() {
               </button>
             </div>
           )}
+        </div>
+
+        {/* Dev — données de test */}
+        <div className="card border-dashed border-amber-200 bg-amber-50/40">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-amber-700/60 mb-3">
+            Dev — données test
+          </p>
+          <p className="text-xs text-amber-800/70 mb-4">
+            Injecte 7 fausses commandes (aujourd'hui, demain, après-demain) avec des statuts variés.
+          </p>
+          <button
+            onClick={handleSeed}
+            disabled={seeding}
+            className="w-full py-3 rounded-xl font-bold text-sm bg-amber-100 text-amber-800 border border-amber-200 active:opacity-70 disabled:opacity-50"
+          >
+            {seeding ? 'Injection...' : 'Injecter des commandes test'}
+          </button>
         </div>
 
         {/* Infos */}

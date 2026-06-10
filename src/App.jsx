@@ -8,6 +8,7 @@ import Calendrier from './pages/Calendrier'
 
 import VendeurDashboard from './pages/vendeur/VendeurDashboard'
 import NouvelleCommande from './pages/vendeur/NouvelleCommande'
+import MesCommandes from './pages/vendeur/MesCommandes'
 
 import PatissiereDashboard from './pages/patissiere/Dashboard'
 
@@ -38,6 +39,7 @@ function AppRoutes() {
       {/* ── Vendeur */}
       <Route path="/vendeur" element={<VendeurDashboard />} />
       <Route path="/vendeur/nouvelle-commande" element={<NouvelleCommande />} />
+      <Route path="/vendeur/mes-commandes"     element={<MesCommandes />} />
 
       {/* ── Pâtissière */}
       <Route path="/patissiere" element={<PatissiereDashboard />} />

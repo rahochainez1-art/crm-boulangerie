@@ -5,7 +5,7 @@ import {
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
-import { subscribeOrders, advanceStatus, STATUS_NEXT, STATUS_LABELS } from '../../lib/orders'
+import { subscribeOrders, setStatus, seedFakeOrders, STATUS_LABELS } from '../../lib/orders'
 import AppLayout from '../../components/layout/AppLayout'
 
 function weekDays(offset = 0) {
@@ -24,18 +24,39 @@ function urgency(pickupDate) {
   return       { bar: 'bg-sage',            pill: null, label: null }
 }
 
-const STATUS_STYLE = {
-  todo:       'bg-parchment text-dust border-warm',
-  inprogress: 'bg-amber-50 text-amber-800 border-amber-100',
-  ready:      'bg-green-50 text-green-800 border-green-100',
+// Statuts que la pâtissière peut choisir (pas "done" — c'est le vendeur)
+const PRODUCTION_STATUSES = ['todo', 'inprogress', 'ready']
+
+const STATUS_PICKER = {
+  todo:       { label: 'Pas commencé', active: 'bg-ink text-chalk',          idle: 'bg-parchment text-dust border border-warm' },
+  inprogress: { label: 'En cours',     active: 'bg-amber-500 text-white',    idle: 'bg-amber-50 text-amber-700 border border-amber-200' },
+  ready:      { label: 'Prêt ✓',       active: 'bg-lime text-ink font-bold', idle: 'bg-green-50 text-green-700 border border-green-200' },
 }
+
 
 export default function PatissiereDashboard() {
   const [orders, setOrders]       = useState([])
   const [weekOffset, setWeekOffset] = useState(0)
   const [selectedDay, setSelectedDay] = useState(() => new Date())
+  const [seeding, setSeeding] = useState(false)
 
-  useEffect(() => subscribeOrders(setOrders), [])
+  useEffect(() => subscribeOrders((data) => {
+    console.log('[orders] reçu:', data.length, 'commandes', data.map(o => o.clientName))
+    setOrders(data)
+  }), [])
+
+  const handleSeed = async () => {
+    setSeeding(true)
+    try {
+      const n = await seedFakeOrders()
+      toast.success(`${n} commandes test injectées`)
+    } catch (e) {
+      console.error('[seed] erreur:', e)
+      toast.error('Erreur seed: ' + e.message)
+    } finally {
+      setSeeding(false)
+    }
+  }
 
   const days = useMemo(() => weekDays(weekOffset), [weekOffset])
 
@@ -138,14 +159,36 @@ export default function PatissiereDashboard() {
 
       {/* Liste des commandes */}
       {dayOrders.length === 0 ? (
-        <div className="bg-chalk border border-warm rounded-2xl text-center py-16">
+        <div className="bg-chalk border border-warm rounded-2xl text-center py-12 px-6">
           <p className="text-3xl mb-3">✓</p>
           <p className="font-bold text-ink">Rien ce jour-là</p>
-          <p className="text-sm text-dust mt-1">Sélectionne un autre jour</p>
+          <p className="text-sm text-dust mt-1 mb-6">Sélectionne un autre jour</p>
+          {orders.length === 0 && (
+            <button
+              onClick={handleSeed}
+              disabled={seeding}
+              className="text-xs font-semibold text-dust border border-warm rounded-xl px-4 py-2.5 active:opacity-70 disabled:opacity-40"
+            >
+              {seeding ? 'Injection...' : '+ Charger données test'}
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
           {dayOrders.map(order => <OrderCard key={order.id} order={order} />)}
+        </div>
+      )}
+
+      {/* Bouton dev toujours accessible */}
+      {orders.length > 0 && (
+        <div className="mt-6 text-center">
+          <button
+            onClick={handleSeed}
+            disabled={seeding}
+            className="text-[11px] text-dust/50 active:opacity-70 disabled:opacity-30"
+          >
+            {seeding ? 'Injection...' : '+ données test'}
+          </button>
         </div>
       )}
 
@@ -156,15 +199,13 @@ export default function PatissiereDashboard() {
 function OrderCard({ order }) {
   const [busy, setBusy] = useState(false)
   const u = urgency(order.pickupDate)
-  const canAdvance = !!STATUS_NEXT[order.status]
 
-  const handleAdvance = async () => {
+  const handleSetStatus = async (newStatus) => {
+    if (newStatus === order.status || busy) return
     setBusy(true)
     try {
-      await advanceStatus(order.id, order.status)
-      toast.success(
-        order.status === 'inprogress' ? '✓ Prêt — vendeur notifié' : 'Mis à jour'
-      )
+      await setStatus(order.id, newStatus)
+      if (newStatus === 'ready') toast.success('✓ Prêt — vendeur notifié')
     } finally {
       setBusy(false)
     }
@@ -177,7 +218,7 @@ function OrderCard({ order }) {
 
       <div className="p-4 space-y-3">
 
-        {/* Ligne 1 : heure + client + statut */}
+        {/* Ligne 1 : heure + client */}
         <div className="flex items-start justify-between gap-2">
           <div>
             <p className="text-3xl font-bold text-ink leading-none tabular-nums tracking-tight">
@@ -190,12 +231,14 @@ function OrderCard({ order }) {
               </a>
             )}
           </div>
-          <span className={`text-xs font-bold px-2.5 py-1 rounded-full border flex-shrink-0 ${STATUS_STYLE[order.status] ?? STATUS_STYLE.todo}`}>
-            {STATUS_LABELS[order.status]}
-          </span>
+          {u.label && (
+            <span className={`text-xs font-bold px-2 py-1 rounded-full border flex-shrink-0 ${u.pill ?? 'bg-parchment text-dust border-warm'}`}>
+              {u.label}
+            </span>
+          )}
         </div>
 
-        {/* Bloc article — zone la plus lisible */}
+        {/* Bloc article */}
         <div className="bg-parchment rounded-xl px-3.5 py-3">
           <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-1">Commande</p>
           <p className="font-semibold text-ink leading-snug text-base">{order.articles}</p>
@@ -209,28 +252,24 @@ function OrderCard({ order }) {
           </div>
         )}
 
-        {/* Ligne bas : urgence + bouton action */}
-        <div className="flex items-center justify-between pt-0.5">
-          <div>
-            {u.label && (
-              <span className={`text-xs font-bold ${u.pill ? '' : 'text-dust'}`}>
-                {u.label}
-              </span>
-            )}
-          </div>
-          {canAdvance && (
-            <button
-              onClick={handleAdvance}
-              disabled={busy}
-              className={`font-bold rounded-xl px-5 py-2.5 text-sm min-h-[44px] transition-opacity active:opacity-70 disabled:opacity-40 ${
-                order.status === 'inprogress'
-                  ? 'bg-lime text-ink'
-                  : 'bg-ink text-chalk'
-              }`}
-            >
-              {busy ? '…' : order.status === 'todo' ? 'Démarrer →' : 'Prêt ✓'}
-            </button>
-          )}
+        {/* Sélecteur de statut */}
+        <div className="grid grid-cols-3 gap-1.5 pt-1">
+          {PRODUCTION_STATUSES.map(s => {
+            const cfg = STATUS_PICKER[s]
+            const isActive = order.status === s
+            return (
+              <button
+                key={s}
+                onClick={() => handleSetStatus(s)}
+                disabled={busy}
+                className={`rounded-xl py-2.5 text-xs font-bold transition-all active:scale-95 disabled:opacity-50 ${
+                  isActive ? cfg.active : cfg.idle
+                }`}
+              >
+                {cfg.label}
+              </button>
+            )
+          })}
         </div>
 
       </div>
