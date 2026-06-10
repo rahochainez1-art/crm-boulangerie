@@ -241,11 +241,12 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
 
 function OrderCard({ order, expanded, onToggle }) {
   const reste = (order.totalAmount || 0) - (order.deposit || 0)
+  const isDone = order.status === 'done'
 
   return (
     <div
-      className="bg-white rounded-2xl overflow-hidden mb-2.5"
-      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+      className="bg-white rounded-2xl overflow-hidden mb-2.5 transition-opacity"
+      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)', opacity: isDone ? 0.45 : 1 }}
     >
       <button className="w-full px-4 py-3.5 flex items-center gap-3 text-left active:bg-black/[0.02] transition-colors" onClick={onToggle}>
         <div className="flex-1 min-w-0">
@@ -431,12 +432,19 @@ export default function ManagerDashboard() {
     setExpandedId(null)
   }
 
-  // Commandes pour le jour sélectionné (toutes statuts sauf annulées)
+  const STATUS_PRIORITY = { todo: 0, inprogress: 1, ready: 2, done: 3 }
+
+  // Commandes pour le jour sélectionné — actives en premier, récupérées à la fin
   const dayOrders = useMemo(() => {
     if (!selectedDay) return []
     return orders
       .filter(o => o.pickupDate && o.status !== 'cancelled' && isSameDay(parseISO(o.pickupDate), selectedDay))
-      .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
+      .sort((a, b) => {
+        const pa = STATUS_PRIORITY[a.status] ?? 99
+        const pb = STATUS_PRIORITY[b.status] ?? 99
+        if (pa !== pb) return pa - pb
+        return new Date(a.pickupDate) - new Date(b.pickupDate)
+      })
   }, [orders, selectedDay])
 
   const sectionTitle = useMemo(() => {
