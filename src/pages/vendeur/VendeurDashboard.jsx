@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
@@ -17,7 +17,7 @@ export default function VendeurDashboard() {
   const [orders, setOrders] = useState([])
   const [tab, setTab] = useState('all')
   const [prevReady, setPrevReady] = useState(new Set())
-  const navigate = useNavigate()
+
 
   useEffect(() => {
     return subscribeTodayOrders((newOrders) => {
@@ -60,24 +60,6 @@ export default function VendeurDashboard() {
           )}
         </div>
       </header>
-
-      {/* CTA */}
-      <div className="px-4 pt-4">
-        <button
-          onClick={() => navigate('/vendeur/nouvelle-commande')}
-          className="w-full bg-ink text-chalk rounded-2xl px-5 py-4 flex items-center justify-between active:opacity-80 transition-opacity"
-        >
-          <div>
-            <p className="text-[10px] font-bold tracking-widest uppercase text-chalk/40 mb-0.5">
-              Nouvelle commande
-            </p>
-            <p className="font-bold text-base">Saisir une commande</p>
-          </div>
-          <span className="w-10 h-10 bg-chalk/10 rounded-xl flex items-center justify-center text-xl font-light">
-            +
-          </span>
-        </button>
-      </div>
 
       {/* Tabs */}
       <div className="flex gap-2 px-4 mt-4">
