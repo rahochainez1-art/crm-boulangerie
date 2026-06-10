@@ -106,10 +106,21 @@ export default function VendeurDashboard() {
 
       {/* Liste */}
       <main className="flex-1 px-4 pt-4 pb-28 overflow-y-auto">
+
+        {/* Titre section */}
+        <div className="flex items-baseline justify-between mb-3">
+          <p className="text-sm font-semibold text-ink capitalize">
+            Commandes d'aujourd'hui
+          </p>
+          <p className="text-xs text-dust capitalize">
+            {format(new Date(), 'EEEE d MMMM', { locale: fr })}
+          </p>
+        </div>
+
         {filtered.length === 0 ? (
           <div className="bg-chalk border border-warm rounded-2xl px-5 py-12 text-center">
             <p className="text-dust text-sm">
-              {orders.length === 0 ? 'Aucune commande aujourd\'hui' : 'Aucune commande ici'}
+              {orders.length === 0 ? 'Aucune commande prévue aujourd\'hui' : 'Aucune commande ici'}
             </p>
           </div>
         ) : (
@@ -119,7 +130,8 @@ export default function VendeurDashboard() {
               return (
                 <div key={order.id} className="bg-chalk border border-warm rounded-2xl px-4 py-3.5 flex items-start gap-3">
                   {/* Heure */}
-                  <div className="flex-shrink-0 w-14 text-right">
+                  <div className="flex-shrink-0 text-right">
+                    <p className="text-[10px] font-bold text-dust uppercase tracking-wide">Retrait à</p>
                     <p className="text-2xl font-bold text-ink leading-none tabular-nums tracking-tight">
                       {format(parseISO(order.pickupDate), 'HH:mm')}
                     </p>
