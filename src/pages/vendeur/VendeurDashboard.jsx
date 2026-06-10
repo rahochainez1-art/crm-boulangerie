@@ -124,7 +124,11 @@ function OrderCard({ order, onOpen }) {
   return (
     <button
       onClick={onOpen}
-      className="w-full text-left bg-chalk border border-warm rounded-2xl overflow-hidden active:opacity-80 transition-opacity"
+      className={`w-full text-left rounded-2xl overflow-hidden active:opacity-70 transition-opacity border ${
+        order.status === 'done'
+          ? 'bg-warm/30 border-warm/40 opacity-50'
+          : 'bg-chalk border-warm'
+      }`}
     >
       <div className="px-4 py-3.5 flex items-start gap-3">
         <div className="flex-shrink-0 text-right">
