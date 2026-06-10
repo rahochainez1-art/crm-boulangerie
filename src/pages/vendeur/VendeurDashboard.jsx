@@ -42,6 +42,13 @@ export default function VendeurDashboard() {
   const today = format(new Date(), 'EEEE d MMMM', { locale: fr })
   const ready = orders.filter((o) => o.status === 'ready').length
 
+  const greeting = (() => {
+    const h = new Date().getHours()
+    if (h < 10) return 'Coucou, belle journée qui commence ! 🌅'
+    if (h < 14) return 'Coucou, comment ça se passe ? 😊'
+    return 'Coucou, on tient bon ! 💪'
+  })()
+
   const filtered = (
     tab === 'ready' ? orders.filter((o) => o.status === 'ready') : orders
   ).slice().sort((a, b) => {
@@ -56,19 +63,30 @@ export default function VendeurDashboard() {
 
       {/* Header */}
       <header
-        className="bg-cream px-5 pb-5 border-b border-warm"
+        className="bg-cream px-5 pb-4 border-b border-warm"
         style={{ paddingTop: 'max(48px, env(safe-area-inset-top))' }}
       >
-        <p className="label-xs mb-2">Au Grand Jour · {today}</p>
-        <div className="flex items-end justify-between">
-          <h1 className="text-2xl font-bold text-ink">Bonjour 👋</h1>
-          {ready > 0 && (
-            <span className="bg-lime text-ink text-xs font-bold px-3 py-1.5 rounded-full">
-              {ready} prête{ready > 1 ? 's' : ''} ✓
-            </span>
-          )}
-        </div>
+        <p className="label-xs mb-1">Au Grand Jour</p>
+        <h1 className="text-xl font-bold text-ink leading-snug">{greeting}</h1>
+        <p className="text-sm text-dust capitalize mt-0.5">{today}</p>
       </header>
+
+      {/* Card alerte commandes prêtes */}
+      <div className="px-4 pt-4">
+        {ready === 0 ? (
+          <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 flex items-center gap-3">
+            <span className="text-green-600 text-lg">✓</span>
+            <p className="text-sm font-semibold text-green-800">Tout est à jour</p>
+          </div>
+        ) : (
+          <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl px-4 py-4 text-center animate-pulse">
+            <p className="font-serif text-5xl font-bold text-amber-700 leading-none">{ready}</p>
+            <p className="text-sm font-semibold text-amber-800 mt-1">
+              commande{ready > 1 ? 's' : ''} prête{ready > 1 ? 's' : ''} à remettre
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* Tabs */}
       <div className="flex gap-2 px-4 mt-4">
