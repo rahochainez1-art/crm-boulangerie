@@ -1,13 +1,26 @@
 import { useEffect, useState, useMemo } from 'react'
 import {
-  format, parseISO, isSameDay,
-  startOfWeek, endOfWeek, addDays, differenceInHours,
+  format, parseISO, isSameDay, isSameMonth,
+  startOfMonth, endOfMonth, startOfWeek, endOfWeek,
+  eachDayOfInterval, addMonths, subMonths, addDays,
+  differenceInHours,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
-import { subscribeOrders, setStatus, seedFakeOrders, isAssignedTo } from '../../lib/orders'
+import { subscribeOrders, setStatus, isAssignedTo } from '../../lib/orders'
 import { getPrenom, getUrgencyHours } from '../../lib/settings'
-import AppLayout from '../../components/layout/AppLayout'
+import BottomNav from '../../components/layout/BottomNav'
+
+// ── Icônes ────────────────────────────────────────────────────────────────
+const IconBell = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+  </svg>
+)
+
+// ── Constantes ────────────────────────────────────────────────────────────
+const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 const PRODUCTION_STATUSES = ['todo', 'inprogress', 'ready']
 const STATUS_PICKER = {
@@ -25,7 +38,7 @@ function urgencyBar(pickupDate) {
   return 'bg-sage'
 }
 
-/* ── Carte de résumé (identique manager, sans données financières) ───── */
+// ── Carte de résumé ───────────────────────────────────────────────────────
 function SummaryCard({ orders }) {
   const weekStart  = startOfWeek(new Date(), { weekStartsOn: 1 })
   const weekEnd    = addDays(weekStart, 6)
@@ -47,7 +60,9 @@ function SummaryCard({ orders }) {
   return (
     <>
       <div className="mb-5 px-1">
-        <p className="text-sm text-dust mb-1">{getPrenom() ? `Bonjour ${getPrenom()} 👋` : 'Voici ton résumé 👋'}</p>
+        <p className="text-sm text-dust mb-1">
+          {getPrenom() ? `Bonjour ${getPrenom()} 👋` : 'Voici ton résumé 👋'}
+        </p>
         <h2
           className="font-serif leading-tight"
           style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1A1A1A', whiteSpace: 'pre-line' }}
@@ -58,8 +73,8 @@ function SummaryCard({ orders }) {
 
       <div className="grid grid-cols-2 gap-3 mb-6">
         <div
-          className="rounded-2xl p-4 flex flex-col justify-between bg-white"
-          style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.07)', minHeight: 120 }}
+          className="rounded-2xl p-4 flex flex-col justify-between"
+          style={{ backgroundColor: '#fff', boxShadow: '0 1px 6px rgba(0,0,0,0.07)', minHeight: 120 }}
         >
           <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-dust">Semaine</p>
           <div>
@@ -101,102 +116,215 @@ function SummaryCard({ orders }) {
   )
 }
 
-/* ── Dashboard pâtissière ────────────────────────────────────────────── */
+// ── Calendrier mensuel (identique manager — couleur dorée) ────────────────
+function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectDay }) {
+  const mStart   = startOfMonth(viewMonth)
+  const mEnd     = endOfMonth(viewMonth)
+  const calStart = startOfWeek(mStart, { weekStartsOn: 1 })
+  const calEnd   = endOfWeek(mEnd,     { weekStartsOn: 1 })
+  const days     = eachDayOfInterval({ start: calStart, end: calEnd })
+
+  const monthOrders = orders.filter(o =>
+    o.pickupDate && isSameMonth(parseISO(o.pickupDate), viewMonth)
+  )
+  const activeDays = new Set(
+    monthOrders.map(o => format(parseISO(o.pickupDate), 'yyyy-MM-dd'))
+  )
+
+  return (
+    <div className="bg-white rounded-2xl p-4 mb-5" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
+
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={() => { setViewMonth(m => subMonths(m, 1)); onSelectDay(null) }}
+          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-2xl font-light"
+          style={{ color: '#6B6B6B' }}
+        >‹</button>
+        <p className="font-serif font-semibold capitalize text-ink" style={{ fontSize: '1.05rem' }}>
+          {format(viewMonth, 'MMMM yyyy', { locale: fr })}
+        </p>
+        <button
+          onClick={() => { setViewMonth(m => addMonths(m, 1)); onSelectDay(null) }}
+          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-2xl font-light"
+          style={{ color: '#6B6B6B' }}
+        >›</button>
+      </div>
+
+      <div className="flex items-center gap-4 mb-4 px-1">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#C8A96E' }} />
+          <span className="text-xs text-dust">
+            <span className="font-bold text-ink">{monthOrders.length}</span> commande{monthOrders.length > 1 ? 's' : ''} ce mois
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#EEED9E' }} />
+          <span className="text-xs text-dust">
+            <span className="font-bold text-ink">{activeDays.size}</span> jour{activeDays.size > 1 ? 's' : ''} actif{activeDays.size > 1 ? 's' : ''}
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-7 mb-1">
+        {DAY_LABELS.map((d, i) => (
+          <p key={i} className="text-center text-[10px] font-bold uppercase py-1" style={{ color: '#B0B0B0' }}>
+            {d}
+          </p>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-y-0.5">
+        {days.map(day => {
+          const inMonth    = isSameMonth(day, viewMonth)
+          const count      = inMonth
+            ? orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day)).length
+            : 0
+          const isSelected = selectedDay && isSameDay(day, selectedDay)
+          const isToday    = isSameDay(day, new Date())
+
+          return (
+            <button
+              key={day.toISOString()}
+              disabled={!inMonth}
+              onClick={() => onSelectDay(isSelected ? null : day)}
+              className="flex flex-col items-center py-1 rounded-xl transition-all active:scale-95"
+              style={{
+                backgroundColor: isSelected ? '#C8A96E' : isToday ? '#FBF0DC' : 'transparent',
+                opacity: inMonth ? 1 : 0.2,
+              }}
+            >
+              <span
+                className="text-sm font-semibold leading-tight"
+                style={{ color: isSelected ? '#fff' : '#1A1A1A' }}
+              >
+                {format(day, 'd')}
+              </span>
+              <div className="h-3.5 flex items-center justify-center mt-0.5">
+                {count > 0 ? (
+                  <span
+                    className="text-[8px] font-bold px-1 min-w-[14px] h-3.5 flex items-center justify-center rounded-full"
+                    style={{
+                      backgroundColor: isSelected ? 'rgba(255,255,255,0.35)' : '#EEED9E',
+                      color: isSelected ? '#fff' : '#4A4E10',
+                    }}
+                  >
+                    {count}
+                  </span>
+                ) : null}
+              </div>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ── Dashboard pâtissière ──────────────────────────────────────────────────
 export default function PatissiereDashboard() {
-  const [orders, setOrders]     = useState([])
-  const [expandedId, setExpandedId] = useState(null)
-  const [seeding, setSeeding]   = useState(false)
+  const [orders, setOrders]           = useState([])
+  const [viewMonth, setViewMonth]     = useState(new Date())
+  const [selectedDay, setSelectedDay] = useState(() => new Date())
+  const [expandedId, setExpandedId]   = useState(null)
 
   useEffect(() => subscribeOrders(setOrders), [])
-
-  const handleSeed = async () => {
-    setSeeding(true)
-    try {
-      const n = await seedFakeOrders()
-      toast.success(`${n} commandes test injectées`)
-    } catch (e) {
-      toast.error('Erreur seed: ' + e.message)
-    } finally { setSeeding(false) }
-  }
-
-  // Commandes patissière non récupérées, filtrées sur la semaine en cours
-  const ws = startOfWeek(new Date(), { weekStartsOn: 1 })
-  const we = addDays(ws, 6)
 
   const poleOrders = useMemo(
     () => orders.filter(o => o.status !== 'done' && isAssignedTo(o, 'patissiere')),
     [orders]
   )
 
-  const weekOrders = useMemo(() =>
-    poleOrders
-      .filter(o => {
-        if (!o.pickupDate) return false
-        const d = parseISO(o.pickupDate)
-        return d >= ws && d <= we
-      })
-      .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate)),
-    [poleOrders]
-  )
+  const dayOrders = useMemo(() => {
+    if (!selectedDay) return []
+    return poleOrders
+      .filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), selectedDay))
+      .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
+  }, [poleOrders, selectedDay])
+
+  const sectionTitle = useMemo(() => {
+    if (!selectedDay) return 'Sélectionne un jour'
+    if (isSameDay(selectedDay, new Date())) return "Aujourd'hui"
+    return format(selectedDay, 'EEEE d MMMM', { locale: fr })
+  }, [selectedDay])
 
   const toggleExpand = (id) => setExpandedId(prev => prev === id ? null : id)
 
+  const prenom = getPrenom()
+  const initiale = prenom[0]?.toUpperCase() ?? 'PT'
+
   return (
-    <AppLayout title="Production">
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto">
 
-      <SummaryCard orders={poleOrders} />
-
-      {/* En-tête section liste */}
-      <div className="flex items-baseline justify-between mb-3">
-        <p className="font-sans font-semibold text-ink" style={{ fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
-          En cours cette semaine
-        </p>
-        <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust">
-          {weekOrders.length} commande{weekOrders.length > 1 ? 's' : ''}
-        </span>
-      </div>
-
-      {weekOrders.length === 0 ? (
-        <div className="bg-chalk border border-warm rounded-2xl text-center py-12 px-6">
-          <p className="text-2xl mb-3">✓</p>
-          <p className="font-bold text-ink">Rien cette semaine</p>
-          <p className="text-sm text-dust mt-1 mb-6">Toutes les commandes sont à jour</p>
-          {orders.length === 0 && (
-            <button
-              onClick={handleSeed}
-              disabled={seeding}
-              className="text-xs font-semibold text-dust border border-warm rounded-xl px-4 py-2.5 active:opacity-70 disabled:opacity-40"
-            >
-              {seeding ? 'Injection...' : '+ Charger données test'}
-            </button>
-          )}
+      {/* ── Header — identique manager, couleurs pâtissière ── */}
+      <header
+        className="px-5 pb-4 flex items-center justify-between"
+        style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: '#DCF0CC' }}
+          >
+            <span className="text-sm font-bold" style={{ color: '#1E3D0E' }}>{initiale}</span>
+          </div>
+          <div>
+            <p className="text-xs text-dust">{prenom ? `Bonjour ${prenom},` : 'Bonjour,'}</p>
+            <p className="font-serif font-semibold text-ink leading-tight" style={{ fontSize: '1.1rem' }}>Pâtissière</p>
+          </div>
         </div>
-      ) : (
-        <div className="space-y-3">
-          {weekOrders.map(order => (
-            <OrderCard
-              key={order.id}
-              order={order}
-              expanded={expandedId === order.id}
-              onToggle={() => toggleExpand(order.id)}
-            />
-          ))}
-        </div>
-      )}
+        <button className="text-dust/60 active:text-ink transition-colors p-2">
+          <IconBell />
+        </button>
+      </header>
 
-      {orders.length > 0 && (
-        <div className="mt-6 text-center">
-          <button onClick={handleSeed} disabled={seeding} className="text-[11px] text-dust/40 active:opacity-70 disabled:opacity-30">
-            {seeding ? 'Injection...' : '+ données test'}
-          </button>
-        </div>
-      )}
+      {/* ── Contenu scrollable ── */}
+      <main className="flex-1 px-4 pb-36 overflow-y-auto">
 
-    </AppLayout>
+        <SummaryCard orders={poleOrders} />
+
+        <MonthCalendar
+          orders={poleOrders}
+          viewMonth={viewMonth}
+          setViewMonth={setViewMonth}
+          selectedDay={selectedDay}
+          onSelectDay={(day) => setSelectedDay(day ?? new Date())}
+        />
+
+        <div className="flex items-baseline justify-between mb-3">
+          <p className="font-sans font-semibold text-ink capitalize" style={{ fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
+            {sectionTitle}
+          </p>
+          <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust">
+            {dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}
+          </span>
+        </div>
+
+        {dayOrders.length === 0 ? (
+          <div className="bg-white rounded-2xl text-center py-12" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+            <p className="text-2xl mb-2">✓</p>
+            <p className="text-sm text-dust">Aucune commande ce jour</p>
+          </div>
+        ) : (
+          <div className="space-y-2.5">
+            {dayOrders.map(order => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                expanded={expandedId === order.id}
+                onToggle={() => toggleExpand(order.id)}
+              />
+            ))}
+          </div>
+        )}
+
+      </main>
+
+      <BottomNav />
+    </div>
   )
 }
 
-/* ── Carte commande expandable avec sélecteur statut ────────────────── */
+// ── Carte commande (style manager + sélecteur statut) ─────────────────────
 function OrderCard({ order, expanded, onToggle }) {
   const [busy, setBusy] = useState(false)
 
@@ -210,10 +338,9 @@ function OrderCard({ order, expanded, onToggle }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+    <div className="bg-white rounded-2xl overflow-hidden mb-2.5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
       <div className={`h-1.5 ${urgencyBar(order.pickupDate)}`} />
 
-      {/* Ligne résumée */}
       <button
         className="w-full px-4 py-3.5 flex items-center gap-3 text-left active:bg-black/[0.02] transition-colors"
         onClick={onToggle}
@@ -234,34 +361,21 @@ function OrderCard({ order, expanded, onToggle }) {
         >↓</span>
       </button>
 
-      {/* Détail étendu */}
       {expanded && (
-        <div className="px-4 pb-4 pt-3 space-y-3" style={{ borderTop: '1px solid rgba(232,226,216,0.6)' }}>
+        <div className="px-4 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid rgba(232,226,216,0.6)' }}>
 
-          <div className="bg-parchment rounded-xl px-3.5 py-3">
-            <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-1">Commande</p>
-            <p className="font-semibold text-ink leading-snug">{order.articles}</p>
-          </div>
-
-          {/* Date de retrait */}
-          <div className="px-1">
-            <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-0.5">Retrait</p>
-            <p className="text-sm font-semibold text-ink capitalize">
-              {format(parseISO(order.pickupDate), "EEEE d MMMM 'à' HH:mm", { locale: fr })}
-            </p>
+          <div>
+            <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust mb-1">Articles</p>
+            <p className="text-sm text-ink leading-relaxed">{order.articles}</p>
           </div>
 
           {order.notes && (
-            <div className="rounded-xl px-3.5 py-3 flex gap-2.5" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
-              <span className="text-base flex-shrink-0">⚠️</span>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#92400E' }}>Attention</p>
-                <p className="text-sm leading-relaxed" style={{ color: '#78350F' }}>{order.notes}</p>
-              </div>
+            <div className="rounded-xl px-3 py-2.5" style={{ backgroundColor: '#FEF3C7' }}>
+              <p className="text-xs font-medium" style={{ color: '#92400e' }}>⚠ {order.notes}</p>
             </div>
           )}
 
-          <div className="grid grid-cols-3 gap-1.5 pt-0.5">
+          <div className="grid grid-cols-3 gap-1.5">
             {PRODUCTION_STATUSES.map(s => {
               const cfg      = STATUS_PICKER[s]
               const isActive = order.status === s
