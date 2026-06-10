@@ -22,6 +22,22 @@ const IconSettings = () => (
 )
 
 // ── Nav vendeur avec bouton + flottant ────────────────────────────────────
+function NavItem({ to, label, Icon }) {
+  return (
+    <NavLink to={to} end className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors">
+      {({ isActive }) => (
+        <>
+          <span style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}><Icon /></span>
+          <span className="text-[10px] font-semibold mt-0.5" style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}>
+            {label}
+          </span>
+          {isActive && <span className="w-1 h-1 rounded-full mt-0.5" style={{ backgroundColor: '#C8A96E' }} />}
+        </>
+      )}
+    </NavLink>
+  )
+}
+
 function VendeurNav() {
   const navigate = useNavigate()
 
@@ -34,45 +50,16 @@ function VendeurNav() {
         boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
       }}
     >
-      <div className="flex items-end justify-around px-1 pt-2 pb-2">
+      {/*
+        Accueil(flex-1) + Historique(flex-1) + [+56px] + Réglages(flex-2)
+        → 2 unités gauche = 2 unités droite = bouton + parfaitement centré
+      */}
+      <div className="flex items-end pt-2 pb-2">
 
-        {/* Accueil */}
-        <NavLink
-          to="/vendeur"
-          end
-          className={({ isActive }) =>
-            `flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors ${isActive ? '' : ''}`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <span style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}><IconHome /></span>
-              <span className="text-[10px] font-semibold mt-0.5" style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}>
-                Accueil
-              </span>
-              {isActive && <span className="w-1 h-1 rounded-full mt-0.5" style={{ backgroundColor: '#C8A96E' }} />}
-            </>
-          )}
-        </NavLink>
+        <NavItem to="/vendeur"            label="Accueil"    Icon={IconHome} />
+        <NavItem to="/vendeur/historique" label="Historique" Icon={IconClock} />
 
-        {/* Historique */}
-        <NavLink
-          to="/vendeur/historique"
-          end
-          className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
-        >
-          {({ isActive }) => (
-            <>
-              <span style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}><IconClock /></span>
-              <span className="text-[10px] font-semibold mt-0.5" style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}>
-                Historique
-              </span>
-              {isActive && <span className="w-1 h-1 rounded-full mt-0.5" style={{ backgroundColor: '#C8A96E' }} />}
-            </>
-          )}
-        </NavLink>
-
-        {/* Bouton + central surélevé */}
+        {/* Bouton + surélevé */}
         <button
           onClick={() => navigate('/vendeur/nouvelle-commande')}
           className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform"
@@ -89,12 +76,8 @@ function VendeurNav() {
           </svg>
         </button>
 
-        {/* Réglages */}
-        <NavLink
-          to="/settings"
-          end
-          className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
-        >
+        {/* flex-2 = même largeur que Accueil + Historique → + centré */}
+        <NavLink to="/settings" end style={{ flex: 2 }} className="flex flex-col items-center gap-0.5 pb-1 transition-colors">
           {({ isActive }) => (
             <>
               <span style={{ color: isActive ? '#C8A96E' : '#B0B0B0' }}><IconSettings /></span>
@@ -105,9 +88,6 @@ function VendeurNav() {
             </>
           )}
         </NavLink>
-
-        {/* Zone droite vide pour équilibrer */}
-        <div className="flex-1" />
 
       </div>
     </nav>
