@@ -8,6 +8,7 @@ import {
 import { fr } from 'date-fns/locale'
 import { useNavigate } from 'react-router-dom'
 import { subscribeOrders, STATUS_LABELS } from '../../lib/orders'
+import { getPrenom } from '../../lib/settings'
 import StatusBadge from '../../components/ui/StatusBadge'
 
 const ASSIGNED = {
@@ -76,7 +77,7 @@ function SummaryCard({ orders }) {
   return (
     <>
       <div className="mb-5 px-1">
-        <p className="text-sm text-dust mb-1">Voici votre résumé 👋</p>
+        <p className="text-sm text-dust mb-1">{getPrenom() ? `Bonjour ${getPrenom()} 👋` : 'Voici votre résumé 👋'}</p>
         <h2
           className="font-serif leading-tight"
           style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1A1A1A', whiteSpace: 'pre-line' }}

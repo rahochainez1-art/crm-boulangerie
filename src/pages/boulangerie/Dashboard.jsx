@@ -6,6 +6,7 @@ import {
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { subscribeOrders, setStatus, isAssignedTo } from '../../lib/orders'
+import { getPrenom, getUrgencyHours } from '../../lib/settings'
 import AppLayout from '../../components/layout/AppLayout'
 
 const PRODUCTION_STATUSES = ['todo', 'inprogress', 'ready']
@@ -17,9 +18,10 @@ const STATUS_PICKER = {
 
 function urgencyBar(pickupDate) {
   const h = differenceInHours(parseISO(pickupDate), new Date())
-  if (h < 0)  return 'bg-red-500'
-  if (h < 24) return 'bg-red-400'
-  if (h < 48) return 'bg-amber-400'
+  const t = getUrgencyHours()
+  if (h < 0)      return 'bg-red-500'
+  if (h < t)      return 'bg-red-400'
+  if (h < t + 24) return 'bg-amber-400'
   return 'bg-sage'
 }
 
@@ -45,7 +47,7 @@ function SummaryCard({ orders }) {
   return (
     <>
       <div className="mb-5 px-1">
-        <p className="text-sm text-dust mb-1">Voici ton résumé 👋</p>
+        <p className="text-sm text-dust mb-1">{getPrenom() ? `Bonjour ${getPrenom()} 👋` : 'Voici ton résumé 👋'}</p>
         <h2
           className="font-serif leading-tight"
           style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1A1A1A', whiteSpace: 'pre-line' }}

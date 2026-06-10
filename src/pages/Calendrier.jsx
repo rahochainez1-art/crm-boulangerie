@@ -7,6 +7,7 @@ import {
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { subscribeOrders, setStatus, isAssignedTo } from '../lib/orders'
+import { getUrgencyHours } from '../lib/settings'
 import { useRole } from '../context/RoleContext'
 import AppLayout from '../components/layout/AppLayout'
 
@@ -22,9 +23,10 @@ function dayBadge(orders) {
 
 function urgencyBar(pickupDate) {
   const h = differenceInHours(parseISO(pickupDate), new Date())
-  if (h < 0)  return 'bg-red-500'
-  if (h < 24) return 'bg-red-400'
-  if (h < 48) return 'bg-amber-400'
+  const t = getUrgencyHours()
+  if (h < 0)      return 'bg-red-500'
+  if (h < t)      return 'bg-red-400'
+  if (h < t + 24) return 'bg-amber-400'
   return 'bg-sage'
 }
 
