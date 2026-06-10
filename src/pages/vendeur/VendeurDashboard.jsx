@@ -9,7 +9,6 @@ import BottomNav from '../../components/layout/BottomNav'
 
 const TABS = [
   { id: 'all',   label: 'Toutes' },
-  { id: 'todo',  label: 'À faire' },
   { id: 'ready', label: 'Prêtes' },
 ]
 
@@ -38,7 +37,6 @@ export default function VendeurDashboard() {
   const ready = orders.filter((o) => o.status === 'ready').length
 
   const filtered =
-    tab === 'todo'  ? orders.filter((o) => o.status === 'todo' || o.status === 'inprogress') :
     tab === 'ready' ? orders.filter((o) => o.status === 'ready') :
     orders
 
@@ -66,7 +64,6 @@ export default function VendeurDashboard() {
         {TABS.map((t) => {
           const count =
             t.id === 'all'   ? orders.length :
-            t.id === 'todo'  ? orders.filter((o) => o.status === 'todo' || o.status === 'inprogress').length :
                                orders.filter((o) => o.status === 'ready').length
           return (
             <button
