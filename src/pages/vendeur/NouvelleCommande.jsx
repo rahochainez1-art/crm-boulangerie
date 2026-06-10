@@ -6,9 +6,15 @@ import toast from 'react-hot-toast'
 import { createOrder } from '../../lib/orders'
 import BottomNav from '../../components/layout/BottomNav'
 
-const ARTICLES_SUGGERES = [
-  'Gâteau d\'anniversaire', 'Bûche', 'Tarte framboise', 'Éclair',
-  'Mille-feuille', 'Paris-Brest', 'Forêt noire', 'Chou craquelin',
+const RACCOURCIS = [
+  'Fraisier 4 pers',
+  'Fraisier 8 pers',
+  'Casse-noisette 4 pers',
+  'Casse-noisette 8 pers',
+  'Flan',
+  'Tartelette moka 4 pers',
+  'Tartelette moka 6 pers',
+  'Baguettes norvégiennes',
 ]
 
 const makeEmptyForm = () => ({
@@ -32,7 +38,7 @@ export default function NouvelleCommande() {
   const [confirmed, setConfirmed] = useState(null) // données de la commande créée
 
   const set = (f) => (e) => setForm((p) => ({ ...p, [f]: e.target.value }))
-  const addArticle = (a) => setForm((p) => ({ ...p, articles: p.articles ? `${p.articles}, ${a}` : a }))
+  const prefillArticle = (a) => setForm((p) => ({ ...p, articles: a }))
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -179,6 +185,29 @@ export default function NouvelleCommande() {
       <main className="flex-1 px-4 py-4 pb-28 overflow-y-auto">
         <form onSubmit={handleSubmit} className="space-y-3">
 
+          {/* Raccourcis commandes fréquentes */}
+          <div>
+            <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-2 px-0.5">
+              Commandes fréquentes
+            </p>
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-0.5 px-0.5">
+              {RACCOURCIS.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => prefillArticle(r)}
+                  className={`flex-shrink-0 px-3.5 py-2 rounded-xl text-sm font-semibold border transition-colors whitespace-nowrap ${
+                    form.articles === r
+                      ? 'bg-ink text-chalk border-ink'
+                      : 'bg-chalk text-dust border-warm active:bg-ink active:text-chalk active:border-ink'
+                  }`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Section label="Client">
             <input placeholder="Nom du client *" autoFocus autoComplete="name"
               value={form.clientName} onChange={set('clientName')} className="field" required />
@@ -200,16 +229,8 @@ export default function NouvelleCommande() {
           </Section>
 
           <Section label="Articles *">
-            <textarea placeholder="Ex : 1 gâteau anniversaire 6 parts, 2 éclairs café..."
+            <textarea placeholder="Sélectionne un raccourci ci-dessus ou décris la commande…"
               value={form.articles} onChange={set('articles')} rows={3} className="field resize-none" required />
-            <div className="flex flex-wrap gap-2">
-              {ARTICLES_SUGGERES.map((a) => (
-                <button key={a} type="button" onClick={() => addArticle(a)}
-                  className="text-xs bg-parchment border border-warm rounded-full px-3 py-1.5 text-dust active:bg-ink active:text-chalk active:border-ink transition-colors">
-                  + {a}
-                </button>
-              ))}
-            </div>
           </Section>
 
           <Section label="Paiement">
