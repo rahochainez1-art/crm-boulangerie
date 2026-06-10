@@ -42,9 +42,14 @@ export default function VendeurDashboard() {
   const today = format(new Date(), 'EEEE d MMMM', { locale: fr })
   const ready = orders.filter((o) => o.status === 'ready').length
 
-  const filtered =
-    tab === 'ready' ? orders.filter((o) => o.status === 'ready') :
-    orders
+  const filtered = (
+    tab === 'ready' ? orders.filter((o) => o.status === 'ready') : orders
+  ).slice().sort((a, b) => {
+    // Commandes récupérées toujours en bas
+    if (a.status === 'done' && b.status !== 'done') return 1
+    if (a.status !== 'done' && b.status === 'done') return -1
+    return 0
+  })
 
   return (
     <div className="min-h-dvh bg-cream flex flex-col max-w-lg mx-auto">
@@ -124,16 +129,18 @@ function OrderCard({ order, onOpen }) {
   return (
     <button
       onClick={onOpen}
-      className={`w-full text-left rounded-2xl overflow-hidden active:opacity-70 transition-opacity border ${
+      className={`w-full text-left rounded-2xl overflow-hidden active:opacity-60 transition-opacity border ${
         order.status === 'done'
-          ? 'bg-warm/30 border-warm/40 opacity-50'
+          ? 'bg-chalk/60 border-warm/30 opacity-40'
           : 'bg-chalk border-warm'
       }`}
     >
       <div className="px-4 py-3.5 flex items-start gap-3">
         <div className="flex-shrink-0 text-right">
           <p className="text-[10px] font-bold text-dust uppercase tracking-wide">Retrait à</p>
-          <p className="text-2xl font-bold text-ink leading-none tabular-nums tracking-tight">
+          <p className={`text-2xl font-bold leading-none tabular-nums tracking-tight ${
+            order.status === 'done' ? 'text-dust' : 'text-ink'
+          }`}>
             {format(parseISO(order.pickupDate), 'HH:mm')}
           </p>
         </div>
@@ -141,16 +148,19 @@ function OrderCard({ order, onOpen }) {
         <div className="w-px self-stretch bg-warm flex-shrink-0" />
 
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-ink truncate">{order.clientName}</p>
+          <p className={`font-semibold truncate ${order.status === 'done' ? 'text-dust' : 'text-ink'}`}>
+            {order.clientName}
+          </p>
           <p className="text-sm text-dust truncate mt-0.5">{order.articles}</p>
           <div className="flex items-center gap-1.5 mt-2 flex-wrap">
             <StatusBadge status={order.status} />
-            {reste > 0 && (
+            {/* Badge paiement : actif = orange si solde dû, vert si soldé / récupéré = vert si soldé, rien sinon */}
+            {order.status !== 'done' && reste > 0 && (
               <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full">
                 {reste} € à encaisser
               </span>
             )}
-            {reste === 0 && order.totalAmount > 0 && (
+            {(order.status === 'done' || reste === 0) && order.totalAmount > 0 && (
               <span className="text-xs font-semibold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full">
                 Soldé ✓
               </span>
