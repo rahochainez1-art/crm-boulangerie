@@ -185,29 +185,6 @@ export default function NouvelleCommande() {
       <main className="flex-1 px-4 py-4 pb-28 overflow-y-auto">
         <form onSubmit={handleSubmit} className="space-y-3">
 
-          {/* Raccourcis commandes fréquentes */}
-          <div>
-            <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-2 px-0.5">
-              Commandes fréquentes
-            </p>
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-0.5 px-0.5">
-              {RACCOURCIS.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => prefillArticle(r)}
-                  className={`flex-shrink-0 px-3.5 py-2 rounded-xl text-sm font-semibold border transition-colors whitespace-nowrap ${
-                    form.articles === r
-                      ? 'bg-ink text-chalk border-ink'
-                      : 'bg-chalk text-dust border-warm active:bg-ink active:text-chalk active:border-ink'
-                  }`}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <Section label="Client">
             <input placeholder="Nom du client *" autoFocus autoComplete="name"
               value={form.clientName} onChange={set('clientName')} className="field" required />
@@ -229,7 +206,23 @@ export default function NouvelleCommande() {
           </Section>
 
           <Section label="Articles *">
-            <textarea placeholder="Sélectionne un raccourci ci-dessus ou décris la commande…"
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1">
+              {RACCOURCIS.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => prefillArticle(r)}
+                  className={`flex-shrink-0 px-3.5 py-2 rounded-xl text-sm font-semibold border transition-colors whitespace-nowrap ${
+                    form.articles === r
+                      ? 'bg-ink text-chalk border-ink'
+                      : 'bg-chalk text-dust border-warm active:bg-ink active:text-chalk active:border-ink'
+                  }`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+            <textarea placeholder="Ou décris la commande manuellement…"
               value={form.articles} onChange={set('articles')} rows={3} className="field resize-none" required />
           </Section>
 
