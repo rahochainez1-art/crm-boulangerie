@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { createOrder } from '../../lib/orders'
@@ -19,10 +19,18 @@ const makeEmptyForm = () => ({
   notes: '', assignedTo: 'patissiere',
 })
 
+const ASSIGNED_LABELS = {
+  patissiere:  '🍰 Pâtisserie',
+  boulangerie: '🥖 Boulangerie',
+  vendeur:     '🛍️ Vendeur·se',
+}
+
 export default function NouvelleCommande() {
-  const navigate = useNavigate()
-  const [form, setForm] = useState(makeEmptyForm)
+  const navigate  = useNavigate()
+  const [form, setForm]       = useState(makeEmptyForm)
   const [loading, setLoading] = useState(false)
+  const [confirmed, setConfirmed] = useState(null) // données de la commande créée
+
   const set = (f) => (e) => setForm((p) => ({ ...p, [f]: e.target.value }))
   const addArticle = (a) => setForm((p) => ({ ...p, articles: p.articles ? `${p.articles}, ${a}` : a }))
 
@@ -31,20 +39,125 @@ export default function NouvelleCommande() {
     if (!form.clientName || !form.articles) { toast.error('Nom client et articles requis.'); return }
     setLoading(true)
     try {
-      await createOrder({
+      const orderData = {
         ...form,
-        pickupDate: `${form.pickupDate}T${form.pickupTime}:00`,
-        deposit: Number(form.deposit) || 0,
+        pickupDate:  `${form.pickupDate}T${form.pickupTime}:00`,
+        deposit:     Number(form.deposit) || 0,
         totalAmount: Number(form.totalAmount) || 0,
-      })
-      toast.success('Commande enregistrée !')
-      navigate('/vendeur')
+      }
+      await createOrder(orderData)
+      setConfirmed(orderData)
     } catch (err) {
       toast.error('Erreur lors de l\'enregistrement.')
       console.error(err)
     } finally { setLoading(false) }
   }
 
+  // ── Vue confirmation ──────────────────────────────────────────────
+  if (confirmed) {
+    const pickup  = parseISO(confirmed.pickupDate)
+    const reste   = confirmed.totalAmount - confirmed.deposit
+
+    return (
+      <div className="min-h-dvh bg-cream flex flex-col max-w-lg mx-auto">
+        <header
+          className="bg-cream px-5 pb-4 border-b border-warm"
+          style={{ paddingTop: 'max(48px, env(safe-area-inset-top))' }}
+        >
+          <p className="label-xs">Au Grand Jour</p>
+          <h1 className="text-2xl font-bold text-ink mt-1">Commande enregistrée</h1>
+        </header>
+
+        <main className="flex-1 px-4 py-5 pb-28 overflow-y-auto space-y-3">
+
+          {/* Indicateur succès */}
+          <div className="bg-lime/40 border border-lime rounded-2xl px-5 py-4 flex items-center gap-3">
+            <span className="text-2xl font-bold text-ink">✓</span>
+            <div>
+              <p className="font-bold text-ink">Commande bien enregistrée</p>
+              <p className="text-sm text-dust">Transmise à {ASSIGNED_LABELS[confirmed.assignedTo]}</p>
+            </div>
+          </div>
+
+          {/* Récapitulatif */}
+          <div className="bg-chalk border border-warm rounded-2xl divide-y divide-warm">
+
+            <div className="px-4 py-3.5">
+              <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-1">Client</p>
+              <p className="font-semibold text-ink text-lg">{confirmed.clientName}</p>
+              {confirmed.clientPhone && (
+                <a href={`tel:${confirmed.clientPhone}`} className="text-sm text-dust underline mt-0.5 block">
+                  {confirmed.clientPhone}
+                </a>
+              )}
+            </div>
+
+            <div className="px-4 py-3.5">
+              <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-1">Retrait</p>
+              <p className="font-semibold text-ink capitalize">
+                {format(pickup, 'EEEE d MMMM', { locale: fr })}
+              </p>
+              <p className="text-2xl font-bold text-ink tabular-nums tracking-tight leading-snug mt-0.5">
+                {format(pickup, 'HH:mm')}
+              </p>
+            </div>
+
+            <div className="px-4 py-3.5">
+              <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-1">Commande</p>
+              <p className="font-semibold text-ink leading-snug">{confirmed.articles}</p>
+            </div>
+
+            {(confirmed.totalAmount > 0 || confirmed.deposit > 0) && (
+              <div className="px-4 py-3.5">
+                <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-2">Paiement</p>
+                <div className="flex gap-6">
+                  <div>
+                    <p className="text-xs text-dust">Total</p>
+                    <p className="font-bold text-ink">{confirmed.totalAmount} €</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-dust">Acompte reçu</p>
+                    <p className="font-bold text-ink">{confirmed.deposit} €</p>
+                  </div>
+                  {reste > 0 && (
+                    <div>
+                      <p className="text-xs text-dust">Reste à encaisser</p>
+                      <p className="font-bold text-amber-700">{reste} €</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {confirmed.notes && (
+              <div className="px-4 py-3.5">
+                <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-1">Notes</p>
+                <p className="text-sm text-amber-800 bg-amber-50 rounded-xl px-3 py-2">{confirmed.notes}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
+          <button
+            onClick={() => { setForm(makeEmptyForm()); setConfirmed(null) }}
+            className="btn-primary"
+          >
+            + Nouvelle commande
+          </button>
+          <button
+            onClick={() => navigate('/vendeur')}
+            className="w-full py-3.5 rounded-2xl text-sm font-bold text-dust bg-chalk border border-warm active:opacity-70"
+          >
+            Retour à l'accueil
+          </button>
+
+        </main>
+        <BottomNav />
+      </div>
+    )
+  }
+
+  // ── Formulaire ────────────────────────────────────────────────────
   return (
     <div className="min-h-dvh bg-cream flex flex-col max-w-lg mx-auto">
       <header
