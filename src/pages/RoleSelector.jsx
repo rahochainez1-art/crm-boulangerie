@@ -1,4 +1,12 @@
+import { useNavigate } from 'react-router-dom'
 import { useRole } from '../context/RoleContext'
+
+const HOME = {
+  vendeur:     '/vendeur',
+  patissiere:  '/patissiere',
+  manager:     '/manager',
+  boulangerie: '/boulangerie',
+}
 
 function IconBag() {
   return (
@@ -89,6 +97,7 @@ const ROLES = [
 
 export default function RoleSelector() {
   const { setRole } = useRole()
+  const navigate = useNavigate()
 
   return (
     <div
@@ -109,7 +118,7 @@ export default function RoleSelector() {
         {ROLES.map((r) => (
           <button
             key={r.id}
-            onClick={() => setRole(r.id)}
+            onClick={() => { setRole(r.id); navigate(HOME[r.id]) }}
             className="w-full rounded-2xl p-5 text-left active:scale-[0.985] transition-transform flex items-center gap-5 overflow-hidden relative"
             style={{ backgroundColor: r.cardBg, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
           >
