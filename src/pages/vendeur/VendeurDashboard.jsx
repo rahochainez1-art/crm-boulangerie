@@ -103,43 +103,45 @@ export default function VendeurDashboard() {
             {filtered.map((order) => {
               const reste = (order.totalAmount || 0) - (order.deposit || 0)
               return (
-                <div key={order.id} className="bg-chalk border border-warm rounded-2xl px-4 py-3.5 flex items-start gap-3">
-                  {/* Heure */}
-                  <div className="flex-shrink-0 text-right">
-                    <p className="text-[10px] font-bold text-dust uppercase tracking-wide">Retrait à</p>
-                    <p className="text-2xl font-bold text-ink leading-none tabular-nums tracking-tight">
-                      {format(parseISO(order.pickupDate), 'HH:mm')}
-                    </p>
-                  </div>
+                <div key={order.id} className="bg-chalk border border-warm rounded-2xl overflow-hidden">
+                  <div className="px-4 py-3.5 flex items-start gap-3">
+                    {/* Heure */}
+                    <div className="flex-shrink-0 text-right">
+                      <p className="text-[10px] font-bold text-dust uppercase tracking-wide">Retrait à</p>
+                      <p className="text-2xl font-bold text-ink leading-none tabular-nums tracking-tight">
+                        {format(parseISO(order.pickupDate), 'HH:mm')}
+                      </p>
+                    </div>
 
-                  <div className="w-px self-stretch bg-warm flex-shrink-0" />
+                    <div className="w-px self-stretch bg-warm flex-shrink-0" />
 
-                  {/* Contenu */}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-ink truncate">{order.clientName}</p>
-                    <p className="text-sm text-dust truncate mt-0.5">{order.articles}</p>
-                    <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                      <StatusBadge status={order.status} />
-                      {reste > 0 && (
-                        <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full">
-                          {reste} € à encaisser
-                        </span>
-                      )}
-                      {reste === 0 && order.totalAmount > 0 && (
-                        <span className="text-xs font-semibold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full">
-                          Soldé ✓
-                        </span>
-                      )}
+                    {/* Contenu */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-ink truncate">{order.clientName}</p>
+                      <p className="text-sm text-dust truncate mt-0.5">{order.articles}</p>
+                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                        <StatusBadge status={order.status} />
+                        {reste > 0 && (
+                          <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full">
+                            {reste} € à encaisser
+                          </span>
+                        )}
+                        {reste === 0 && order.totalAmount > 0 && (
+                          <span className="text-xs font-semibold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full">
+                            Soldé ✓
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Avancer */}
-                  {order.status !== 'done' && (
+                  {/* Bouton récupération — uniquement quand la commande est prête */}
+                  {order.status === 'ready' && (
                     <button
-                      onClick={() => advanceStatus(order.id, order.status).then(() => toast.success('Mis à jour'))}
-                      className="flex-shrink-0 self-center w-11 h-11 flex items-center justify-center rounded-xl bg-parchment text-dust text-lg active:bg-ink active:text-chalk transition-colors"
+                      onClick={() => advanceStatus(order.id, order.status).then(() => toast.success(`${order.clientName} a récupéré sa commande`))}
+                      className="w-full py-3 text-sm font-bold text-green-800 bg-green-50 border-t border-green-100 active:bg-green-100 transition-colors"
                     >
-                      →
+                      Commande récupérée ✓
                     </button>
                   )}
                 </div>
