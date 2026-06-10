@@ -24,10 +24,14 @@ const IconHome = () => (
     <path d="M9 21V12h6v9"/>
   </svg>
 )
-const IconCalendar = () => (
+const IconList = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="4" width="18" height="18" rx="2"/>
-    <path d="M16 2v4M8 2v4M3 10h18"/>
+    <line x1="8" y1="6"  x2="21" y2="6"/>
+    <line x1="8" y1="12" x2="21" y2="12"/>
+    <line x1="8" y1="18" x2="21" y2="18"/>
+    <line x1="3" y1="6"  x2="3.01" y2="6"/>
+    <line x1="3" y1="12" x2="3.01" y2="12"/>
+    <line x1="3" y1="18" x2="3.01" y2="18"/>
   </svg>
 )
 const IconClock = () => (
@@ -49,7 +53,7 @@ const IconSettings = () => (
   </svg>
 )
 
-// ── Résumé hebdo (greeting + card) ───────────────────────────────────────
+// ── Résumé hebdo ──────────────────────────────────────────────────────────
 
 function SummaryCard({ orders }) {
   const weekStart  = startOfWeek(new Date(), { weekStartsOn: 1 })
@@ -59,7 +63,7 @@ function SummaryCard({ orders }) {
     const d = parseISO(o.pickupDate)
     return d >= weekStart && d <= weekEnd
   })
-  const todoCount  = orders.filter(o => o.status === 'todo' || o.status === 'inprogress').length
+  const todoCount = orders.filter(o => o.status === 'todo' || o.status === 'inprogress').length
 
   const greeting = weekOrders.length === 0
     ? 'Aucune commande\ncette semaine.'
@@ -71,7 +75,6 @@ function SummaryCard({ orders }) {
 
   return (
     <>
-      {/* Message d'encouragement */}
       <div className="mb-5 px-1">
         <p className="text-sm text-dust mb-1">Voici votre résumé 👋</p>
         <h2
@@ -82,28 +85,20 @@ function SummaryCard({ orders }) {
         </h2>
       </div>
 
-      {/* Deux tuiles stats */}
       <div className="grid grid-cols-2 gap-3 mb-6">
-
-        {/* Tuile 1 — Commandes */}
         <div
           className="rounded-2xl p-4 flex flex-col justify-between"
           style={{ backgroundColor: '#fff', boxShadow: '0 1px 6px rgba(0,0,0,0.07)', minHeight: 120 }}
         >
-          <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-dust">
-            Semaine
-          </p>
+          <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-dust">Semaine</p>
           <div>
             <p className="font-serif leading-none mt-3" style={{ fontSize: '2.8rem', fontWeight: 600, color: '#1A1A1A' }}>
               {weekOrders.length}
             </p>
-            <p className="text-xs text-dust mt-1.5">
-              commande{weekOrders.length > 1 ? 's' : ''}
-            </p>
+            <p className="text-xs text-dust mt-1.5">commande{weekOrders.length > 1 ? 's' : ''}</p>
           </div>
         </div>
 
-        {/* Tuile 2 — À produire */}
         <div
           className="rounded-2xl p-4 flex flex-col justify-between"
           style={{
@@ -121,23 +116,15 @@ function SummaryCard({ orders }) {
           <div>
             <p
               className="font-serif leading-none mt-3"
-              style={{
-                fontSize: '2.8rem',
-                fontWeight: 600,
-                color: todoCount > 3 ? '#dc2626' : '#1A1A1A',
-              }}
+              style={{ fontSize: '2.8rem', fontWeight: 600, color: todoCount > 3 ? '#dc2626' : '#1A1A1A' }}
             >
               {todoCount}
             </p>
-            <p
-              className="text-xs mt-1.5"
-              style={{ color: todoCount > 3 ? '#dc2626' : '#6B6B6B' }}
-            >
+            <p className="text-xs mt-1.5" style={{ color: todoCount > 3 ? '#dc2626' : '#6B6B6B' }}>
               à produire
             </p>
           </div>
         </div>
-
       </div>
     </>
   )
@@ -148,10 +135,10 @@ function SummaryCard({ orders }) {
 const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectDay }) {
-  const mStart  = startOfMonth(viewMonth)
-  const mEnd    = endOfMonth(viewMonth)
+  const mStart   = startOfMonth(viewMonth)
+  const mEnd     = endOfMonth(viewMonth)
   const calStart = startOfWeek(mStart, { weekStartsOn: 1 })
-  const calEnd   = endOfWeek(mEnd,   { weekStartsOn: 1 })
+  const calEnd   = endOfWeek(mEnd,     { weekStartsOn: 1 })
   const days     = eachDayOfInterval({ start: calStart, end: calEnd })
 
   const monthOrders = orders.filter(o =>
@@ -164,28 +151,22 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
   return (
     <div className="bg-white rounded-2xl p-4 mb-5" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
 
-      {/* En-tête mois + navigation */}
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => { setViewMonth(m => subMonths(m, 1)); onSelectDay(null) }}
-          className="w-8 h-8 flex items-center justify-center rounded-xl active:bg-black/5 transition-colors"
+          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-2xl font-light"
           style={{ color: '#6B6B6B' }}
-        >
-          ‹
-        </button>
+        >‹</button>
         <p className="font-serif font-semibold capitalize text-ink" style={{ fontSize: '1.05rem' }}>
           {format(viewMonth, 'MMMM yyyy', { locale: fr })}
         </p>
         <button
           onClick={() => { setViewMonth(m => addMonths(m, 1)); onSelectDay(null) }}
-          className="w-8 h-8 flex items-center justify-center rounded-xl active:bg-black/5 transition-colors"
+          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-2xl font-light"
           style={{ color: '#6B6B6B' }}
-        >
-          ›
-        </button>
+        >›</button>
       </div>
 
-      {/* Résumé du mois */}
       <div className="flex items-center gap-4 mb-4 px-1">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#C8A96E' }} />
@@ -201,7 +182,6 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
         </div>
       </div>
 
-      {/* Entêtes jours */}
       <div className="grid grid-cols-7 mb-1">
         {DAY_LABELS.map((d, i) => (
           <p key={i} className="text-center text-[10px] font-bold uppercase py-1" style={{ color: '#B0B0B0' }}>
@@ -210,12 +190,12 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
         ))}
       </div>
 
-      {/* Grille jours */}
       <div className="grid grid-cols-7 gap-y-0.5">
         {days.map(day => {
-          const key        = format(day, 'yyyy-MM-dd')
           const inMonth    = isSameMonth(day, viewMonth)
-          const count      = inMonth ? orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day)).length : 0
+          const count      = inMonth
+            ? orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day)).length
+            : 0
           const isSelected = selectedDay && isSameDay(day, selectedDay)
           const isToday    = isSameDay(day, new Date())
 
@@ -267,7 +247,6 @@ function OrderCard({ order, expanded, onToggle }) {
       className="bg-white rounded-2xl overflow-hidden mb-2.5"
       style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
     >
-      {/* Ligne principale */}
       <button className="w-full px-4 py-3.5 flex items-center gap-3 text-left active:bg-black/[0.02] transition-colors" onClick={onToggle}>
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-ink text-sm truncate">{order.clientName}</p>
@@ -282,23 +261,18 @@ function OrderCard({ order, expanded, onToggle }) {
         <span
           className="text-dust/40 flex-shrink-0 text-base ml-1 transition-transform duration-200"
           style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-        >
-          ↓
-        </span>
+        >↓</span>
       </button>
 
-      {/* Détail étendu — lecture seule */}
       {expanded && (
         <div style={{ borderTop: '1px solid rgba(232,226,216,0.6)' }} className="px-4 pb-5 pt-4">
           <div className="space-y-4">
 
-            {/* Articles */}
             <div>
               <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust mb-1">Articles</p>
               <p className="text-sm text-ink leading-relaxed">{order.articles}</p>
             </div>
 
-            {/* Paiement */}
             {order.totalAmount > 0 && (
               <div>
                 <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust mb-2">Paiement</p>
@@ -323,12 +297,15 @@ function OrderCard({ order, expanded, onToggle }) {
               </div>
             )}
 
-            {/* Assigné & Contact */}
             <div className="flex gap-5">
               {order.assignedTo && (
                 <div>
                   <p className="text-xs text-dust">Assigné à</p>
-                  <p className="text-sm font-medium text-ink mt-0.5">{ASSIGNED[order.assignedTo] ?? order.assignedTo}</p>
+                  <p className="text-sm font-medium text-ink mt-0.5">
+                    {Array.isArray(order.assignedTo)
+                      ? order.assignedTo.map(p => ASSIGNED[p] ?? p).join(' + ')
+                      : (ASSIGNED[order.assignedTo] ?? order.assignedTo)}
+                  </p>
                 </div>
               )}
               {order.clientPhone && (
@@ -341,14 +318,12 @@ function OrderCard({ order, expanded, onToggle }) {
               )}
             </div>
 
-            {/* Notes */}
             {order.notes && (
               <div className="rounded-xl px-3 py-2.5" style={{ backgroundColor: '#FEF3C7' }}>
                 <p className="text-xs font-medium" style={{ color: '#92400e' }}>⚠ {order.notes}</p>
               </div>
             )}
 
-            {/* Historique */}
             {order.statusHistory?.length > 0 && (
               <div>
                 <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust mb-2">Historique</p>
@@ -434,7 +409,7 @@ function AnalysesView({ orders }) {
 
 const NAV_ITEMS = [
   { id: 'home',     label: 'Accueil',  Icon: IconHome },
-  { id: 'semaine',  label: 'Semaine',  Icon: IconCalendar },
+  { id: 'toutes',   label: 'Toutes',   Icon: IconList },
   { id: 'analyses', label: 'Analyses', Icon: IconClock },
   { id: 'reglages', label: 'Réglages', Icon: IconSettings },
 ]
@@ -443,7 +418,7 @@ export default function ManagerDashboard() {
   const [orders, setOrders]           = useState([])
   const [tab, setTab]                 = useState('home')
   const [viewMonth, setViewMonth]     = useState(new Date())
-  const [selectedDay, setSelectedDay] = useState(null)
+  const [selectedDay, setSelectedDay] = useState(() => new Date())
   const [expandedId, setExpandedId]   = useState(null)
   const navigate = useNavigate()
 
@@ -451,45 +426,24 @@ export default function ManagerDashboard() {
 
   const changeTab = (t) => {
     if (t === 'reglages') { navigate('/settings'); return }
+    if (t === 'toutes')   { navigate('/manager/toutes'); return }
     setTab(t)
     setExpandedId(null)
-    if (t !== 'semaine') setSelectedDay(null)
   }
 
-  const ws = startOfWeek(new Date(), { weekStartsOn: 1 })
-  const we = addDays(ws, 6)
-
-  const displayOrders = useMemo(() => {
-    if (tab === 'home') {
-      return orders
-        .filter(o => {
-          if (!o.pickupDate || o.status === 'done') return false
-          const d = parseISO(o.pickupDate)
-          return d >= ws && d <= we
-        })
-        .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
-    }
-    if (tab === 'semaine') {
-      const mStart = startOfMonth(viewMonth)
-      const mEnd   = endOfMonth(viewMonth)
-      const base   = orders.filter(o => {
-        if (!o.pickupDate) return false
-        const d = parseISO(o.pickupDate)
-        return d >= mStart && d <= mEnd
-      })
-      if (selectedDay) return base
-        .filter(o => isSameDay(parseISO(o.pickupDate), selectedDay))
-        .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
-      return base.sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
-    }
-    return []
-  }, [orders, tab, selectedDay, viewMonth])
+  // Commandes pour le jour sélectionné (toutes statuts sauf annulées)
+  const dayOrders = useMemo(() => {
+    if (!selectedDay) return []
+    return orders
+      .filter(o => o.pickupDate && o.status !== 'cancelled' && isSameDay(parseISO(o.pickupDate), selectedDay))
+      .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
+  }, [orders, selectedDay])
 
   const sectionTitle = useMemo(() => {
-    if (tab === 'home')   return 'En cours cette semaine'
-    if (selectedDay)      return format(selectedDay, 'EEEE d MMMM', { locale: fr })
-    return `Toutes — ${format(viewMonth, 'MMMM', { locale: fr })}`
-  }, [tab, selectedDay, viewMonth])
+    if (!selectedDay) return 'Sélectionne un jour'
+    if (isSameDay(selectedDay, new Date())) return "Aujourd'hui"
+    return format(selectedDay, 'EEEE d MMMM', { locale: fr })
+  }, [selectedDay])
 
   const toggleExpand = (id) => setExpandedId(prev => prev === id ? null : id)
 
@@ -522,52 +476,34 @@ export default function ManagerDashboard() {
         {tab === 'home' && (
           <>
             <SummaryCard orders={orders} />
-            <div className="flex items-baseline justify-between mb-3">
-              <p className="font-sans font-semibold text-ink" style={{ fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
-                {sectionTitle}
-              </p>
-              <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust">
-                {displayOrders.length} commande{displayOrders.length > 1 ? 's' : ''}
-              </span>
-            </div>
-            {displayOrders.length === 0 ? (
-              <div className="bg-white rounded-2xl text-center py-12" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-                <p className="text-2xl mb-2">✓</p>
-                <p className="text-sm text-dust">Aucune commande active cette semaine</p>
-              </div>
-            ) : displayOrders.map(o => (
-              <OrderCard key={o.id} order={o} expanded={expandedId === o.id} onToggle={() => toggleExpand(o.id)} />
-            ))}
-          </>
-        )}
 
-        {tab === 'semaine' && (
-          <>
             <MonthCalendar
               orders={orders}
               viewMonth={viewMonth}
               setViewMonth={setViewMonth}
               selectedDay={selectedDay}
-              onSelectDay={setSelectedDay}
+              onSelectDay={(day) => setSelectedDay(day ?? new Date())}
             />
+
             <div className="flex items-baseline justify-between mb-3">
-              <p className="font-sans font-semibold text-ink" style={{ fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
+              <p className="font-sans font-semibold text-ink capitalize" style={{ fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
                 {sectionTitle}
               </p>
               <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust">
-                {displayOrders.length} commande{displayOrders.length > 1 ? 's' : ''}
+                {dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}
               </span>
             </div>
-            {displayOrders.length === 0 ? (
+
+            {dayOrders.length === 0 ? (
               <div className="bg-white rounded-2xl text-center py-12" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
                 <p className="text-2xl mb-2">📅</p>
-                <p className="text-sm text-dust">
-                  {selectedDay ? 'Aucune commande ce jour' : 'Aucune commande cette semaine'}
-                </p>
+                <p className="text-sm text-dust">Aucune commande ce jour</p>
               </div>
-            ) : displayOrders.map(o => (
-              <OrderCard key={o.id} order={o} expanded={expandedId === o.id} onToggle={() => toggleExpand(o.id)} />
-            ))}
+            ) : (
+              dayOrders.map(o => (
+                <OrderCard key={o.id} order={o} expanded={expandedId === o.id} onToggle={() => toggleExpand(o.id)} />
+              ))
+            )}
           </>
         )}
 
@@ -575,7 +511,7 @@ export default function ManagerDashboard() {
 
       </main>
 
-      {/* ── Bottom nav — 5 zones avec bouton + central surélevé ── */}
+      {/* ── Bottom nav — 2 + center + 2 ── */}
       <nav
         className="fixed bottom-0 left-0 right-0 bg-white max-w-lg mx-auto z-50"
         style={{
@@ -584,10 +520,10 @@ export default function ManagerDashboard() {
           boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
         }}
       >
-        <div className="flex items-end justify-around px-1 pt-2 pb-2">
+        <div className="flex items-end pt-2 pb-2">
 
-          {/* Accueil */}
-          {['home', 'semaine'].map(id => {
+          {/* Accueil + Toutes */}
+          {['home', 'toutes'].map(id => {
             const item   = NAV_ITEMS.find(x => x.id === id)
             const active = tab === id
             return (

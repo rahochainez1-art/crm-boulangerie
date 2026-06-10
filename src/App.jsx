@@ -12,6 +12,7 @@ import Historique from './pages/vendeur/Historique'
 import Profil from './pages/vendeur/Profil'
 
 import PatissiereDashboard from './pages/patissiere/Dashboard'
+import PatissiereHistorique from './pages/patissiere/Historique'
 import BoulangerieDashboard from './pages/boulangerie/Dashboard'
 
 import ManagerDashboard from './pages/manager/ManagerDashboard'
@@ -47,6 +48,7 @@ function AppRoutes() {
 
       {/* ── Pâtissière */}
       <Route path="/patissiere" element={<PatissiereDashboard />} />
+      <Route path="/patissiere/historique" element={<PatissiereHistorique />} />
 
       {/* ── Boulangerie */}
       <Route path="/boulangerie" element={<BoulangerieDashboard />} />

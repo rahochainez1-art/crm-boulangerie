@@ -131,12 +131,46 @@ function VendeurNav() {
   )
 }
 
-// ── Nav générique (pâtissière) ────────────────────────────────────────────
+// ── Nav pâtissière — 3 onglets ────────────────────────────────────────────
+function IconHomeSmall() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+      <path d="M9 21V12h6v9"/>
+    </svg>
+  )
+}
+function IconArchive() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="21 8 21 21 3 21 3 8"/>
+      <rect x="1" y="3" width="22" height="5"/>
+      <line x1="10" y1="12" x2="14" y2="12"/>
+    </svg>
+  )
+}
+
+function PatissiereNav() {
+  return (
+    <nav
+      className="fixed bottom-0 left-0 right-0 bg-white max-w-lg mx-auto z-50"
+      style={{
+        borderTop: '1px solid rgba(232,226,216,0.5)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
+      }}
+    >
+      <div className="flex items-stretch justify-around pt-2 pb-2">
+        <NavItem to="/patissiere"           label="Accueil"    Icon={IconHomeSmall} />
+        <NavItem to="/patissiere/historique" label="Historique" Icon={IconArchive} />
+        <NavItem to="/settings"              label="Réglages"   Icon={IconSettings} />
+      </div>
+    </nav>
+  )
+}
+
+// ── Nav générique (boulangerie / manager) ─────────────────────────────────
 const navByRole = {
-  patissiere: [
-    { to: '/patissiere', label: 'Production', icon: '◈', end: true },
-    { to: '/calendrier', label: 'Calendrier', icon: '▦', end: true },
-  ],
   boulangerie: [
     { to: '/boulangerie', label: 'Production', icon: '◈', end: true },
     { to: '/calendrier',  label: 'Calendrier', icon: '▦', end: true },
@@ -151,7 +185,8 @@ export default function BottomNav() {
   const { role } = useRole()
   const navigate = useNavigate()
 
-  if (role === 'vendeur') return <VendeurNav />
+  if (role === 'vendeur')    return <VendeurNav />
+  if (role === 'patissiere') return <PatissiereNav />
 
   const links = navByRole[role] ?? []
 
