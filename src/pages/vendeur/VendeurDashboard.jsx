@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import {
   format, parseISO, isSameDay,
-  startOfWeek, endOfWeek, eachDayOfInterval,
+  startOfWeek, endOfWeek, eachDayOfInterval, addWeeks,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
@@ -61,6 +61,7 @@ export default function VendeurDashboard() {
   const [tab, setTab]             = useState('all')
   const [selected, setSelected]   = useState(null)
   const [selectedDay, setSelectedDay] = useState(() => new Date())
+  const [weekOffset, setWeekOffset]   = useState(0)
   const [prevReady, setPrevReady] = useState(new Set())
 
   useEffect(() => {
@@ -89,14 +90,14 @@ export default function VendeurDashboard() {
     if (updated) setSelected(updated)
   }, [allOrders]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Jours de la semaine (lun → dim)
+  // Jours de la semaine (lun → dim) selon l'offset
   const weekDays = useMemo(() => {
-    const now = new Date()
+    const base = addWeeks(new Date(), weekOffset)
     return eachDayOfInterval({
-      start: startOfWeek(now, { weekStartsOn: 1 }),
-      end:   endOfWeek(now,   { weekStartsOn: 1 }),
+      start: startOfWeek(base, { weekStartsOn: 1 }),
+      end:   endOfWeek(base,   { weekStartsOn: 1 }),
     })
-  }, [])
+  }, [weekOffset])
 
   // Commandes du jour sélectionné
   const dayOrders = useMemo(() =>
@@ -136,8 +137,36 @@ export default function VendeurDashboard() {
       <div className="flex-1 overflow-y-auto pb-28">
 
         {/* ── 2. Calendrier semaine ──────────────────────────────────── */}
-        <div className="px-4 pt-4">
-          <div className="flex gap-1.5 justify-between">
+        <div className="pt-5 pb-1">
+          {/* Navigation mois */}
+          <div className="flex items-center justify-between px-5 mb-3">
+            <button
+              onClick={() => {
+                const prev = addWeeks(new Date(), weekOffset - 1)
+                setWeekOffset(o => o - 1)
+                setSelectedDay(startOfWeek(prev, { weekStartsOn: 1 }))
+              }}
+              className="text-sm font-semibold text-dust active:text-ink px-2 py-1"
+            >
+              ← Préc
+            </button>
+            <p className="font-bold text-ink capitalize text-base">
+              {format(weekDays[3], 'MMMM yyyy', { locale: fr })}
+            </p>
+            <button
+              onClick={() => {
+                const next = addWeeks(new Date(), weekOffset + 1)
+                setWeekOffset(o => o + 1)
+                setSelectedDay(startOfWeek(next, { weekStartsOn: 1 }))
+              }}
+              className="text-sm font-semibold text-dust active:text-ink px-2 py-1"
+            >
+              Suiv →
+            </button>
+          </div>
+
+          {/* Pastilles jours */}
+          <div className="flex gap-2 px-4 overflow-x-auto scrollbar-none">
             {weekDays.map(day => {
               const isSelected = isSameDay(day, selectedDay)
               const isToday    = isSameDay(day, new Date())
@@ -148,23 +177,26 @@ export default function VendeurDashboard() {
                 <button
                   key={day.toISOString()}
                   onClick={() => setSelectedDay(day)}
-                  className="flex-1 flex flex-col items-center gap-1 py-1"
-                >
-                  <span className="text-[10px] font-bold text-dust uppercase tracking-wide">
-                    {format(day, 'EEEEE', { locale: fr })}
-                  </span>
-                  <span className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                  className={`flex-1 flex flex-col items-center justify-center rounded-3xl py-3.5 min-w-[42px] transition-all ${
                     isSelected
-                      ? 'bg-ink text-chalk'
-                      : isToday
-                      ? 'bg-warm text-ink'
-                      : 'text-ink'
+                      ? 'shadow-md'
+                      : 'bg-white border border-warm/70 shadow-sm'
+                  }`}
+                  style={isSelected ? { backgroundColor: '#C8A96E' } : {}}
+                >
+                  <span className={`text-xl font-bold leading-none ${
+                    isSelected ? 'text-white' : isToday ? 'text-[#C8A96E]' : 'text-[#C8A96E]'
                   }`}>
                     {format(day, 'd')}
                   </span>
-                  <span className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                  <span className={`text-[11px] font-semibold mt-1 capitalize ${
+                    isSelected ? 'text-white/80' : 'text-dust'
+                  }`}>
+                    {format(day, 'EEE', { locale: fr })}
+                  </span>
+                  <span className={`w-1.5 h-1.5 rounded-full mt-1.5 ${
                     hasOrders
-                      ? isSelected ? 'bg-chalk/60' : 'bg-ink/30'
+                      ? isSelected ? 'bg-white/60' : 'bg-[#C8A96E]/70'
                       : 'bg-transparent'
                   }`} />
                 </button>
