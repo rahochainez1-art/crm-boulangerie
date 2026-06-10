@@ -206,16 +206,16 @@ export default function NouvelleCommande() {
           </Section>
 
           <Section label="Articles *">
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1">
+            <div className="flex flex-wrap gap-1.5">
               {RACCOURCIS.map((r) => (
                 <button
                   key={r}
                   type="button"
                   onClick={() => prefillArticle(r)}
-                  className={`flex-shrink-0 px-3.5 py-2 rounded-xl text-sm font-semibold border transition-colors whitespace-nowrap ${
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
                     form.articles === r
                       ? 'bg-ink text-chalk border-ink'
-                      : 'bg-chalk text-dust border-warm active:bg-ink active:text-chalk active:border-ink'
+                      : 'bg-parchment text-dust border-warm active:bg-ink active:text-chalk active:border-ink'
                   }`}
                 >
                   {r}
