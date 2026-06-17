@@ -3,7 +3,7 @@ import {
   format, parseISO, isSameDay, isSameMonth,
   startOfWeek, endOfWeek, addDays,
   startOfMonth, endOfMonth, eachDayOfInterval,
-  addMonths, subMonths,
+  addMonths, subMonths, differenceInHours,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useNavigate } from 'react-router-dom'
@@ -17,8 +17,10 @@ const ASSIGNED = {
   vendeur:     'Vendeur·se',
 }
 
-// ── Icônes ────────────────────────────────────────────────────────────────
+const STATUS_PRIORITY = { todo: 0, inprogress: 1, ready: 2, done: 3 }
+const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
+// ── Icônes ────────────────────────────────────────────────────────────────
 const IconHome = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
@@ -35,16 +37,12 @@ const IconList = () => (
     <line x1="3" y1="18" x2="3.01" y2="18"/>
   </svg>
 )
-const IconClock = () => (
+const IconAnalytics = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="9"/>
-    <path d="M12 7v5l3 3"/>
-  </svg>
-)
-const IconBell = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    <line x1="18" y1="20" x2="18" y2="10"/>
+    <line x1="12" y1="20" x2="12" y2="4"/>
+    <line x1="6"  y1="20" x2="6"  y2="14"/>
+    <line x1="2"  y1="20" x2="22" y2="20"/>
   </svg>
 )
 const IconSettings = () => (
@@ -54,87 +52,63 @@ const IconSettings = () => (
   </svg>
 )
 
-// ── Résumé hebdo ──────────────────────────────────────────────────────────
+// ── Cartes statistiques (4 tuiles) ───────────────────────────────────────
+function StatCards({ orders }) {
+  const today       = new Date()
+  const todayCount  = orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), today) && o.status !== 'cancelled').length
+  const inProgress  = orders.filter(o => o.status === 'inprogress').length
+  const ready       = orders.filter(o => o.status === 'ready').length
+  const urgent      = orders.filter(o => {
+    if (!o.pickupDate || o.status === 'done' || o.status === 'cancelled') return false
+    const h = differenceInHours(parseISO(o.pickupDate), today)
+    return h >= 0 && h <= 24 && o.status !== 'ready'
+  }).length
 
-function SummaryCard({ orders }) {
-  const weekStart  = startOfWeek(new Date(), { weekStartsOn: 1 })
-  const weekEnd    = addDays(weekStart, 6)
-  const weekOrders = orders.filter(o => {
-    if (!o.pickupDate) return false
-    const d = parseISO(o.pickupDate)
-    return d >= weekStart && d <= weekEnd
-  })
-  const todoCount = orders.filter(o => o.status === 'todo' || o.status === 'inprogress').length
-
-  const greeting = weekOrders.length === 0
-    ? 'Aucune commande\ncette semaine.'
-    : weekOrders.length <= 2
-    ? 'Calme et maîtrisé —\nbonne semaine.'
-    : todoCount > 3
-    ? 'Beaucoup à faire,\nbonne organisation !'
-    : 'Belle activité,\ntout est sous contrôle.'
+  const tiles = [
+    { label: "Aujourd'hui", value: todayCount, bg: '#FFFFFF',  accent: false },
+    { label: 'En cours',    value: inProgress, bg: '#FEF3C7',  accent: false },
+    { label: 'Prêtes',      value: ready,      bg: '#F7F4C8',  accent: true  },
+    { label: 'Urgentes',    value: urgent,     bg: urgent > 0 ? '#FEE2E2' : '#F4F4F5', urgent: urgent > 0 },
+  ]
 
   return (
-    <>
-      <div className="mb-5 px-1">
-        <p className="text-sm text-dust mb-1">{getPrenom() ? `Bonjour ${getPrenom()} 👋` : 'Voici votre résumé 👋'}</p>
-        <h2
-          className="font-serif leading-tight"
-          style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1A1A1A', whiteSpace: 'pre-line' }}
-        >
-          {greeting}
-        </h2>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 mb-6">
+    <div className="grid grid-cols-2 gap-3 mb-6">
+      {tiles.map((t, i) => (
         <div
-          className="rounded-2xl p-4 flex flex-col justify-between"
-          style={{ backgroundColor: '#fff', boxShadow: '0 1px 6px rgba(0,0,0,0.07)', minHeight: 120 }}
-        >
-          <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-dust">Semaine</p>
-          <div>
-            <p className="font-serif leading-none mt-3" style={{ fontSize: '2.8rem', fontWeight: 600, color: '#1A1A1A' }}>
-              {weekOrders.length}
-            </p>
-            <p className="text-xs text-dust mt-1.5">commande{weekOrders.length > 1 ? 's' : ''}</p>
-          </div>
-        </div>
-
-        <div
-          className="rounded-2xl p-4 flex flex-col justify-between"
+          key={t.label}
+          className="rounded-3xl p-5 flex flex-col justify-between animate-fade-up"
           style={{
-            backgroundColor: todoCount > 3 ? '#FEF2F2' : todoCount > 0 ? '#FBF0DC' : '#F2F6CC',
-            boxShadow: '0 1px 6px rgba(0,0,0,0.05)',
-            minHeight: 120,
+            backgroundColor: t.bg,
+            border: '1px solid #E7E5E4',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
+            minHeight: 112,
+            animationDelay: `${i * 0.05}s`,
           }}
         >
           <p
-            className="text-[10px] font-bold tracking-[0.14em] uppercase"
-            style={{ color: todoCount > 3 ? '#dc2626' : '#6B6B6B' }}
+            className="label-xs"
+            style={{ color: t.urgent ? '#b91c1c' : '#71717A' }}
           >
-            {todoCount > 3 ? '⚠ Urgent' : 'Production'}
+            {t.label}
           </p>
           <div>
             <p
-              className="font-serif leading-none mt-3"
-              style={{ fontSize: '2.8rem', fontWeight: 600, color: todoCount > 3 ? '#dc2626' : '#1A1A1A' }}
+              className="font-serif leading-none"
+              style={{
+                fontSize: '2.75rem',
+                color: t.urgent ? '#b91c1c' : '#18181B',
+              }}
             >
-              {todoCount}
-            </p>
-            <p className="text-xs mt-1.5" style={{ color: todoCount > 3 ? '#dc2626' : '#6B6B6B' }}>
-              à produire
+              {t.value}
             </p>
           </div>
         </div>
-      </div>
-    </>
+      ))}
+    </div>
   )
 }
 
 // ── Calendrier mensuel ────────────────────────────────────────────────────
-
-const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
-
 function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectDay }) {
   const mStart   = startOfMonth(viewMonth)
   const mEnd     = endOfMonth(viewMonth)
@@ -145,58 +119,51 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
   const monthOrders = orders.filter(o =>
     o.pickupDate && isSameMonth(parseISO(o.pickupDate), viewMonth)
   )
-  const activeDays = new Set(
-    monthOrders.map(o => format(parseISO(o.pickupDate), 'yyyy-MM-dd'))
-  )
 
   return (
-    <div className="bg-white rounded-2xl p-4 mb-5" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
-
-      <div className="flex items-center justify-between mb-4">
+    <div
+      className="rounded-3xl p-5 mb-5 animate-fade-up delay-100"
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+    >
+      {/* Navigation mois */}
+      <div className="flex items-center justify-between mb-5">
         <button
           onClick={() => { setViewMonth(m => subMonths(m, 1)); onSelectDay(null) }}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-2xl font-light"
-          style={{ color: '#6B6B6B' }}
+          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
+          style={{ color: '#71717A' }}
         >‹</button>
-        <p className="font-serif font-semibold capitalize text-ink" style={{ fontSize: '1.05rem' }}>
+        <p className="font-semibold capitalize text-ink" style={{ fontSize: '0.95rem' }}>
           {format(viewMonth, 'MMMM yyyy', { locale: fr })}
         </p>
         <button
           onClick={() => { setViewMonth(m => addMonths(m, 1)); onSelectDay(null) }}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-2xl font-light"
-          style={{ color: '#6B6B6B' }}
+          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
+          style={{ color: '#71717A' }}
         >›</button>
       </div>
 
-      <div className="flex items-center gap-4 mb-4 px-1">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#C8A96E' }} />
-          <span className="text-xs text-dust">
-            <span className="font-bold text-ink">{monthOrders.length}</span> commande{monthOrders.length > 1 ? 's' : ''} ce mois
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#EEED9E' }} />
-          <span className="text-xs text-dust">
-            <span className="font-bold text-ink">{activeDays.size}</span> jour{activeDays.size > 1 ? 's' : ''} actif{activeDays.size > 1 ? 's' : ''}
-          </span>
-        </div>
+      {/* Légende */}
+      <div className="flex items-center gap-1.5 mb-4">
+        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#E8E27A' }} />
+        <span className="text-xs" style={{ color: '#71717A' }}>
+          <span className="font-semibold text-ink">{monthOrders.length}</span> commande{monthOrders.length > 1 ? 's' : ''} ce mois
+        </span>
       </div>
 
+      {/* Labels colonnes */}
       <div className="grid grid-cols-7 mb-1">
         {DAY_LABELS.map((d, i) => (
-          <p key={i} className="text-center text-[10px] font-bold uppercase py-1" style={{ color: '#B0B0B0' }}>
+          <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#A1A1AA', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             {d}
           </p>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-y-0.5">
+      {/* Grille */}
+      <div className="grid grid-cols-7 gap-y-1">
         {days.map(day => {
           const inMonth    = isSameMonth(day, viewMonth)
-          const count      = inMonth
-            ? orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day)).length
-            : 0
+          const count      = inMonth ? orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day)).length : 0
           const isSelected = selectedDay && isSameDay(day, selectedDay)
           const isToday    = isSameDay(day, new Date())
 
@@ -205,30 +172,34 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
               key={day.toISOString()}
               disabled={!inMonth}
               onClick={() => onSelectDay(isSelected ? null : day)}
-              className="flex flex-col items-center py-1 rounded-xl transition-all active:scale-95"
+              className="flex flex-col items-center py-1.5 rounded-2xl transition-all active:scale-95"
               style={{
-                backgroundColor: isSelected ? '#C8A96E' : isToday ? '#FBF0DC' : 'transparent',
-                opacity: inMonth ? 1 : 0.2,
+                backgroundColor: isSelected ? '#18181B' : isToday ? '#F7F4C8' : 'transparent',
+                opacity: inMonth ? 1 : 0.15,
               }}
             >
               <span
-                className="text-sm font-semibold leading-tight"
-                style={{ color: isSelected ? '#fff' : '#1A1A1A' }}
+                className="text-sm font-medium leading-tight"
+                style={{ color: isSelected ? '#FFFFFF' : '#18181B' }}
               >
                 {format(day, 'd')}
               </span>
               <div className="h-3.5 flex items-center justify-center mt-0.5">
-                {count > 0 ? (
+                {count > 0 && (
                   <span
-                    className="text-[8px] font-bold px-1 min-w-[14px] h-3.5 flex items-center justify-center rounded-full"
+                    className="text-[8px] font-bold flex items-center justify-center"
                     style={{
-                      backgroundColor: isSelected ? 'rgba(255,255,255,0.35)' : '#EEED9E',
+                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#E8E27A',
                       color: isSelected ? '#fff' : '#4A4E10',
+                      minWidth: 14,
+                      height: 14,
+                      padding: '0 3px',
+                      borderRadius: 9999,
                     }}
                   >
                     {count}
                   </span>
-                ) : null}
+                )}
               </div>
             </button>
           )
@@ -238,123 +209,149 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
   )
 }
 
-// ── Carte commande (expandable, lecture seule) ────────────────────────────
-
+// ── Carte commande ────────────────────────────────────────────────────────
 function OrderCard({ order, expanded, onToggle }) {
   const reste = (order.totalAmount || 0) - (order.deposit || 0)
   const isDone = order.status === 'done'
 
   return (
     <div
-      className="bg-white rounded-2xl overflow-hidden mb-2.5 transition-opacity"
-      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)', opacity: isDone ? 0.45 : 1 }}
+      className="rounded-3xl overflow-hidden mb-3 transition-opacity"
+      style={{
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E7E5E4',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
+        opacity: isDone ? 0.5 : 1,
+      }}
     >
-      <button className="w-full px-4 py-3.5 flex items-center gap-3 text-left active:bg-black/[0.02] transition-colors" onClick={onToggle}>
+      <button
+        className="w-full px-5 py-4 flex items-center gap-3 text-left active:bg-black/[0.02] transition-colors"
+        onClick={onToggle}
+      >
+        {/* Heure */}
+        <div className="flex-shrink-0 text-right" style={{ minWidth: 42 }}>
+          <p className="font-semibold text-ink tabular-nums" style={{ fontSize: '0.9rem' }}>
+            {format(parseISO(order.pickupDate), 'HH:mm')}
+          </p>
+        </div>
+
+        <div className="w-px self-stretch" style={{ backgroundColor: '#E7E5E4' }} />
+
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-ink text-sm truncate">{order.clientName}</p>
-          <p className="text-xs text-dust truncate mt-0.5">{order.articles}</p>
+          <p className="text-xs truncate mt-0.5" style={{ color: '#71717A' }}>{order.articles}</p>
         </div>
+
         <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
-          <span className="text-xs font-bold text-dust tabular-nums">
-            {format(parseISO(order.pickupDate), 'HH:mm')}
-          </span>
           <StatusBadge status={order.status} />
         </div>
-        <span
-          className="text-dust/40 flex-shrink-0 text-base ml-1 transition-transform duration-200"
-          style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-        >↓</span>
+
+        <svg
+          width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="#A1A1AA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          className="flex-shrink-0 transition-transform duration-200"
+          style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+        >
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
       </button>
 
       {expanded && (
-        <div style={{ borderTop: '1px solid rgba(232,226,216,0.6)' }} className="px-4 pb-5 pt-4">
-          <div className="space-y-4">
-
-            <div>
-              <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust mb-1">Articles</p>
-              <p className="text-sm text-ink leading-relaxed">{order.articles}</p>
-            </div>
-
-            {order.totalAmount > 0 && (
-              <div>
-                <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust mb-2">Paiement</p>
-                <div className="flex gap-5">
-                  <div>
-                    <p className="text-xs text-dust">Total</p>
-                    <p className="text-sm font-bold text-ink mt-0.5">{order.totalAmount} €</p>
-                  </div>
-                  {order.deposit > 0 && (
-                    <div>
-                      <p className="text-xs text-dust">Acompte</p>
-                      <p className="text-sm font-bold text-ink mt-0.5">{order.deposit} €</p>
-                    </div>
-                  )}
-                  {reste > 0 && (
-                    <div>
-                      <p className="text-xs text-dust">Reste dû</p>
-                      <p className="text-sm font-bold mt-0.5" style={{ color: '#C8A96E' }}>{reste} €</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-5">
-              {order.assignedTo && (
-                <div>
-                  <p className="text-xs text-dust">Assigné à</p>
-                  <p className="text-sm font-medium text-ink mt-0.5">
-                    {Array.isArray(order.assignedTo)
-                      ? order.assignedTo.map(p => ASSIGNED[p] ?? p).join(' + ')
-                      : (ASSIGNED[order.assignedTo] ?? order.assignedTo)}
-                  </p>
-                </div>
-              )}
-              {order.clientPhone && (
-                <div>
-                  <p className="text-xs text-dust">Téléphone</p>
-                  <a href={`tel:${order.clientPhone}`} className="text-sm font-medium mt-0.5 underline" style={{ color: '#C8A96E' }}>
-                    {order.clientPhone}
-                  </a>
-                </div>
-              )}
-            </div>
-
-            {order.notes && (
-              <div className="rounded-xl px-3 py-2.5" style={{ backgroundColor: '#FEF3C7' }}>
-                <p className="text-xs font-medium" style={{ color: '#92400e' }}>⚠ {order.notes}</p>
-              </div>
-            )}
-
-            {order.statusHistory?.length > 0 && (
-              <div>
-                <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust mb-2">Historique</p>
-                <div className="space-y-2">
-                  {[...order.statusHistory].reverse().map((h, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: i === 0 ? '#C8A96E' : '#E8E2D8' }} />
-                        <span className="text-xs font-medium text-ink">{STATUS_LABELS[h.status]}</span>
-                      </div>
-                      <span className="text-xs text-dust">
-                        {format(parseISO(h.at), 'dd MMM à HH:mm', { locale: fr })}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
+        <div
+          className="px-5 pb-5 pt-4 space-y-4"
+          style={{ borderTop: '1px solid #F1EFE8' }}
+        >
+          <div>
+            <p className="label-xs mb-1.5">Articles</p>
+            <p className="text-sm text-ink leading-relaxed">{order.articles}</p>
           </div>
+
+          {order.totalAmount > 0 && (
+            <div>
+              <p className="label-xs mb-2">Paiement</p>
+              <div className="flex gap-6">
+                <div>
+                  <p className="text-xs" style={{ color: '#71717A' }}>Total</p>
+                  <p className="text-sm font-semibold text-ink mt-0.5">{order.totalAmount} €</p>
+                </div>
+                {order.deposit > 0 && (
+                  <div>
+                    <p className="text-xs" style={{ color: '#71717A' }}>Acompte</p>
+                    <p className="text-sm font-semibold text-ink mt-0.5">{order.deposit} €</p>
+                  </div>
+                )}
+                {reste > 0 && (
+                  <div>
+                    <p className="text-xs" style={{ color: '#71717A' }}>Reste dû</p>
+                    <p className="text-sm font-semibold mt-0.5" style={{ color: '#E8A600' }}>{reste} €</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-6">
+            {order.assignedTo && (
+              <div>
+                <p className="text-xs mb-0.5" style={{ color: '#71717A' }}>Assigné à</p>
+                <p className="text-sm font-medium text-ink">
+                  {Array.isArray(order.assignedTo)
+                    ? order.assignedTo.map(p => ASSIGNED[p] ?? p).join(' + ')
+                    : (ASSIGNED[order.assignedTo] ?? order.assignedTo)}
+                </p>
+              </div>
+            )}
+            {order.clientPhone && (
+              <div>
+                <p className="text-xs mb-0.5" style={{ color: '#71717A' }}>Téléphone</p>
+                <a
+                  href={`tel:${order.clientPhone}`}
+                  className="text-sm font-medium underline"
+                  style={{ color: '#18181B' }}
+                >
+                  {order.clientPhone}
+                </a>
+              </div>
+            )}
+          </div>
+
+          {order.notes && (
+            <div
+              className="rounded-2xl px-4 py-3"
+              style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}
+            >
+              <p className="text-xs font-medium" style={{ color: '#92400e' }}>⚠ {order.notes}</p>
+            </div>
+          )}
+
+          {order.statusHistory?.length > 0 && (
+            <div>
+              <p className="label-xs mb-2">Historique</p>
+              <div className="space-y-2">
+                {[...order.statusHistory].reverse().map((h, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: i === 0 ? '#E8E27A' : '#E7E5E4' }}
+                      />
+                      <span className="text-xs font-medium text-ink">{STATUS_LABELS[h.status]}</span>
+                    </div>
+                    <span className="text-xs" style={{ color: '#71717A' }}>
+                      {format(parseISO(h.at), 'dd MMM à HH:mm', { locale: fr })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
   )
 }
 
-// ── Vue Analyses ─────────────────────────────────────────────────────────
-
+// ── Vue Analyses ──────────────────────────────────────────────────────────
 function AnalysesView({ orders }) {
   const done    = orders.filter(o => o.status === 'done')
   const revenue = done.reduce((s, o) => s + (o.totalAmount || 0), 0)
@@ -362,57 +359,73 @@ function AnalysesView({ orders }) {
   return (
     <>
       <div className="grid grid-cols-2 gap-3 mb-6">
-        <div className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
-          <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-dust mb-3">Récupérées</p>
-          <p className="font-serif leading-none" style={{ fontSize: '2.8rem', fontWeight: 600, color: '#1A1A1A' }}>
-            {done.length}
-          </p>
-          <p className="text-xs text-dust mt-1.5">commandes</p>
+        <div
+          className="rounded-3xl p-5 animate-fade-up"
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)', minHeight: 112 }}
+        >
+          <p className="label-xs mb-3">Récupérées</p>
+          <p className="font-serif leading-none" style={{ fontSize: '2.75rem', color: '#18181B' }}>{done.length}</p>
+          <p className="text-xs mt-1.5" style={{ color: '#71717A' }}>commandes</p>
         </div>
-        <div className="rounded-2xl p-4" style={{ backgroundColor: '#F2F6CC', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
-          <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-dust mb-3">CA encaissé</p>
-          <p className="font-serif leading-none" style={{ fontSize: '2.8rem', fontWeight: 600, color: '#1A1A1A' }}>
-            {revenue}€
-          </p>
-          <p className="text-xs text-dust mt-1.5">toutes périodes</p>
+        <div
+          className="rounded-3xl p-5 animate-fade-up delay-50"
+          style={{ backgroundColor: '#F7F4C8', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.03)', minHeight: 112 }}
+        >
+          <p className="label-xs mb-3">CA encaissé</p>
+          <p className="font-serif leading-none" style={{ fontSize: '2.75rem', color: '#18181B' }}>{revenue}€</p>
+          <p className="text-xs mt-1.5" style={{ color: '#71717A' }}>toutes périodes</p>
         </div>
       </div>
 
-      <div className="flex items-baseline justify-between mb-3">
-        <p className="font-serif font-semibold text-ink" style={{ fontSize: '1.05rem' }}>Historique</p>
-        <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust">{done.length}</span>
+      <div className="flex items-center justify-between mb-4">
+        <p className="font-semibold text-ink">Historique</p>
+        <span className="label-xs">{done.length}</span>
       </div>
 
       {done.length === 0 ? (
-        <div className="bg-white rounded-2xl text-center py-12" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-          <p className="text-2xl mb-2">📋</p>
-          <p className="text-sm text-dust">Aucune commande récupérée</p>
+        <div
+          className="rounded-3xl text-center py-16 animate-fade-up"
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4' }}
+        >
+          <p className="text-2xl mb-2">—</p>
+          <p className="text-sm" style={{ color: '#71717A' }}>Aucune commande récupérée</p>
         </div>
       ) : (
-        [...done].sort((a, b) => new Date(b.pickupDate) - new Date(a.pickupDate)).map(o => (
-          <div key={o.id} className="bg-white rounded-2xl px-4 py-3.5 mb-2.5 flex items-center gap-3"
-            style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm text-ink truncate">{o.clientName}</p>
-              <p className="text-xs text-dust truncate mt-0.5">{o.articles}</p>
+        [...done]
+          .sort((a, b) => new Date(b.pickupDate) - new Date(a.pickupDate))
+          .map(o => (
+            <div
+              key={o.id}
+              className="rounded-3xl px-5 py-4 mb-2.5 flex items-center gap-3 animate-fade-up"
+              style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+            >
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm text-ink truncate">{o.clientName}</p>
+                <p className="text-xs truncate mt-0.5" style={{ color: '#71717A' }}>{o.articles}</p>
+              </div>
+              <div className="text-right flex-shrink-0">
+                <p className="text-xs tabular-nums" style={{ color: '#71717A' }}>
+                  {format(parseISO(o.pickupDate), 'dd MMM', { locale: fr })}
+                </p>
+                {o.totalAmount > 0 && (
+                  <p className="text-sm font-semibold text-ink mt-0.5">{o.totalAmount}€</p>
+                )}
+              </div>
             </div>
-            <div className="text-right flex-shrink-0">
-              <p className="text-xs text-dust tabular-nums">{format(parseISO(o.pickupDate), 'dd MMM', { locale: fr })}</p>
-              {o.totalAmount > 0 && <p className="text-sm font-bold text-ink mt-0.5">{o.totalAmount}€</p>}
-            </div>
-          </div>
-        ))
+          ))
       )}
     </>
   )
 }
 
-// ── Dashboard Manager ─────────────────────────────────────────────────────
+// ── Manager Dashboard ─────────────────────────────────────────────────────
+const INACTIVE = '#A1A1AA'
+const ACTIVE   = '#18181B'
 
 const NAV_ITEMS = [
   { id: 'home',     label: 'Accueil',  Icon: IconHome },
   { id: 'toutes',   label: 'Toutes',   Icon: IconList },
-  { id: 'analyses', label: 'Analyses', Icon: IconClock },
+  { id: 'analyses', label: 'Analyses', Icon: IconAnalytics },
   { id: 'reglages', label: 'Réglages', Icon: IconSettings },
 ]
 
@@ -433,9 +446,6 @@ export default function ManagerDashboard() {
     setExpandedId(null)
   }
 
-  const STATUS_PRIORITY = { todo: 0, inprogress: 1, ready: 2, done: 3 }
-
-  // Commandes pour le jour sélectionné — actives en premier, récupérées à la fin
   const dayOrders = useMemo(() => {
     if (!selectedDay) return []
     return orders
@@ -454,37 +464,48 @@ export default function ManagerDashboard() {
     return format(selectedDay, 'EEEE d MMMM', { locale: fr })
   }, [selectedDay])
 
-  const toggleExpand = (id) => setExpandedId(prev => prev === id ? null : id)
+  const prenom = getPrenom()
+  const weekCount = useMemo(() => {
+    const ws = startOfWeek(new Date(), { weekStartsOn: 1 })
+    const we = addDays(ws, 6)
+    return orders.filter(o => {
+      if (!o.pickupDate || o.status === 'cancelled') return false
+      const d = parseISO(o.pickupDate)
+      return d >= ws && d <= we
+    }).length
+  }, [orders])
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto">
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F8F7F3' }}>
 
       {/* ── Header ── */}
       <header
-        className="px-5 pb-4 flex items-center justify-between"
-        style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}
+        className="px-5 pb-5"
+        style={{
+          paddingTop: 'max(52px, env(safe-area-inset-top))',
+          borderBottom: '1px solid #E7E5E4',
+          backgroundColor: '#F8F7F3',
+        }}
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{ backgroundColor: '#F8EDD4' }}>
-            <span className="text-sm font-bold" style={{ color: '#5C3D0A' }}>MG</span>
-          </div>
-          <div>
-            <p className="text-xs text-dust">Bonjour,</p>
-            <p className="font-serif font-semibold text-ink leading-tight" style={{ fontSize: '1.1rem' }}>Manager</p>
-          </div>
+        <div className="animate-fade-up">
+          <p className="label-xs mb-3">Au Grand Jour · Manager</p>
+          <h1 className="font-serif text-ink" style={{ fontSize: '2rem', lineHeight: 1.15 }}>
+            {prenom ? `Bonjour ${prenom} 👋` : 'Bonjour 👋'}
+          </h1>
+          <p className="text-sm mt-1" style={{ color: '#71717A' }}>
+            {weekCount > 0
+              ? `${weekCount} commande${weekCount > 1 ? 's' : ''} cette semaine`
+              : 'Aucune commande cette semaine'}
+          </p>
         </div>
-        <button className="text-dust/60 active:text-ink transition-colors p-2">
-          <IconBell />
-        </button>
       </header>
 
       {/* ── Contenu scrollable ── */}
-      <main className="flex-1 px-4 pb-36 overflow-y-auto">
+      <main className="flex-1 px-4 pt-5 pb-36 overflow-y-auto">
 
         {tab === 'home' && (
           <>
-            <SummaryCard orders={orders} />
+            <StatCards orders={orders} />
 
             <MonthCalendar
               orders={orders}
@@ -494,23 +515,29 @@ export default function ManagerDashboard() {
               onSelectDay={(day) => setSelectedDay(day ?? new Date())}
             />
 
-            <div className="flex items-baseline justify-between mb-3">
-              <p className="font-sans font-semibold text-ink capitalize" style={{ fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
+            <div className="flex items-center justify-between mb-3 animate-fade-up delay-150">
+              <p className="font-semibold text-ink capitalize" style={{ fontSize: '0.95rem' }}>
                 {sectionTitle}
               </p>
-              <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-dust">
-                {dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}
-              </span>
+              <span className="label-xs">{dayOrders.length} cmd</span>
             </div>
 
             {dayOrders.length === 0 ? (
-              <div className="bg-white rounded-2xl text-center py-12" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-                <p className="text-2xl mb-2">📅</p>
-                <p className="text-sm text-dust">Aucune commande ce jour</p>
+              <div
+                className="rounded-3xl text-center py-14 animate-fade-up delay-200"
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4' }}
+              >
+                <p className="text-2xl mb-2">—</p>
+                <p className="text-sm" style={{ color: '#71717A' }}>Aucune commande ce jour</p>
               </div>
             ) : (
               dayOrders.map(o => (
-                <OrderCard key={o.id} order={o} expanded={expandedId === o.id} onToggle={() => toggleExpand(o.id)} />
+                <OrderCard
+                  key={o.id}
+                  order={o}
+                  expanded={expandedId === o.id}
+                  onToggle={() => setExpandedId(prev => prev === o.id ? null : o.id)}
+                />
               ))
             )}
           </>
@@ -520,60 +547,62 @@ export default function ManagerDashboard() {
 
       </main>
 
-      {/* ── Bottom nav — 2 + center + 2 ── */}
+      {/* ── Bottom nav manager ── */}
       <nav
         className="fixed bottom-0 left-0 right-0 bg-white max-w-lg mx-auto z-50"
         style={{
-          borderTop: '1px solid rgba(232,226,216,0.5)',
+          borderTop: '1px solid #E7E5E4',
           paddingBottom: 'env(safe-area-inset-bottom)',
-          boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.04)',
         }}
       >
         <div className="flex items-end pt-2 pb-2">
 
-          {/* Accueil + Toutes */}
-          {['home', 'toutes'].map(id => {
-            const item   = NAV_ITEMS.find(x => x.id === id)
-            const active = tab === id
+          {NAV_ITEMS.slice(0, 2).map(item => {
+            const active = tab === item.id
             return (
-              <button key={id} onClick={() => changeTab(id)}
+              <button
+                key={item.id}
+                onClick={() => changeTab(item.id)}
                 className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
-                style={{ color: active ? '#C8A96E' : '#B0B0B0' }}>
+                style={{ color: active ? ACTIVE : INACTIVE }}
+              >
                 <item.Icon />
                 <span className="text-[10px] font-semibold mt-0.5">{item.label}</span>
-                {active && <span className="w-1 h-1 rounded-full mt-0.5" style={{ backgroundColor: '#C8A96E' }} />}
+                {active && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#E8E27A' }} />}
               </button>
             )
           })}
 
-          {/* Bouton + central surélevé */}
+          {/* Bouton + surélevé */}
           <button
             onClick={() => navigate('/vendeur/nouvelle-commande')}
             className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform"
             style={{
-              backgroundColor: '#C8A96E',
-              boxShadow: '0 6px 24px rgba(200,169,110,0.5)',
+              backgroundColor: '#18181B',
+              boxShadow: '0 8px 32px rgba(24,24,27,0.25)',
               transform: 'translateY(-14px)',
               marginBottom: -14,
             }}
           >
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5"  y1="12" x2="19" y2="12"/>
             </svg>
           </button>
 
-          {/* Analyses + Réglages */}
-          {['analyses', 'reglages'].map(id => {
-            const item   = NAV_ITEMS.find(x => x.id === id)
-            const active = tab === id
+          {NAV_ITEMS.slice(2).map(item => {
+            const active = tab === item.id
             return (
-              <button key={id} onClick={() => changeTab(id)}
+              <button
+                key={item.id}
+                onClick={() => changeTab(item.id)}
                 className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
-                style={{ color: active ? '#C8A96E' : '#B0B0B0' }}>
+                style={{ color: active ? ACTIVE : INACTIVE }}
+              >
                 <item.Icon />
                 <span className="text-[10px] font-semibold mt-0.5">{item.label}</span>
-                {active && <span className="w-1 h-1 rounded-full mt-0.5" style={{ backgroundColor: '#C8A96E' }} />}
+                {active && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#E8E27A' }} />}
               </button>
             )
           })}

@@ -13,28 +13,27 @@ import AppLayout from '../components/layout/AppLayout'
 
 const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
-// Badge jour : rouge si ≥1 todo · orange si ≥1 inprogress · vert si tout ready/done
 function dayBadge(orders) {
   if (orders.length === 0) return null
-  if (orders.some(o => o.status === 'todo'))       return { bg: '#FEE2E2', color: '#DC2626', ring: '#FCA5A5' }
-  if (orders.some(o => o.status === 'inprogress')) return { bg: '#FEF3C7', color: '#D97706', ring: '#FCD34D' }
-  return                                                  { bg: '#DCFCE7', color: '#16A34A', ring: '#86EFAC' }
+  if (orders.some(o => o.status === 'todo'))       return { bg: '#FEE2E2', color: '#b91c1c' }
+  if (orders.some(o => o.status === 'inprogress')) return { bg: '#FEF3C7', color: '#92400e' }
+  return                                                  { bg: '#DCFCE7', color: '#166534' }
 }
 
-function urgencyBar(pickupDate) {
+function urgencyColor(pickupDate) {
   const h = differenceInHours(parseISO(pickupDate), new Date())
   const t = getUrgencyHours()
-  if (h < 0)      return 'bg-red-500'
-  if (h < t)      return 'bg-red-400'
-  if (h < t + 24) return 'bg-amber-400'
-  return 'bg-sage'
+  if (h < 0)      return '#EF4444'
+  if (h < t)      return '#EF4444'
+  if (h < t + 24) return '#F59E0B'
+  return '#22C55E'
 }
 
 const PRODUCTION_STATUSES = ['todo', 'inprogress', 'ready']
 const STATUS_PICKER = {
-  todo:       { label: 'Pas commencé', active: 'bg-ink text-chalk',          idle: 'bg-parchment text-dust border border-warm' },
-  inprogress: { label: 'En cours',     active: 'bg-amber-500 text-white',    idle: 'bg-amber-50 text-amber-700 border border-amber-200' },
-  ready:      { label: 'Prêt ✓',       active: 'bg-lime text-ink font-bold', idle: 'bg-green-50 text-green-700 border border-green-200' },
+  todo:       { label: 'Pas commencé', activeBg: '#18181B', activeColor: '#FFFFFF', idleBg: '#F1EFE8', idleColor: '#71717A' },
+  inprogress: { label: 'En cours',     activeBg: '#FEF3C7', activeColor: '#92400e', idleBg: '#F8F7F3', idleColor: '#71717A' },
+  ready:      { label: 'Prêt ✓',       activeBg: '#E8E27A', activeColor: '#18181B', idleBg: '#F8F7F3', idleColor: '#71717A' },
 }
 
 export default function Calendrier() {
@@ -48,13 +47,11 @@ export default function Calendrier() {
 
   useEffect(() => subscribeOrders(setAllOrders), [])
 
-  // Uniquement les commandes du pôle actuel, non récupérées
   const poleOrders = useMemo(
     () => allOrders.filter(o => o.status !== 'done' && isAssignedTo(o, pole)),
     [allOrders, pole]
   )
 
-  // Commandes du jour sélectionné
   const dayOrders = useMemo(() =>
     poleOrders
       .filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), selectedDay))
@@ -62,7 +59,6 @@ export default function Calendrier() {
     [poleOrders, selectedDay]
   )
 
-  // Grille du mois
   const calDays = useMemo(() => {
     const mStart = startOfMonth(viewMonth)
     const mEnd   = endOfMonth(viewMonth)
@@ -76,12 +72,7 @@ export default function Calendrier() {
     () => poleOrders.filter(o => o.pickupDate && isSameMonth(parseISO(o.pickupDate), viewMonth)),
     [poleOrders, viewMonth]
   )
-  const activeDays = useMemo(
-    () => new Set(monthOrders.map(o => format(parseISO(o.pickupDate), 'yyyy-MM-dd'))),
-    [monthOrders]
-  )
 
-  // Commandes par jour (pour les badges)
   const ordersByDay = useMemo(() => {
     const map = {}
     monthOrders.forEach(o => {
@@ -92,52 +83,58 @@ export default function Calendrier() {
     return map
   }, [monthOrders])
 
+  const activeDays = useMemo(
+    () => new Set(monthOrders.map(o => format(parseISO(o.pickupDate), 'yyyy-MM-dd'))),
+    [monthOrders]
+  )
+
   return (
     <AppLayout title="Calendrier">
 
-      {/* ── Calendrier mensuel ─────────────────────────────────────── */}
-      <div className="bg-white rounded-2xl p-4 mb-5" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
-
+      {/* Calendrier mensuel */}
+      <div
+        className="rounded-3xl p-5 mb-5 animate-fade-up"
+        style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+      >
         {/* Navigation mois */}
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={() => { setViewMonth(m => subMonths(m, 1)); setExpandedId(null) }}
-            className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-2xl font-light"
-            style={{ color: '#6B6B6B' }}
+            className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
+            style={{ color: '#71717A' }}
           >‹</button>
-          <p className="font-serif font-semibold capitalize text-ink" style={{ fontSize: '1.05rem' }}>
+          <p className="font-semibold capitalize text-ink" style={{ fontSize: '0.95rem' }}>
             {format(viewMonth, 'MMMM yyyy', { locale: fr })}
           </p>
           <button
             onClick={() => { setViewMonth(m => addMonths(m, 1)); setExpandedId(null) }}
-            className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-2xl font-light"
-            style={{ color: '#6B6B6B' }}
+            className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
+            style={{ color: '#71717A' }}
           >›</button>
         </div>
 
         {/* Légende */}
-        <div className="flex items-center gap-3 mb-4 px-1 flex-wrap">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
-            <span className="text-[10px] text-dust">À faire</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-            <span className="text-[10px] text-dust">En cours</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-green-400" />
-            <span className="text-[10px] text-dust">Tout prêt</span>
-          </div>
-          <span className="text-[10px] text-dust ml-auto">
-            <span className="font-bold text-ink">{monthOrders.length}</span> cmd · <span className="font-bold text-ink">{activeDays.size}</span> jour{activeDays.size > 1 ? 's' : ''}
+        <div className="flex items-center gap-4 mb-4 px-1 flex-wrap">
+          {[
+            { color: '#EF4444', label: 'À faire' },
+            { color: '#F59E0B', label: 'En cours' },
+            { color: '#22C55E', label: 'Tout prêt' },
+          ].map(item => (
+            <div key={item.label} className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+              <span style={{ fontSize: '10px', color: '#71717A' }}>{item.label}</span>
+            </div>
+          ))}
+          <span className="ml-auto" style={{ fontSize: '10px', color: '#71717A' }}>
+            <span className="font-semibold text-ink">{monthOrders.length}</span> cmd ·{' '}
+            <span className="font-semibold text-ink">{activeDays.size}</span> jour{activeDays.size > 1 ? 's' : ''}
           </span>
         </div>
 
         {/* Labels colonnes */}
         <div className="grid grid-cols-7 mb-1">
           {DAY_LABELS.map((d, i) => (
-            <p key={i} className="text-center text-[10px] font-bold uppercase py-1" style={{ color: '#B0B0B0' }}>
+            <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#A1A1AA', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               {d}
             </p>
           ))}
@@ -158,28 +155,27 @@ export default function Calendrier() {
                 key={day.toISOString()}
                 disabled={!inMonth}
                 onClick={() => { setSelectedDay(day); setExpandedId(null) }}
-                className="flex flex-col items-center py-1.5 rounded-xl transition-all active:scale-95"
+                className="flex flex-col items-center py-1.5 rounded-2xl transition-all active:scale-95"
                 style={{
-                  backgroundColor: isSelected ? '#1A1A1A' : isToday ? '#FBF0DC' : 'transparent',
+                  backgroundColor: isSelected ? '#18181B' : isToday ? '#F7F4C8' : 'transparent',
                   opacity: inMonth ? 1 : 0.12,
                 }}
               >
                 <span
-                  className="text-sm font-semibold leading-tight"
-                  style={{ color: isSelected ? '#fff' : '#1A1A1A' }}
+                  className="text-sm font-medium leading-tight"
+                  style={{ color: isSelected ? '#FFFFFF' : '#18181B' }}
                 >
                   {format(day, 'd')}
                 </span>
-
-                {/* Badge coloré */}
                 <div className="h-4 flex items-center justify-center mt-0.5">
                   {badge ? (
                     <span
-                      className="text-[9px] font-bold px-1.5 min-w-[18px] h-4 flex items-center justify-center rounded-full leading-none"
-                      style={isSelected
-                        ? { backgroundColor: 'rgba(255,255,255,0.25)', color: '#fff' }
-                        : { backgroundColor: badge.bg, color: badge.color, outline: `1.5px solid ${badge.ring}` }
-                      }
+                      className="text-[9px] font-bold flex items-center justify-center"
+                      style={{
+                        backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : badge.bg,
+                        color: isSelected ? '#fff' : badge.color,
+                        minWidth: 16, height: 16, padding: '0 4px', borderRadius: 9999,
+                      }}
                     >
                       {dayOrd.length}
                     </span>
@@ -191,25 +187,26 @@ export default function Calendrier() {
         </div>
       </div>
 
-      {/* ── Liste commandes du jour ────────────────────────────────── */}
-      <div className="flex items-baseline justify-between mb-3">
-        <p className="text-sm font-semibold text-ink capitalize">
+      {/* Liste commandes du jour */}
+      <div className="flex items-center justify-between mb-3">
+        <p className="font-semibold text-ink capitalize" style={{ fontSize: '0.95rem' }}>
           {isSameDay(selectedDay, new Date())
-            ? "Commandes d'aujourd'hui"
-            : `Commandes du ${format(selectedDay, 'd MMMM', { locale: fr })}`}
+            ? "Aujourd'hui"
+            : format(selectedDay, 'd MMMM', { locale: fr })}
         </p>
         {dayOrders.length > 0 && (
-          <span className="text-xs font-bold text-dust">
-            {dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}
-          </span>
+          <span className="label-xs">{dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}</span>
         )}
       </div>
 
       {dayOrders.length === 0 ? (
-        <div className="bg-chalk border border-warm rounded-2xl text-center py-12 px-6">
-          <p className="text-2xl mb-3">—</p>
-          <p className="font-bold text-ink">Rien ce jour-là</p>
-          <p className="text-sm text-dust mt-1">Sélectionne un jour coloré dans le calendrier</p>
+        <div
+          className="rounded-3xl text-center py-14"
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4' }}
+        >
+          <p className="text-2xl mb-2">—</p>
+          <p className="font-semibold text-ink mb-1">Rien ce jour-là</p>
+          <p className="text-sm" style={{ color: '#71717A' }}>Sélectionne un jour coloré dans le calendrier</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -228,7 +225,7 @@ export default function Calendrier() {
   )
 }
 
-/* ── Carte commande ──────────────────────────────────────────────────── */
+// ── Carte commande ────────────────────────────────────────────────────────
 function OrderCard({ order, expanded, onToggle }) {
   const [busy, setBusy] = useState(false)
 
@@ -242,63 +239,61 @@ function OrderCard({ order, expanded, onToggle }) {
   }
 
   return (
-    <div className="bg-chalk border border-warm rounded-2xl overflow-hidden">
-      <div className={`h-1.5 ${urgencyBar(order.pickupDate)}`} />
+    <div
+      className="rounded-3xl overflow-hidden"
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+    >
+      <div className="h-1 rounded-t-3xl" style={{ backgroundColor: urgencyColor(order.pickupDate) }} />
 
-      {/* Résumé cliquable */}
       <button
-        className="w-full px-4 py-3.5 flex items-start gap-3 text-left active:bg-black/[0.02] transition-colors"
+        className="w-full px-5 py-4 flex items-start gap-3 text-left active:bg-black/[0.01] transition-colors"
         onClick={onToggle}
       >
-        <div className="flex-shrink-0 text-right min-w-[44px]">
-          <p className="text-[10px] font-bold text-dust uppercase tracking-wide leading-none mb-1">Retrait</p>
-          <p className="text-xl font-bold text-ink tabular-nums leading-none">
+        <div className="flex-shrink-0 text-right" style={{ minWidth: 44 }}>
+          <p style={{ fontSize: '10px', fontWeight: 600, color: '#A1A1AA', textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1, marginBottom: 4 }}>
+            Retrait
+          </p>
+          <p className="font-semibold text-ink tabular-nums text-lg leading-none">
             {format(parseISO(order.pickupDate), 'HH:mm')}
           </p>
         </div>
 
-        <div className="w-px self-stretch bg-warm flex-shrink-0" />
+        <div className="w-px self-stretch" style={{ backgroundColor: '#E7E5E4' }} />
 
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-ink truncate">{order.clientName}</p>
-          <p className="text-sm text-dust truncate mt-0.5">{order.articles}</p>
-          {/* Badge statut visible en résumé */}
+          <p className="font-semibold text-ink text-sm truncate">{order.clientName}</p>
+          <p className="text-xs truncate mt-0.5" style={{ color: '#71717A' }}>{order.articles}</p>
           <div className="mt-2">
             <StatusPill status={order.status} />
           </div>
         </div>
 
-        <span
-          className="text-dust/40 flex-shrink-0 self-center text-base transition-transform duration-200"
-          style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-        >↓</span>
+        <svg
+          width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="#A1A1AA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          className="flex-shrink-0 self-center transition-transform duration-200"
+          style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+        >
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
       </button>
 
-      {/* Détail déplié */}
       {expanded && (
-        <div className="px-4 pb-4 pt-3 space-y-3" style={{ borderTop: '1px solid rgba(232,226,216,0.6)' }}>
+        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid #F1EFE8' }}>
 
-          {/* Articles */}
-          <div className="bg-parchment rounded-xl px-3.5 py-3">
-            <p className="text-[10px] font-bold text-dust uppercase tracking-widest mb-1.5">Commande</p>
-            <p className="font-semibold text-ink leading-relaxed">{order.articles}</p>
+          <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#F1EFE8' }}>
+            <p className="label-xs mb-1">Commande</p>
+            <p className="font-medium text-ink text-sm leading-relaxed">{order.articles}</p>
           </div>
 
-          {/* Notes / allergies — fond jaune pâle mis en évidence */}
           {order.notes && (
-            <div className="rounded-xl px-3.5 py-3 flex gap-2.5" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
-              <span className="text-base flex-shrink-0">⚠️</span>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#92400E' }}>
-                  Attention
-                </p>
-                <p className="text-sm leading-relaxed" style={{ color: '#78350F' }}>{order.notes}</p>
-              </div>
+            <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
+              <span className="text-base mr-2">⚠️</span>
+              <p className="text-xs font-medium inline" style={{ color: '#92400e' }}>{order.notes}</p>
             </div>
           )}
 
-          {/* Sélecteur de statut */}
-          <div className="grid grid-cols-3 gap-1.5 pt-0.5">
+          <div className="grid grid-cols-3 gap-2 pt-1">
             {PRODUCTION_STATUSES.map(s => {
               const cfg      = STATUS_PICKER[s]
               const isActive = order.status === s
@@ -307,7 +302,12 @@ function OrderCard({ order, expanded, onToggle }) {
                   key={s}
                   onClick={() => handleSetStatus(s)}
                   disabled={busy}
-                  className={`rounded-xl py-2.5 text-xs font-bold transition-all active:scale-95 disabled:opacity-50 ${isActive ? cfg.active : cfg.idle}`}
+                  className="rounded-2xl py-3 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50"
+                  style={{
+                    backgroundColor: isActive ? cfg.activeBg : cfg.idleBg,
+                    color:           isActive ? cfg.activeColor : cfg.idleColor,
+                    border:          isActive ? 'none' : '1px solid #E7E5E4',
+                  }}
                 >
                   {cfg.label}
                 </button>
@@ -323,16 +323,19 @@ function OrderCard({ order, expanded, onToggle }) {
 
 function StatusPill({ status }) {
   const map = {
-    todo:       { label: 'À faire',      cls: 'bg-parchment text-dust border border-warm' },
-    inprogress: { label: 'En cours',     cls: 'bg-amber-50 text-amber-700 border border-amber-200' },
-    ready:      { label: 'Prêt ✓',       cls: 'bg-green-50 text-green-700 border border-green-200' },
-    done:       { label: 'Récupéré',     cls: 'bg-chalk text-dust/60 border border-warm/50' },
-    cancelled:  { label: 'Annulée',      cls: 'bg-red-50 text-red-400 border border-red-100' },
+    todo:       { label: 'À faire',  bg: '#F1EFE8', color: 'rgba(24,24,27,0.55)' },
+    inprogress: { label: 'En cours', bg: '#FEF3C7', color: '#92400e' },
+    ready:      { label: 'Prêt ✓',   bg: '#DCFCE7', color: '#166534' },
+    done:       { label: 'Récupéré', bg: '#F4F4F5', color: 'rgba(24,24,27,0.4)' },
+    cancelled:  { label: 'Annulée',  bg: '#FEE2E2', color: '#b91c1c' },
   }
-  const cfg = map[status] ?? map.todo
+  const c = map[status] ?? map.todo
   return (
-    <span className={`inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full ${cfg.cls}`}>
-      {cfg.label}
+    <span
+      className="inline-flex text-[10px] font-semibold"
+      style={{ backgroundColor: c.bg, color: c.color, padding: '0.2rem 0.6rem', borderRadius: 9999 }}
+    >
+      {c.label}
     </span>
   )
 }

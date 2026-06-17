@@ -1,15 +1,24 @@
 const CONFIG = {
-  todo:       { label: 'À faire',  cls: 'bg-status-todo text-ink/60' },
-  inprogress: { label: 'En cours', cls: 'bg-status-inprogress text-amber-800' },
-  ready:      { label: 'Prêt',     cls: 'bg-status-ready text-green-800' },
-  done:       { label: 'Récupéré', cls: 'bg-status-done text-ink/40' },
-  cancelled:  { label: 'Annulée',  cls: 'bg-red-50 text-red-500' },
+  todo:       { label: 'À faire',   bg: '#F1EFE8', color: 'rgba(24,24,27,0.55)' },
+  inprogress: { label: 'En cours',  bg: '#FEF3C7', color: '#92400e' },
+  ready:      { label: 'Prêt',      bg: '#DCFCE7', color: '#166534' },
+  done:       { label: 'Récupéré',  bg: '#F4F4F5', color: 'rgba(24,24,27,0.4)' },
+  cancelled:  { label: 'Annulée',   bg: '#FEE2E2', color: '#b91c1c' },
 }
 
 export default function StatusBadge({ status }) {
-  const c = CONFIG[status] ?? { label: status, cls: 'bg-parchment text-dust' }
+  const c = CONFIG[status] ?? { label: status, bg: '#F1EFE8', color: '#71717A' }
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${c.cls}`}>
+    <span
+      className="inline-flex items-center text-xs font-semibold"
+      style={{
+        backgroundColor: c.bg,
+        color: c.color,
+        padding: '0.2rem 0.6rem',
+        borderRadius: '9999px',
+        letterSpacing: '0.01em',
+      }}
+    >
       {c.label}
     </span>
   )

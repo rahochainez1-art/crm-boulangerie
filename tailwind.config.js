@@ -5,40 +5,49 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans:  ['DM Sans', 'sans-serif'],
-        serif: ['Poppins', 'sans-serif'],
+        sans:  ['Inter', 'sans-serif'],
+        serif: ['DM Serif Display', 'serif'],
       },
       colors: {
-        // Fond global
-        cream:      '#FAFAF7',
-        // Blobs décoratifs
-        'blob-green':  '#D4E8C2',
-        'blob-yellow': '#F5E6C8',
-        'blob-pink':   '#F2D4D4',
-        // Cartes
-        chalk:      '#FFFFFF',
-        // Accent CTA
-        accent:     '#C8A96E',
-        // Textes
-        ink:        '#1A1A1A',
-        dust:       '#6B6B6B',
-        // Bordures / fond alternatif
-        parchment:  '#F0EBE0',
-        warm:       '#E8E2D8',
-        // Accents couleur
-        lime:       '#EEED9E',
-        sage:       '#C8D8A8',
-        // Statuts
+        // ── Fond & surfaces ──────────────────────────────────
+        base:         '#F8F7F3',
+        surface:      '#FFFFFF',
+        'surface-2':  '#F1EFE8',
+        // ── Textes ──────────────────────────────────────────
+        ink:          '#18181B',
+        muted:        '#71717A',
+        dust:         '#71717A',
+        // ── Bordures ────────────────────────────────────────
+        border:       '#E7E5E4',
+        warm:         '#E7E5E4',
+        // ── Accent principal ────────────────────────────────
+        accent:       '#E8E27A',
+        'accent-h':   '#DDD660',
+        'accent-l':   '#F7F4C8',
+        // ── Sémantiques ─────────────────────────────────────
+        success:      '#22C55E',
+        info:         '#3B82F6',
+        warning:      '#F59E0B',
+        error:        '#EF4444',
+        // ── Rétrocompat ─────────────────────────────────────
+        chalk:        '#FFFFFF',
+        cream:        '#F8F7F3',
+        parchment:    '#F1EFE8',
+        lime:         '#F7F4C8',
+        sage:         '#D1FAE5',
+        // ── Statuts ─────────────────────────────────────────
         status: {
-          todo:       '#F0EBE0',
+          todo:       '#F1EFE8',
           inprogress: '#FEF3C7',
           ready:      '#DCFCE7',
-          done:       '#F5F4F2',
+          done:       '#F4F4F5',
         },
-        // Rétrocompat
-        vanilla:  '#EFF0A3',
-        eerie:    '#1A1A1A',
-        ghost:    '#FAFAF7',
+      },
+      boxShadow: {
+        card:      '0 4px 24px rgba(0,0,0,0.04)',
+        'card-md': '0 8px 40px rgba(0,0,0,0.07)',
+        nav:       '0 -4px 24px rgba(0,0,0,0.04)',
+        accent:    '0 8px 32px rgba(232,226,122,0.35)',
       },
       borderRadius: {
         pill: '9999px',
