@@ -9,45 +9,43 @@ export default {
         serif: ['DM Serif Display', 'serif'],
       },
       colors: {
-        // ── Fond & surfaces ──────────────────────────────────
-        base:         '#F8F7F3',
-        surface:      '#FFFFFF',
-        'surface-2':  '#F1EFE8',
-        // ── Textes ──────────────────────────────────────────
-        ink:          '#18181B',
-        muted:        '#71717A',
-        dust:         '#71717A',
-        // ── Bordures ────────────────────────────────────────
-        border:       '#E7E5E4',
-        warm:         '#E7E5E4',
-        // ── Accent principal ────────────────────────────────
-        accent:       '#E8E27A',
-        'accent-h':   '#DDD660',
-        'accent-l':   '#F7F4C8',
-        // ── Sémantiques ─────────────────────────────────────
-        success:      '#22C55E',
-        info:         '#3B82F6',
-        warning:      '#F59E0B',
-        error:        '#EF4444',
-        // ── Rétrocompat ─────────────────────────────────────
-        chalk:        '#FFFFFF',
-        cream:        '#F8F7F3',
-        parchment:    '#F1EFE8',
-        lime:         '#F7F4C8',
-        sage:         '#D1FAE5',
-        // ── Statuts ─────────────────────────────────────────
+        // ── Huru palette ─────────────────────────────────────
+        butter:    '#F5EEB5',    // fond principal chaud
+        lemon:     '#EBDF28',    // accent vif
+        'lemon-l': '#F5F0A8',    // accent léger
+        oat:       '#E8E4C4',    // inputs, surfaces secondaires
+        cream:     '#FEFDF5',    // cartes
+        charcoal:  '#232726',    // texte principal
+        stone:     '#6E6B4E',    // texte secondaire
+        border:    '#DDD9B0',    // bordures sur fond beurre
+        mint:      '#C5E6D3',    // succès
+        // ── Sémantiques ──────────────────────────────────────
+        success:   '#22C55E',
+        warning:   '#F59E0B',
+        error:     '#EF4444',
+        info:      '#3B82F6',
+        // ── Rétrocompat ──────────────────────────────────────
+        ink:       '#232726',
+        dust:      '#6E6B4E',
+        muted:     '#6E6B4E',
+        warm:      '#DDD9B0',
+        parchment: '#E8E4C4',
+        chalk:     '#FEFDF5',
+        surface:   '#FEFDF5',
+        base:      '#F5EEB5',
+        accent:    '#EBDF28',
         status: {
-          todo:       '#F1EFE8',
+          todo:       '#E8E4C4',
           inprogress: '#FEF3C7',
-          ready:      '#DCFCE7',
-          done:       '#F4F4F5',
+          ready:      '#C5E6D3',
+          done:       '#EDEDEA',
         },
       },
       boxShadow: {
-        card:      '0 4px 24px rgba(0,0,0,0.04)',
-        'card-md': '0 8px 40px rgba(0,0,0,0.07)',
-        nav:       '0 -4px 24px rgba(0,0,0,0.04)',
-        accent:    '0 8px 32px rgba(232,226,122,0.35)',
+        card:    '0 2px 16px rgba(35,39,38,0.06)',
+        'card-lg': '0 8px 40px rgba(35,39,38,0.10)',
+        nav:     '0 -2px 16px rgba(35,39,38,0.06)',
+        lemon:   '0 4px 20px rgba(235,223,40,0.5)',
       },
       borderRadius: {
         pill: '9999px',
