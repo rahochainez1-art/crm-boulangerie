@@ -5,7 +5,6 @@ import toast from 'react-hot-toast'
 import { subscribeOrders, updateOrder, cancelOrder } from '../../lib/orders'
 import { useRole } from '../../context/RoleContext'
 import StatusBadge from '../../components/ui/StatusBadge'
-import BottomNav from '../../components/layout/BottomNav'
 
 const TABS = [
   { id: 'all',       label: 'Toutes' },
@@ -67,7 +66,7 @@ export default function MesCommandes() {
             Valider
           </button>
         </form>
-        <BottomNav />
+  
       </div>
     )
   }
@@ -125,7 +124,7 @@ export default function MesCommandes() {
         )}
       </main>
 
-      <BottomNav />
+
     </div>
   )
 }

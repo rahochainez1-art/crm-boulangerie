@@ -1,5 +1,3 @@
-import BottomNav from './BottomNav'
-
 export default function AppLayout({ title, subtitle, action, children }) {
   return (
     <div className="min-h-dvh flex flex-col max-w-lg mx-auto">
@@ -32,7 +30,6 @@ export default function AppLayout({ title, subtitle, action, children }) {
         {children}
       </main>
 
-      <BottomNav />
     </div>
   )
 }

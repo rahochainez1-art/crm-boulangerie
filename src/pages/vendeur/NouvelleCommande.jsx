@@ -4,7 +4,6 @@ import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { createOrder } from '../../lib/orders'
-import BottomNav from '../../components/layout/BottomNav'
 
 const RACCOURCIS = [
   'Fraisier 4 pers',
@@ -167,7 +166,7 @@ export default function NouvelleCommande() {
           </button>
 
         </main>
-        <BottomNav />
+  
       </div>
     )
   }
@@ -284,7 +283,7 @@ export default function NouvelleCommande() {
         </form>
       </main>
 
-      <BottomNav />
+
     </div>
   )
 }

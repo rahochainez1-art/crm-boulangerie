@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { RoleProvider, useRole } from './context/RoleContext'
+import BottomNav from './components/layout/BottomNav'
 
 import RoleSelector from './pages/RoleSelector'
 import Settings from './pages/Settings'
@@ -83,6 +84,7 @@ export default function App() {
       <BrowserRouter>
         <BackgroundBlobs />
         <AppRoutes />
+        <BottomNav />
         <Toaster
           position="top-center"
           toastOptions={{

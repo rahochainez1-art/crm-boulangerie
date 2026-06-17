@@ -10,7 +10,6 @@ import toast from 'react-hot-toast'
 import { subscribeOrders, setStatus, isAssignedTo } from '../../lib/orders'
 import { getPrenom, getUrgencyHours } from '../../lib/settings'
 import { useNewOrderNotification } from '../../hooks/useNewOrderNotification'
-import BottomNav from '../../components/layout/BottomNav'
 
 const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
@@ -303,7 +302,6 @@ export default function PatissiereDashboard() {
 
       </main>
 
-      <BottomNav />
     </div>
   )
 }

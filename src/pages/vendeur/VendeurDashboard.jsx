@@ -6,7 +6,6 @@ import {
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { subscribeOrders, setStatus } from '../../lib/orders'
-import BottomNav from '../../components/layout/BottomNav'
 import { getPrenom } from '../../lib/settings'
 
 const BLAGUES = [
@@ -330,8 +329,6 @@ export default function VendeurDashboard() {
         </main>
 
       </div>
-
-      <BottomNav />
 
       {selected && <OrderSheet order={selected} onClose={() => setSelected(null)} />}
     </div>

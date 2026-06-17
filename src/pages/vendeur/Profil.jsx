@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react'
 import toast from 'react-hot-toast'
-import BottomNav from '../../components/layout/BottomNav'
 
 const AVATAR_KEY = 'agj_profil_avatar'
 const NAME_KEY   = 'agj_profil_name'
@@ -139,7 +138,7 @@ export default function Profil() {
 
       </main>
 
-      <BottomNav />
+
     </div>
   )
 }

@@ -3,7 +3,6 @@ import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { subscribeOrders } from '../../lib/orders'
 import StatusBadge from '../../components/ui/StatusBadge'
-import BottomNav from '../../components/layout/BottomNav'
 
 const TABS = [
   { id: 'all',       label: 'Toutes' },
@@ -94,7 +93,7 @@ export default function Historique() {
         )}
       </main>
 
-      <BottomNav />
+
     </div>
   )
 }
