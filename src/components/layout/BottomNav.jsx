@@ -61,7 +61,7 @@ function NavShell({ children }) {
       className="fixed bottom-0 left-0 right-0 bg-white max-w-lg mx-auto z-50"
       style={{
         borderTop: '1px solid #E7E5E4',
-        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
         boxShadow: '0 -4px 24px rgba(0,0,0,0.04)',
       }}
     >
