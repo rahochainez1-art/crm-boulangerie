@@ -55,18 +55,25 @@ const IconPlus = () => (
 )
 
 // ── Nav shell commune ─────────────────────────────────────────────────────
+// L'élément fixed couvre TOUTE la largeur du viewport (left-0 right-0 sans max-w).
+// Le centrage max-w est appliqué sur un div INTÉRIEUR — pattern fiable sur Android/Samsung.
 function NavShell({ children }) {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 bg-white max-w-lg mx-auto z-50"
-      style={{
-        borderTop: '1px solid #E7E5E4',
-        paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
-        boxShadow: '0 -4px 24px rgba(0,0,0,0.04)',
-      }}
+      className="fixed bottom-0 left-0 right-0 z-50"
+      style={{ backgroundColor: '#FFFFFF' }}
     >
-      <div className="flex items-end pt-2 pb-2">
-        {children}
+      <div
+        className="max-w-lg mx-auto"
+        style={{
+          borderTop: '1px solid #E7E5E4',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.04)',
+        }}
+      >
+        <div className="flex items-end pt-2 pb-2">
+          {children}
+        </div>
       </div>
     </nav>
   )
