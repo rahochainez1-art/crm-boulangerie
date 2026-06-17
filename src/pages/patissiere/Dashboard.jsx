@@ -9,6 +9,7 @@ import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { subscribeOrders, setStatus, isAssignedTo } from '../../lib/orders'
 import { getPrenom, getUrgencyHours } from '../../lib/settings'
+import { useNewOrderNotification } from '../../hooks/useNewOrderNotification'
 import BottomNav from '../../components/layout/BottomNav'
 
 // ── Icônes ────────────────────────────────────────────────────────────────
@@ -227,6 +228,8 @@ export default function PatissiereDashboard() {
   const [selectedDay, setSelectedDay] = useState(() => new Date())
   const [expandedId, setExpandedId]   = useState(null)
 
+  const { newOrders, clearNew, isUnlocked, unlock } = useNewOrderNotification('patissiere')
+
   useEffect(() => subscribeOrders(setOrders), [])
 
   const poleOrders = useMemo(
@@ -255,6 +258,16 @@ export default function PatissiereDashboard() {
   return (
     <div className="min-h-dvh flex flex-col max-w-lg mx-auto">
 
+      {/* ── Bannière nouvelle commande ────────────────────────────────── */}
+      {newOrders.length > 0 && (
+        <NewOrderBanner
+          newOrders={newOrders}
+          isUnlocked={isUnlocked}
+          onUnlock={unlock}
+          onDismiss={clearNew}
+        />
+      )}
+
       {/* ── Header — identique manager, couleurs pâtissière ── */}
       <header
         className="px-5 pb-4 flex items-center justify-between"
@@ -272,9 +285,27 @@ export default function PatissiereDashboard() {
             <p className="font-serif font-semibold text-ink leading-tight" style={{ fontSize: '1.1rem' }}>Pâtissière</p>
           </div>
         </div>
-        <button className="text-dust/60 active:text-ink transition-colors p-2">
-          <IconBell />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Bouton d'activation son — affiché si pas encore unlocked */}
+          {!isUnlocked && (
+            <button
+              onClick={unlock}
+              className="text-[11px] font-bold px-2.5 py-1.5 rounded-xl border active:opacity-70 flex items-center gap-1"
+              style={{ backgroundColor: '#FEF3C7', color: '#92400E', borderColor: '#FDE68A' }}
+            >
+              🔕 Son
+            </button>
+          )}
+          {isUnlocked && (
+            <span className="text-[11px] font-bold px-2.5 py-1.5 rounded-xl"
+              style={{ backgroundColor: '#F2F6CC', color: '#4A4E10' }}>
+              🔊
+            </span>
+          )}
+          <button className="text-dust/60 active:text-ink transition-colors p-2">
+            <IconBell />
+          </button>
+        </div>
       </header>
 
       {/* ── Contenu scrollable ── */}
@@ -310,6 +341,7 @@ export default function PatissiereDashboard() {
               <OrderCard
                 key={order.id}
                 order={order}
+                isNew={newOrders.some(n => n.id === order.id)}
                 expanded={expandedId === order.id}
                 onToggle={() => toggleExpand(order.id)}
               />
@@ -324,8 +356,61 @@ export default function PatissiereDashboard() {
   )
 }
 
+// ── Bannière nouvelle commande ────────────────────────────────────────────
+function NewOrderBanner({ newOrders, isUnlocked, onUnlock, onDismiss }) {
+  // Auto-dismiss après 8 secondes
+  useEffect(() => {
+    const t = setTimeout(onDismiss, 8000)
+    return () => clearTimeout(t)
+  }, [newOrders.length])
+
+  const last = newOrders[newOrders.length - 1]
+
+  return (
+    <div
+      className="fixed top-0 left-0 right-0 z-50 max-w-lg mx-auto px-3"
+      style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}
+    >
+      <div
+        className="rounded-2xl px-4 py-3.5 flex items-start gap-3"
+        style={{
+          backgroundColor: '#1A1A1A',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+        }}
+      >
+        <span className="text-xl flex-shrink-0 mt-0.5">🍰</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#EEED9E' }}>
+            {newOrders.length > 1 ? `${newOrders.length} nouvelles commandes` : 'Nouvelle commande'}
+          </p>
+          <p className="font-semibold text-white truncate">{last.clientName}</p>
+          <p className="text-xs truncate mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            {last.articles}
+          </p>
+          {/* Bouton d'activation son si pas encore unlocked */}
+          {!isUnlocked && (
+            <button
+              onClick={onUnlock}
+              className="mt-2 text-[11px] font-bold px-2.5 py-1 rounded-lg active:opacity-70"
+              style={{ backgroundColor: 'rgba(255,255,255,0.12)', color: '#EEED9E' }}
+            >
+              🔕 Activer le son
+            </button>
+          )}
+        </div>
+        <button
+          onClick={onDismiss}
+          className="text-white/40 active:text-white flex-shrink-0 text-xl leading-none p-1 -mr-1"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // ── Carte commande (style manager + sélecteur statut) ─────────────────────
-function OrderCard({ order, expanded, onToggle }) {
+function OrderCard({ order, isNew, expanded, onToggle }) {
   const [busy, setBusy] = useState(false)
 
   const handleSetStatus = async (newStatus) => {
@@ -338,7 +423,15 @@ function OrderCard({ order, expanded, onToggle }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden mb-2.5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+    <div
+      className="rounded-2xl overflow-hidden mb-2.5 transition-all duration-500"
+      style={{
+        backgroundColor: '#fff',
+        boxShadow: isNew
+          ? '0 0 0 2px #C8A96E, 0 4px 16px rgba(200,169,110,0.25)'
+          : '0 1px 4px rgba(0,0,0,0.06)',
+      }}
+    >
       <div className={`h-1.5 ${urgencyBar(order.pickupDate)}`} />
 
       <button
