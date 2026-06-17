@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { format, parseISO, isSameMonth } from 'date-fns'
 import { useRole } from '../context/RoleContext'
 import { registerFCMToken, getDeviceId } from '../lib/notifications'
-import { seedFakeOrders, subscribeOrders } from '../lib/orders'
+import { seedFakeOrders, subscribeOrders, clearAllOrders } from '../lib/orders'
 import {
   getPrenom, savePrenom,
   getUrgencyHours, saveUrgencyHours,
@@ -32,6 +32,7 @@ export default function Settings() {
   const [notifStatus, setNotifStatus]   = useState(safeNotifPermission)
   const [notifLoading, setNotifLoading] = useState(false)
   const [seeding, setSeeding]           = useState(false)
+  const [clearing, setClearing]         = useState(false)
   const [csvLoading, setCsvLoading]     = useState(false)
   const [orders, setOrders]             = useState([])
 
@@ -115,6 +116,17 @@ export default function Settings() {
     try { await seedFakeOrders(); alert('7 commandes test ajoutées ✓') }
     catch (e) { alert('Erreur : ' + e.message) }
     finally { setSeeding(false) }
+  }
+
+  const handleClearAll = async () => {
+    const ok = window.confirm('Supprimer TOUTES les commandes ? Cette action est irréversible.')
+    if (!ok) return
+    setClearing(true)
+    try {
+      const n = await clearAllOrders()
+      alert(`${n} commande${n > 1 ? 's' : ''} supprimée${n > 1 ? 's' : ''} ✓`)
+    } catch (e) { alert('Erreur : ' + e.message) }
+    finally { setClearing(false) }
   }
 
   const initiale = prenom.trim()[0]?.toUpperCase() ?? meta.label[0]
@@ -272,7 +284,7 @@ export default function Settings() {
           </div>
         )}
 
-        {/* ── Export — manager ───────────────────────────────── */}
+        {/* ── Export + Gestion — manager ─────────────────────── */}
         {role === 'manager' && (
           <div className="bg-chalk border border-warm rounded-2xl p-4 space-y-3">
             <p className="label-xs">Export</p>
@@ -291,6 +303,22 @@ export default function Settings() {
                   : monthCount === 0
                   ? 'Aucune commande ce mois'
                   : `↓ Exporter CSV — ${monthCount} commande${monthCount > 1 ? 's' : ''}`}
+              </button>
+            </div>
+
+            {/* Suppression globale */}
+            <div style={{ borderTop: '1px solid rgba(232,226,216,0.6)', paddingTop: '0.75rem' }}>
+              <p className="text-sm font-semibold text-ink mb-0.5">Réinitialiser</p>
+              <p className="text-xs text-dust mb-3">
+                Supprime définitivement toutes les commandes de la plateforme.
+              </p>
+              <button
+                onClick={handleClearAll}
+                disabled={clearing}
+                className="w-full py-3 rounded-xl font-bold text-sm active:opacity-80 disabled:opacity-40 transition-opacity"
+                style={{ backgroundColor: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}
+              >
+                {clearing ? 'Suppression...' : '✕ Tout supprimer'}
               </button>
             </div>
           </div>

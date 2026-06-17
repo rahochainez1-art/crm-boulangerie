@@ -70,6 +70,13 @@ export const setStatus = (id, newStatus) =>
 
 export const deleteOrder = (id) => deleteDoc(doc(db, 'orders', id))
 
+export const clearAllOrders = async () => {
+  const { getDocs } = await import('firebase/firestore')
+  const snap = await getDocs(collection(db, 'orders'))
+  await Promise.all(snap.docs.map(d => deleteDoc(doc(db, 'orders', d.id))))
+  return snap.size
+}
+
 // Backward-compatible : assignedTo peut être string (ancien) ou array (nouveau)
 export const isAssignedTo = (order, pole) =>
   Array.isArray(order.assignedTo)
