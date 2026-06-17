@@ -287,8 +287,10 @@ export default function PatissiereDashboard() {
         </div>
         <div className="flex items-center gap-2">
           {/* Bouton d'activation son — affiché si pas encore unlocked */}
+          {/* onTouchStart : iOS traite le play() dans le call-stack synchrone du geste */}
           {!isUnlocked && (
             <button
+              onTouchStart={(e) => { e.preventDefault(); unlock() }}
               onClick={unlock}
               className="text-[11px] font-bold px-2.5 py-1.5 rounded-xl border active:opacity-70 flex items-center gap-1"
               style={{ backgroundColor: '#FEF3C7', color: '#92400E', borderColor: '#FDE68A' }}
@@ -387,9 +389,9 @@ function NewOrderBanner({ newOrders, isUnlocked, onUnlock, onDismiss }) {
           <p className="text-xs truncate mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
             {last.articles}
           </p>
-          {/* Bouton d'activation son si pas encore unlocked */}
           {!isUnlocked && (
             <button
+              onTouchStart={(e) => { e.preventDefault(); onUnlock() }}
               onClick={onUnlock}
               className="mt-2 text-[11px] font-bold px-2.5 py-1 rounded-lg active:opacity-70"
               style={{ backgroundColor: 'rgba(255,255,255,0.12)', color: '#EEED9E' }}
