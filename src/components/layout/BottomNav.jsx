@@ -2,8 +2,8 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useRole } from '../../context/RoleContext'
 
-const ACCENT = '#18181B'
-const INACTIVE = '#A1A1AA'
+const ACCENT = '#432F2E'
+const INACTIVE = '#B0A090'
 
 // ── Icônes ────────────────────────────────────────────────────────────────
 const IconHome = () => (
@@ -48,7 +48,7 @@ const IconUser = () => (
   </svg>
 )
 const IconPlus = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round">
     <line x1="12" y1="5" x2="12" y2="19"/>
     <line x1="5"  y1="12" x2="19" y2="12"/>
   </svg>
@@ -61,14 +61,14 @@ function NavShell({ children }) {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-50"
-      style={{ backgroundColor: '#FFFFFF' }}
+      style={{ backgroundColor: '#FFFEF8' }}
     >
       <div
         className="max-w-lg mx-auto"
         style={{
-          borderTop: '1px solid #E7E5E4',
+          borderTop: '1px solid #E8DFC0',
           paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
-          boxShadow: '0 -4px 24px rgba(0,0,0,0.04)',
+          boxShadow: '0 -4px 24px rgba(67,47,46,0.06)',
         }}
       >
         <div className="flex items-end pt-2 pb-2">
@@ -89,7 +89,7 @@ function NavItem({ to, label, Icon, end = false }) {
             {label}
           </span>
           {isActive && (
-            <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#E8E27A' }} />
+            <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#EDD83D' }} />
           )}
         </>
       )}
@@ -103,8 +103,8 @@ function PlusButton({ onClick }) {
       onClick={onClick}
       className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform"
       style={{
-        backgroundColor: '#18181B',
-        boxShadow: '0 8px 32px rgba(24,24,27,0.25)',
+        backgroundColor: '#EDD83D',
+        boxShadow: '0 8px 32px rgba(237,216,61,0.45)',
         transform: 'translateY(-14px)',
         marginBottom: -14,
       }}
@@ -152,7 +152,7 @@ function VendeurNav() {
           <>
             <span style={{ color: isActive ? ACCENT : INACTIVE }}><AvatarIcon isActive={isActive} /></span>
             <span className="text-[10px] font-semibold mt-0.5" style={{ color: isActive ? ACCENT : INACTIVE }}>Profil</span>
-            {isActive && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#E8E27A' }} />}
+            {isActive && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#EDD83D' }} />}
           </>
         )}
       </NavLink>

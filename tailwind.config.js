@@ -5,47 +5,50 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans:  ['Inter', 'sans-serif'],
-        serif: ['DM Serif Display', 'serif'],
+        sans:    ['Satoshi', 'sans-serif'],
+        display: ['Clash Display', 'sans-serif'],
+        serif:   ['Clash Display', 'sans-serif'], // rétrocompat — même font
       },
       colors: {
-        // ── Huru palette ─────────────────────────────────────
-        butter:    '#F5EEB5',    // fond principal chaud
-        lemon:     '#EBDF28',    // accent vif
-        'lemon-l': '#F5F0A8',    // accent léger
-        oat:       '#E8E4C4',    // inputs, surfaces secondaires
-        cream:     '#FEFDF5',    // cartes
-        charcoal:  '#232726',    // texte principal
-        stone:     '#6E6B4E',    // texte secondaire
-        border:    '#DDD9B0',    // bordures sur fond beurre
-        mint:      '#C5E6D3',    // succès
+        // ── Palette Au Grand Jour ─────────────────────────────
+        butter:    '#FFF0B5',    // fond principal jaune chaud
+        choco:     '#432F2E',    // brun chocolat — texte principal
+        sky:       '#E5F0F5',    // bleu ciel — accent secondaire
+        cream:     '#FFFEF8',    // cartes blanches
+        oat:       '#F0EBD0',    // inputs, surfaces secondaires
+        lemon:     '#EDD83D',    // accent jaune vif — boutons CTA
+        'lemon-l': '#F5ECA0',    // jaune clair — badges
+        stone:     '#8A7060',    // texte secondaire (brun moyen)
+        border:    '#E8DFC0',    // bordures sur fond beurre
+        mint:      '#C5E6D3',    // succès vert
         // ── Sémantiques ──────────────────────────────────────
         success:   '#22C55E',
         warning:   '#F59E0B',
         error:     '#EF4444',
         info:      '#3B82F6',
-        // ── Rétrocompat ──────────────────────────────────────
-        ink:       '#232726',
-        dust:      '#6E6B4E',
-        muted:     '#6E6B4E',
-        warm:      '#DDD9B0',
-        parchment: '#E8E4C4',
-        chalk:     '#FEFDF5',
-        surface:   '#FEFDF5',
-        base:      '#F5EEB5',
-        accent:    '#EBDF28',
+        // ── Rétrocompat (anciens noms) ────────────────────────
+        ink:       '#432F2E',
+        dust:      '#8A7060',
+        muted:     '#8A7060',
+        warm:      '#E8DFC0',
+        parchment: '#F0EBD0',
+        chalk:     '#FFFEF8',
+        surface:   '#FFFEF8',
+        base:      '#FFF0B5',
+        accent:    '#EDD83D',
+        charcoal:  '#432F2E',
         status: {
-          todo:       '#E8E4C4',
-          inprogress: '#FEF3C7',
+          todo:       '#F5ECA0',
+          inprogress: '#432F2E',
           ready:      '#C5E6D3',
-          done:       '#EDEDEA',
+          done:       '#EBEBEB',
         },
       },
       boxShadow: {
-        card:    '0 2px 16px rgba(35,39,38,0.06)',
-        'card-lg': '0 8px 40px rgba(35,39,38,0.10)',
-        nav:     '0 -2px 16px rgba(35,39,38,0.06)',
-        lemon:   '0 4px 20px rgba(235,223,40,0.5)',
+        card:      '0 2px 16px rgba(67,47,46,0.07)',
+        'card-lg': '0 8px 40px rgba(67,47,46,0.12)',
+        nav:       '0 -2px 20px rgba(67,47,46,0.08)',
+        lemon:     '0 4px 20px rgba(237,216,61,0.45)',
       },
       borderRadius: {
         pill: '9999px',

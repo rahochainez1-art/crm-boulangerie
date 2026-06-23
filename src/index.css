@@ -8,11 +8,10 @@
     box-sizing: border-box;
   }
 
-  /* ── Fond beurre chaud — signature Huru ──────────────────── */
   body {
-    background-color: #F5EEB5;
-    color: #232726;
-    font-family: 'Inter', sans-serif;
+    background-color: #FFF0B5;
+    color: #432F2E;
+    font-family: 'Satoshi', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
@@ -22,58 +21,63 @@
   }
 
   #root {
-    min-height: 100vh;     /* fallback Samsung Internet < v21 */
-    min-height: 100svh;    /* fallback intermédiaire */
-    min-height: 100dvh;    /* valeur préférée */
+    min-height: 100vh;
+    min-height: 100svh;
+    min-height: 100dvh;
   }
 
   input, textarea, select {
     font-size: 1rem;
     line-height: 1.5rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Satoshi', sans-serif;
+  }
+
+  /* Titres en Clash Display */
+  h1, h2, h3 {
+    font-family: 'Clash Display', sans-serif;
   }
 }
 
 @layer components {
 
-  /* ── Carte flottante (blanche sur fond beurre) ────────────── */
+  /* ── Carte ────────────────────────────────────────────────── */
   .card {
-    background-color: #FEFDF5;
-    border-radius: 24px;
+    background-color: #FFFEF8;
+    border-radius: 20px;
     padding: 1.25rem;
-    box-shadow: 0 2px 16px rgba(35,39,38,0.07);
-    border: 1px solid rgba(221,217,176,0.6);
+    box-shadow: 0 2px 16px rgba(67,47,46,0.07);
+    border: 1px solid rgba(232,223,192,0.7);
   }
 
   /* ── Champ de formulaire ──────────────────────────────────── */
   .field {
-    background-color: #E8E4C4;
-    border-radius: 18px;
+    background-color: #F0EBD0;
+    border-radius: 14px;
     padding: 0.9rem 1rem;
     font-size: 1rem;
     line-height: 1.5rem;
-    color: #232726;
+    color: #432F2E;
     outline: none;
     width: 100%;
     border: 1.5px solid transparent;
     transition: border-color 0.15s, background-color 0.15s;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Satoshi', sans-serif;
   }
-  .field::placeholder { color: rgba(110,107,78,0.5); }
+  .field::placeholder { color: rgba(138,112,96,0.5); }
   .field:focus {
-    background-color: #FEFDF5;
-    border-color: #EBDF28;
+    background-color: #FFFEF8;
+    border-color: #EDD83D;
   }
 
-  /* ── Bouton principal — pill shape lemon ─────────────────── */
+  /* ── Bouton principal ─────────────────────────────────────── */
   .btn-primary {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #EBDF28;
-    color: #232726;
-    font-weight: 600;
-    border-radius: 9999px;          /* pill — signature Huru */
+    background-color: #EDD83D;
+    color: #432F2E;
+    font-weight: 700;
+    border-radius: 9999px;
     padding: 0.875rem 1.75rem;
     font-size: 0.9375rem;
     text-align: center;
@@ -83,20 +87,20 @@
     cursor: pointer;
     transition: background-color 0.15s, transform 0.1s;
     letter-spacing: -0.01em;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Satoshi', sans-serif;
   }
   .btn-primary:active {
-    background-color: #DDD200;
+    background-color: #D9C530;
     transform: scale(0.985);
   }
 
-  /* ── Bouton secondaire — pill shape ──────────────────────── */
+  /* ── Bouton secondaire ───────────────────────────────────── */
   .btn-secondary {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #FEFDF5;
-    color: #232726;
+    background-color: #FFFEF8;
+    color: #432F2E;
     font-weight: 600;
     border-radius: 9999px;
     padding: 0.875rem 1.75rem;
@@ -104,13 +108,13 @@
     text-align: center;
     width: 100%;
     min-height: 52px;
-    border: 1.5px solid #DDD9B0;
+    border: 1.5px solid #E8DFC0;
     cursor: pointer;
     transition: background-color 0.15s, transform 0.1s;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Satoshi', sans-serif;
   }
   .btn-secondary:active {
-    background-color: #F5EEB5;
+    background-color: #FFF0B5;
     transform: scale(0.985);
   }
 
@@ -118,15 +122,16 @@
   .badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.2rem 0.7rem;
+    padding: 0.2rem 0.75rem;
     border-radius: 9999px;
     font-size: 0.72rem;
-    font-weight: 600;
+    font-weight: 700;
+    font-family: 'Satoshi', sans-serif;
   }
-  .badge-todo       { background-color: #E8E4C4; color: rgba(35,39,38,0.6); }
-  .badge-inprogress { background-color: #FEF3C7; color: #92400e; }
+  .badge-todo       { background-color: #F5ECA0; color: #6B5800; }
+  .badge-inprogress { background-color: #432F2E; color: #FFFFFF; }
   .badge-ready      { background-color: #C5E6D3; color: #166534; }
-  .badge-done       { background-color: #EDEDEA; color: rgba(35,39,38,0.4); }
+  .badge-done       { background-color: #EBEBEB; color: rgba(67,47,46,0.45); }
 
   /* ── Label micro uppercase ────────────────────────────────── */
   .label-xs {
@@ -134,7 +139,8 @@
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #6E6B4E;
+    color: #8A7060;
+    font-family: 'Satoshi', sans-serif;
   }
 }
 
@@ -143,6 +149,9 @@
   .safe-top    { padding-top: env(safe-area-inset-top); }
   .scrollbar-none { scrollbar-width: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
+
+  /* Clash Display utilitaire */
+  .font-display { font-family: 'Clash Display', sans-serif; }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(10px); }
