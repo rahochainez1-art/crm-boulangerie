@@ -31,9 +31,9 @@ function urgencyColor(pickupDate) {
 
 const PRODUCTION_STATUSES = ['todo', 'inprogress', 'ready']
 const STATUS_PICKER = {
-  todo:       { label: 'Pas commencé', activeBg: '#18181B', activeColor: '#FFFFFF', idleBg: '#F1EFE8', idleColor: '#71717A' },
-  inprogress: { label: 'En cours',     activeBg: '#FEF3C7', activeColor: '#92400e', idleBg: '#F8F7F3', idleColor: '#71717A' },
-  ready:      { label: 'Prêt ✓',       activeBg: '#E8E27A', activeColor: '#18181B', idleBg: '#F8F7F3', idleColor: '#71717A' },
+  todo:       { label: 'Pas commencé', activeBg: '#432F2E', activeColor: '#FFFFFF', idleBg: '#F0EBD0', idleColor: '#8A7060' },
+  inprogress: { label: 'En cours',     activeBg: '#FEF3C7', activeColor: '#92400e', idleBg: '#FFF0B5', idleColor: '#8A7060' },
+  ready:      { label: 'Prêt ✓',       activeBg: '#EDD83D', activeColor: '#432F2E', idleBg: '#FFF0B5', idleColor: '#8A7060' },
 }
 
 export default function Calendrier() {
@@ -94,14 +94,14 @@ export default function Calendrier() {
       {/* Calendrier mensuel */}
       <div
         className="rounded-3xl p-5 mb-5 animate-fade-up"
-        style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+        style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
       >
         {/* Navigation mois */}
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={() => { setViewMonth(m => subMonths(m, 1)); setExpandedId(null) }}
             className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-            style={{ color: '#71717A' }}
+            style={{ color: '#8A7060' }}
           >‹</button>
           <p className="font-semibold capitalize text-ink" style={{ fontSize: '0.95rem' }}>
             {format(viewMonth, 'MMMM yyyy', { locale: fr })}
@@ -109,7 +109,7 @@ export default function Calendrier() {
           <button
             onClick={() => { setViewMonth(m => addMonths(m, 1)); setExpandedId(null) }}
             className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-            style={{ color: '#71717A' }}
+            style={{ color: '#8A7060' }}
           >›</button>
         </div>
 
@@ -122,10 +122,10 @@ export default function Calendrier() {
           ].map(item => (
             <div key={item.label} className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-              <span style={{ fontSize: '10px', color: '#71717A' }}>{item.label}</span>
+              <span style={{ fontSize: '10px', color: '#8A7060' }}>{item.label}</span>
             </div>
           ))}
-          <span className="ml-auto" style={{ fontSize: '10px', color: '#71717A' }}>
+          <span className="ml-auto" style={{ fontSize: '10px', color: '#8A7060' }}>
             <span className="font-semibold text-ink">{monthOrders.length}</span> cmd ·{' '}
             <span className="font-semibold text-ink">{activeDays.size}</span> jour{activeDays.size > 1 ? 's' : ''}
           </span>
@@ -134,7 +134,7 @@ export default function Calendrier() {
         {/* Labels colonnes */}
         <div className="grid grid-cols-7 mb-1">
           {DAY_LABELS.map((d, i) => (
-            <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#A1A1AA', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               {d}
             </p>
           ))}
@@ -157,13 +157,13 @@ export default function Calendrier() {
                 onClick={() => { setSelectedDay(day); setExpandedId(null) }}
                 className="flex flex-col items-center py-1.5 rounded-2xl transition-all active:scale-95"
                 style={{
-                  backgroundColor: isSelected ? '#18181B' : isToday ? '#F7F4C8' : 'transparent',
+                  backgroundColor: isSelected ? '#432F2E' : isToday ? '#FFF0B5' : 'transparent',
                   opacity: inMonth ? 1 : 0.12,
                 }}
               >
                 <span
                   className="text-sm font-medium leading-tight"
-                  style={{ color: isSelected ? '#FFFFFF' : '#18181B' }}
+                  style={{ color: isSelected ? '#FFFFFF' : '#432F2E' }}
                 >
                   {format(day, 'd')}
                 </span>
@@ -202,11 +202,11 @@ export default function Calendrier() {
       {dayOrders.length === 0 ? (
         <div
           className="rounded-3xl text-center py-14"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4' }}
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0' }}
         >
           <p className="text-2xl mb-2">—</p>
           <p className="font-semibold text-ink mb-1">Rien ce jour-là</p>
-          <p className="text-sm" style={{ color: '#71717A' }}>Sélectionne un jour coloré dans le calendrier</p>
+          <p className="text-sm" style={{ color: '#8A7060' }}>Sélectionne un jour coloré dans le calendrier</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -241,7 +241,7 @@ function OrderCard({ order, expanded, onToggle }) {
   return (
     <div
       className="rounded-3xl overflow-hidden"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
     >
       <div className="h-1 rounded-t-3xl" style={{ backgroundColor: urgencyColor(order.pickupDate) }} />
 
@@ -250,7 +250,7 @@ function OrderCard({ order, expanded, onToggle }) {
         onClick={onToggle}
       >
         <div className="flex-shrink-0 text-right" style={{ minWidth: 44 }}>
-          <p style={{ fontSize: '10px', fontWeight: 600, color: '#A1A1AA', textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1, marginBottom: 4 }}>
+          <p style={{ fontSize: '10px', fontWeight: 600, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1, marginBottom: 4 }}>
             Retrait
           </p>
           <p className="font-semibold text-ink tabular-nums text-lg leading-none">
@@ -258,11 +258,11 @@ function OrderCard({ order, expanded, onToggle }) {
           </p>
         </div>
 
-        <div className="w-px self-stretch" style={{ backgroundColor: '#E7E5E4' }} />
+        <div className="w-px self-stretch" style={{ backgroundColor: '#E8DFC0' }} />
 
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-ink text-sm truncate">{order.clientName}</p>
-          <p className="text-xs truncate mt-0.5" style={{ color: '#71717A' }}>{order.articles}</p>
+          <p className="text-xs truncate mt-0.5" style={{ color: '#8A7060' }}>{order.articles}</p>
           <div className="mt-2">
             <StatusPill status={order.status} />
           </div>
@@ -270,7 +270,7 @@ function OrderCard({ order, expanded, onToggle }) {
 
         <svg
           width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="#A1A1AA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          stroke="#B0A090" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           className="flex-shrink-0 self-center transition-transform duration-200"
           style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
         >
@@ -279,9 +279,9 @@ function OrderCard({ order, expanded, onToggle }) {
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid #F1EFE8' }}>
+        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid #F0EBD0' }}>
 
-          <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#F1EFE8' }}>
+          <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#F0EBD0' }}>
             <p className="label-xs mb-1">Commande</p>
             <p className="font-medium text-ink text-sm leading-relaxed">{order.articles}</p>
           </div>
@@ -306,7 +306,7 @@ function OrderCard({ order, expanded, onToggle }) {
                   style={{
                     backgroundColor: isActive ? cfg.activeBg : cfg.idleBg,
                     color:           isActive ? cfg.activeColor : cfg.idleColor,
-                    border:          isActive ? 'none' : '1px solid #E7E5E4',
+                    border:          isActive ? 'none' : '1px solid #E8DFC0',
                   }}
                 >
                   {cfg.label}
@@ -323,7 +323,7 @@ function OrderCard({ order, expanded, onToggle }) {
 
 function StatusPill({ status }) {
   const map = {
-    todo:       { label: 'À faire',  bg: '#F1EFE8', color: 'rgba(24,24,27,0.55)' },
+    todo:       { label: 'À faire',  bg: '#F0EBD0', color: 'rgba(24,24,27,0.55)' },
     inprogress: { label: 'En cours', bg: '#FEF3C7', color: '#92400e' },
     ready:      { label: 'Prêt ✓',   bg: '#DCFCE7', color: '#166534' },
     done:       { label: 'Récupéré', bg: '#F4F4F5', color: 'rgba(24,24,27,0.4)' },

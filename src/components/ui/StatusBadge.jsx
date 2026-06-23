@@ -1,5 +1,5 @@
 const CONFIG = {
-  todo:       { label: 'À faire',   bg: '#F1EFE8', color: 'rgba(24,24,27,0.55)' },
+  todo:       { label: 'À faire',   bg: '#F0EBD0', color: 'rgba(24,24,27,0.55)' },
   inprogress: { label: 'En cours',  bg: '#FEF3C7', color: '#92400e' },
   ready:      { label: 'Prêt',      bg: '#DCFCE7', color: '#166534' },
   done:       { label: 'Récupéré',  bg: '#F4F4F5', color: 'rgba(24,24,27,0.4)' },
@@ -7,7 +7,7 @@ const CONFIG = {
 }
 
 export default function StatusBadge({ status }) {
-  const c = CONFIG[status] ?? { label: status, bg: '#F1EFE8', color: '#71717A' }
+  const c = CONFIG[status] ?? { label: status, bg: '#F0EBD0', color: '#8A7060' }
   return (
     <span
       className="inline-flex items-center text-xs font-semibold"

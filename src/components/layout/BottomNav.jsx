@@ -133,7 +133,7 @@ function AvatarIcon({ isActive }) {
       <img
         src={avatar} alt=""
         className="rounded-full object-cover"
-        style={{ width: 26, height: 26, border: isActive ? '2px solid #18181B' : '2px solid transparent' }}
+        style={{ width: 26, height: 26, border: isActive ? '2px solid #432F2E' : '2px solid transparent' }}
       />
     )
   }

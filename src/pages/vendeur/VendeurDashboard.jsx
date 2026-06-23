@@ -48,7 +48,7 @@ const TABS = [
 ]
 
 const STATUS_META = {
-  todo:       { label: 'À faire',   topColor: '#E8E4C4', bg: '#E8E4C4', color: 'rgba(35,39,38,0.65)' },
+  todo:       { label: 'À faire',   topColor: '#F0EBD0', bg: '#F0EBD0', color: 'rgba(35,39,38,0.65)' },
   inprogress: { label: 'En cours',  topColor: '#FEE18B', bg: '#FEF3C7', color: '#92400e' },
   ready:      { label: 'Prête ✓',   topColor: '#86EFAC', bg: '#C5E6D3', color: '#166534' },
   done:       { label: 'Récupérée', topColor: '#D4D4D8', bg: '#F4F4F5', color: 'rgba(35,39,38,0.35)' },
@@ -123,7 +123,7 @@ export default function VendeurDashboard() {
   const blague = BLAGUES[(new Date().getDate() - 1) % BLAGUES.length]
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5EEB5' }}>
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFF0B5' }}>
 
       {/* ── Header ─────────────────────────────────────────────────── */}
       <header
@@ -136,7 +136,7 @@ export default function VendeurDashboard() {
             <h1 className="font-serif text-ink leading-none" style={{ fontSize: '2.1rem' }}>
               {greeting(prenom)}
             </h1>
-            <p className="text-sm mt-1.5 capitalize" style={{ color: '#6E6B4E' }}>
+            <p className="text-sm mt-1.5 capitalize" style={{ color: '#8A7060' }}>
               {format(selectedDay, 'EEEE d MMMM', { locale: fr })}
             </p>
           </div>
@@ -163,7 +163,7 @@ export default function VendeurDashboard() {
                 setSelectedDay(startOfWeek(prev, { weekStartsOn: 1 }))
               }}
               className="text-sm font-semibold active:opacity-50 transition-opacity"
-              style={{ color: '#6E6B4E' }}
+              style={{ color: '#8A7060' }}
             >
               ← Préc
             </button>
@@ -177,7 +177,7 @@ export default function VendeurDashboard() {
                 setSelectedDay(startOfWeek(next, { weekStartsOn: 1 }))
               }}
               className="text-sm font-semibold active:opacity-50 transition-opacity"
-              style={{ color: '#6E6B4E' }}
+              style={{ color: '#8A7060' }}
             >
               Suiv →
             </button>
@@ -197,7 +197,7 @@ export default function VendeurDashboard() {
                   className="flex-1 flex flex-col items-center py-3 rounded-2xl transition-all active:scale-95"
                   style={{
                     backgroundColor: isSelected
-                      ? '#232726'
+                      ? '#432F2E'
                       : isToday
                       ? 'rgba(255,255,255,0.85)'
                       : 'rgba(255,255,255,0.45)',
@@ -206,13 +206,13 @@ export default function VendeurDashboard() {
                 >
                   <span
                     className="font-bold leading-none"
-                    style={{ fontSize: '1.15rem', color: isSelected ? '#fff' : '#232726' }}
+                    style={{ fontSize: '1.15rem', color: isSelected ? '#fff' : '#432F2E' }}
                   >
                     {format(day, 'd')}
                   </span>
                   <span
                     className="capitalize mt-1"
-                    style={{ fontSize: 10, fontWeight: 600, color: isSelected ? 'rgba(255,255,255,0.55)' : '#6E6B4E' }}
+                    style={{ fontSize: 10, fontWeight: 600, color: isSelected ? 'rgba(255,255,255,0.55)' : '#8A7060' }}
                   >
                     {format(day, 'EEE', { locale: fr })}
                   </span>
@@ -220,7 +220,7 @@ export default function VendeurDashboard() {
                     className="w-1.5 h-1.5 rounded-full mt-1.5"
                     style={{
                       backgroundColor: hasOrders
-                        ? isSelected ? 'rgba(255,255,255,0.45)' : '#EBDF28'
+                        ? isSelected ? 'rgba(255,255,255,0.45)' : '#EDD83D'
                         : 'transparent',
                     }}
                   />
@@ -235,13 +235,13 @@ export default function VendeurDashboard() {
           <div
             className="rounded-3xl p-4"
             style={{
-              backgroundColor: '#FEFDF5',
+              backgroundColor: '#FFFEF8',
               border: '1px solid rgba(221,217,176,0.5)',
               boxShadow: '0 2px 12px rgba(35,39,38,0.05)',
             }}
           >
             <p className="label-xs mb-2">Du jour ✨</p>
-            <p className="text-sm leading-relaxed" style={{ color: '#6E6B4E' }}>{blague}</p>
+            <p className="text-sm leading-relaxed" style={{ color: '#8A7060' }}>{blague}</p>
           </div>
         </div>
 
@@ -256,7 +256,7 @@ export default function VendeurDashboard() {
               }}
             >
               <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#22C55E' }} />
-              <p className="text-sm font-medium" style={{ color: '#6E6B4E' }}>Tout est à jour</p>
+              <p className="text-sm font-medium" style={{ color: '#8A7060' }}>Tout est à jour</p>
             </div>
           ) : (
             <div
@@ -282,8 +282,8 @@ export default function VendeurDashboard() {
                 className="flex-1 py-2.5 text-sm font-semibold transition-all active:scale-95"
                 style={{
                   borderRadius: 9999,
-                  backgroundColor: tab === t.id ? '#232726' : 'rgba(255,255,255,0.6)',
-                  color: tab === t.id ? '#FEFDF5' : '#6E6B4E',
+                  backgroundColor: tab === t.id ? '#432F2E' : 'rgba(255,255,255,0.6)',
+                  color: tab === t.id ? '#FFFEF8' : '#8A7060',
                   border: tab === t.id ? 'none' : '1px solid rgba(221,217,176,0.7)',
                 }}
               >
@@ -300,7 +300,7 @@ export default function VendeurDashboard() {
               ? "Aujourd'hui"
               : format(selectedDay, 'EEEE d MMMM', { locale: fr })}
           </p>
-          <p className="text-xs" style={{ color: '#6E6B4E' }}>
+          <p className="text-xs" style={{ color: '#8A7060' }}>
             {dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}
           </p>
         </div>
@@ -315,7 +315,7 @@ export default function VendeurDashboard() {
                 border: '1px solid rgba(221,217,176,0.5)',
               }}
             >
-              <p className="text-sm" style={{ color: '#6E6B4E' }}>
+              <p className="text-sm" style={{ color: '#8A7060' }}>
                 {dayOrders.length === 0 ? 'Aucune commande ce jour-là' : 'Aucune commande ici'}
               </p>
             </div>
@@ -345,7 +345,7 @@ function OrderCard({ order, onOpen }) {
       onClick={onOpen}
       className="w-full text-left rounded-3xl overflow-hidden transition-all active:scale-[0.98] active:opacity-75"
       style={{
-        backgroundColor: '#FEFDF5',
+        backgroundColor: '#FFFEF8',
         border: '1px solid rgba(221,217,176,0.65)',
         boxShadow: '0 2px 16px rgba(35,39,38,0.06)',
         opacity: order.status === 'done' ? 0.45 : 1,
@@ -361,7 +361,7 @@ function OrderCard({ order, onOpen }) {
             className="font-bold tabular-nums tracking-tight leading-none"
             style={{
               fontSize: '2rem',
-              color: order.status === 'done' ? '#A1A1AA' : '#232726',
+              color: order.status === 'done' ? '#B0A090' : '#432F2E',
             }}
           >
             {format(parseISO(order.pickupDate), 'HH:mm')}
@@ -379,14 +379,14 @@ function OrderCard({ order, onOpen }) {
           className="font-semibold leading-tight truncate"
           style={{
             fontSize: '1rem',
-            color: order.status === 'done' ? '#A1A1AA' : '#232726',
+            color: order.status === 'done' ? '#B0A090' : '#432F2E',
           }}
         >
           {order.clientName}
         </p>
 
         {/* Articles */}
-        <p className="text-sm truncate mt-0.5" style={{ color: '#6E6B4E' }}>
+        <p className="text-sm truncate mt-0.5" style={{ color: '#8A7060' }}>
           {order.articles}
         </p>
 
@@ -433,10 +433,10 @@ function OrderSheet({ order, onClose }) {
       <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
       <div
         className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto z-50 rounded-t-3xl overflow-hidden"
-        style={{ backgroundColor: '#FEFDF5', paddingBottom: 'env(safe-area-inset-bottom)' }}
+        style={{ backgroundColor: '#FFFEF8', paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full" style={{ backgroundColor: '#DDD9B0' }} />
+          <div className="w-10 h-1 rounded-full" style={{ backgroundColor: '#E8DFC0' }} />
         </div>
 
         <div className="px-5 pt-2 pb-5" style={{ borderBottom: '1px solid #EEE9C8' }}>
@@ -445,11 +445,11 @@ function OrderSheet({ order, onClose }) {
               <p className="label-xs mb-1">Retrait</p>
               <p
                 className="font-bold tabular-nums tracking-tight leading-none"
-                style={{ fontSize: '2.5rem', color: '#232726' }}
+                style={{ fontSize: '2.5rem', color: '#432F2E' }}
               >
                 {format(pickup, 'HH:mm')}
               </p>
-              <p className="text-sm capitalize mt-1" style={{ color: '#6E6B4E' }}>
+              <p className="text-sm capitalize mt-1" style={{ color: '#8A7060' }}>
                 {format(pickup, 'EEEE d MMMM', { locale: fr })}
               </p>
             </div>
@@ -463,7 +463,7 @@ function OrderSheet({ order, onClose }) {
               <button
                 onClick={onClose}
                 className="text-xs font-semibold px-3 py-1.5 rounded-full active:opacity-70"
-                style={{ backgroundColor: '#E8E4C4', color: '#6E6B4E' }}
+                style={{ backgroundColor: '#F0EBD0', color: '#8A7060' }}
               >
                 Fermer
               </button>
@@ -479,38 +479,38 @@ function OrderSheet({ order, onClose }) {
               <a
                 href={`tel:${order.clientPhone}`}
                 className="text-sm underline mt-0.5 block active:opacity-70"
-                style={{ color: '#6E6B4E' }}
+                style={{ color: '#8A7060' }}
               >
                 {order.clientPhone}
               </a>
             )}
           </div>
 
-          <div className="rounded-2xl px-4 py-3.5" style={{ backgroundColor: '#E8E4C4' }}>
+          <div className="rounded-2xl px-4 py-3.5" style={{ backgroundColor: '#F0EBD0' }}>
             <p className="label-xs mb-1.5">Commande</p>
             <p className="font-semibold text-ink leading-snug">{order.articles}</p>
           </div>
 
           {order.totalAmount > 0 && (
-            <div className="rounded-2xl px-4 py-3.5" style={{ backgroundColor: '#FEFDF5', border: '1px solid #EEE9C8' }}>
+            <div className="rounded-2xl px-4 py-3.5" style={{ backgroundColor: '#FFFEF8', border: '1px solid #EEE9C8' }}>
               <p className="label-xs mb-3">Paiement</p>
               <div className="flex gap-6">
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#6E6B4E' }}>Total</p>
+                  <p className="text-xs mb-1" style={{ color: '#8A7060' }}>Total</p>
                   <p className="font-bold text-ink">{order.totalAmount} €</p>
                 </div>
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#6E6B4E' }}>Acompte</p>
+                  <p className="text-xs mb-1" style={{ color: '#8A7060' }}>Acompte</p>
                   <p className="font-bold text-ink">{order.deposit || 0} €</p>
                 </div>
                 {reste > 0 ? (
                   <div>
-                    <p className="text-xs mb-1" style={{ color: '#6E6B4E' }}>Reste</p>
+                    <p className="text-xs mb-1" style={{ color: '#8A7060' }}>Reste</p>
                     <p className="font-bold" style={{ color: '#92400e' }}>{reste} €</p>
                   </div>
                 ) : (
                   <div>
-                    <p className="text-xs mb-1" style={{ color: '#6E6B4E' }}>Solde</p>
+                    <p className="text-xs mb-1" style={{ color: '#8A7060' }}>Solde</p>
                     <p className="font-bold" style={{ color: '#166534' }}>Soldé ✓</p>
                   </div>
                 )}
@@ -534,8 +534,8 @@ function OrderSheet({ order, onClose }) {
                 onClick={() => handleStatus('ready')}
                 className="flex-1 py-3.5 text-sm font-semibold rounded-2xl transition-all active:scale-95"
                 style={{
-                  backgroundColor: order.status !== 'done' ? '#E8E4C4' : '#F5F5F5',
-                  color: order.status !== 'done' ? '#232726' : '#A1A1AA',
+                  backgroundColor: order.status !== 'done' ? '#F0EBD0' : '#F5F5F5',
+                  color: order.status !== 'done' ? '#432F2E' : '#B0A090',
                 }}
               >
                 Pas encore
@@ -545,7 +545,7 @@ function OrderSheet({ order, onClose }) {
                 className="flex-1 py-3.5 text-sm font-semibold rounded-2xl transition-all active:scale-95"
                 style={{
                   backgroundColor: order.status === 'done' ? '#C5E6D3' : '#F5F5F5',
-                  color: order.status === 'done' ? '#166534' : '#A1A1AA',
+                  color: order.status === 'done' ? '#166534' : '#B0A090',
                 }}
               >
                 Récupérée ✓

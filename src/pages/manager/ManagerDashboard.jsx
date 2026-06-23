@@ -67,7 +67,7 @@ function StatCards({ orders }) {
   const tiles = [
     { label: "Aujourd'hui", value: todayCount, bg: '#FFFFFF',  accent: false },
     { label: 'En cours',    value: inProgress, bg: '#FEF3C7',  accent: false },
-    { label: 'Prêtes',      value: ready,      bg: '#F7F4C8',  accent: true  },
+    { label: 'Prêtes',      value: ready,      bg: '#FFF0B5',  accent: true  },
     { label: 'Urgentes',    value: urgent,     bg: urgent > 0 ? '#FEE2E2' : '#F4F4F5', urgent: urgent > 0 },
   ]
 
@@ -79,7 +79,7 @@ function StatCards({ orders }) {
           className="rounded-3xl p-5 flex flex-col justify-between animate-fade-up"
           style={{
             backgroundColor: t.bg,
-            border: '1px solid #E7E5E4',
+            border: '1px solid #E8DFC0',
             boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
             minHeight: 112,
             animationDelay: `${i * 0.05}s`,
@@ -87,7 +87,7 @@ function StatCards({ orders }) {
         >
           <p
             className="label-xs"
-            style={{ color: t.urgent ? '#b91c1c' : '#71717A' }}
+            style={{ color: t.urgent ? '#b91c1c' : '#8A7060' }}
           >
             {t.label}
           </p>
@@ -96,7 +96,7 @@ function StatCards({ orders }) {
               className="font-serif leading-none"
               style={{
                 fontSize: '2.75rem',
-                color: t.urgent ? '#b91c1c' : '#18181B',
+                color: t.urgent ? '#b91c1c' : '#432F2E',
               }}
             >
               {t.value}
@@ -123,14 +123,14 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
   return (
     <div
       className="rounded-3xl p-5 mb-5 animate-fade-up delay-100"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
     >
       {/* Navigation mois */}
       <div className="flex items-center justify-between mb-5">
         <button
           onClick={() => { setViewMonth(m => subMonths(m, 1)); onSelectDay(null) }}
           className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-          style={{ color: '#71717A' }}
+          style={{ color: '#8A7060' }}
         >‹</button>
         <p className="font-semibold capitalize text-ink" style={{ fontSize: '0.95rem' }}>
           {format(viewMonth, 'MMMM yyyy', { locale: fr })}
@@ -138,14 +138,14 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
         <button
           onClick={() => { setViewMonth(m => addMonths(m, 1)); onSelectDay(null) }}
           className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-          style={{ color: '#71717A' }}
+          style={{ color: '#8A7060' }}
         >›</button>
       </div>
 
       {/* Légende */}
       <div className="flex items-center gap-1.5 mb-4">
-        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#E8E27A' }} />
-        <span className="text-xs" style={{ color: '#71717A' }}>
+        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#EDD83D' }} />
+        <span className="text-xs" style={{ color: '#8A7060' }}>
           <span className="font-semibold text-ink">{monthOrders.length}</span> commande{monthOrders.length > 1 ? 's' : ''} ce mois
         </span>
       </div>
@@ -153,7 +153,7 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
       {/* Labels colonnes */}
       <div className="grid grid-cols-7 mb-1">
         {DAY_LABELS.map((d, i) => (
-          <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#A1A1AA', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             {d}
           </p>
         ))}
@@ -174,13 +174,13 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
               onClick={() => onSelectDay(isSelected ? null : day)}
               className="flex flex-col items-center py-1.5 rounded-2xl transition-all active:scale-95"
               style={{
-                backgroundColor: isSelected ? '#18181B' : isToday ? '#F7F4C8' : 'transparent',
+                backgroundColor: isSelected ? '#432F2E' : isToday ? '#FFF0B5' : 'transparent',
                 opacity: inMonth ? 1 : 0.15,
               }}
             >
               <span
                 className="text-sm font-medium leading-tight"
-                style={{ color: isSelected ? '#FFFFFF' : '#18181B' }}
+                style={{ color: isSelected ? '#FFFFFF' : '#432F2E' }}
               >
                 {format(day, 'd')}
               </span>
@@ -189,7 +189,7 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
                   <span
                     className="text-[8px] font-bold flex items-center justify-center"
                     style={{
-                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#E8E27A',
+                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#EDD83D',
                       color: isSelected ? '#fff' : '#4A4E10',
                       minWidth: 14,
                       height: 14,
@@ -219,7 +219,7 @@ function OrderCard({ order, expanded, onToggle }) {
       className="rounded-3xl overflow-hidden mb-3 transition-opacity"
       style={{
         backgroundColor: '#FFFFFF',
-        border: '1px solid #E7E5E4',
+        border: '1px solid #E8DFC0',
         boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
         opacity: isDone ? 0.5 : 1,
       }}
@@ -235,11 +235,11 @@ function OrderCard({ order, expanded, onToggle }) {
           </p>
         </div>
 
-        <div className="w-px self-stretch" style={{ backgroundColor: '#E7E5E4' }} />
+        <div className="w-px self-stretch" style={{ backgroundColor: '#E8DFC0' }} />
 
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-ink text-sm truncate">{order.clientName}</p>
-          <p className="text-xs truncate mt-0.5" style={{ color: '#71717A' }}>{order.articles}</p>
+          <p className="text-xs truncate mt-0.5" style={{ color: '#8A7060' }}>{order.articles}</p>
         </div>
 
         <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
@@ -248,7 +248,7 @@ function OrderCard({ order, expanded, onToggle }) {
 
         <svg
           width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="#A1A1AA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          stroke="#B0A090" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           className="flex-shrink-0 transition-transform duration-200"
           style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
         >
@@ -259,7 +259,7 @@ function OrderCard({ order, expanded, onToggle }) {
       {expanded && (
         <div
           className="px-5 pb-5 pt-4 space-y-4"
-          style={{ borderTop: '1px solid #F1EFE8' }}
+          style={{ borderTop: '1px solid #F0EBD0' }}
         >
           <div>
             <p className="label-xs mb-1.5">Articles</p>
@@ -271,18 +271,18 @@ function OrderCard({ order, expanded, onToggle }) {
               <p className="label-xs mb-2">Paiement</p>
               <div className="flex gap-6">
                 <div>
-                  <p className="text-xs" style={{ color: '#71717A' }}>Total</p>
+                  <p className="text-xs" style={{ color: '#8A7060' }}>Total</p>
                   <p className="text-sm font-semibold text-ink mt-0.5">{order.totalAmount} €</p>
                 </div>
                 {order.deposit > 0 && (
                   <div>
-                    <p className="text-xs" style={{ color: '#71717A' }}>Acompte</p>
+                    <p className="text-xs" style={{ color: '#8A7060' }}>Acompte</p>
                     <p className="text-sm font-semibold text-ink mt-0.5">{order.deposit} €</p>
                   </div>
                 )}
                 {reste > 0 && (
                   <div>
-                    <p className="text-xs" style={{ color: '#71717A' }}>Reste dû</p>
+                    <p className="text-xs" style={{ color: '#8A7060' }}>Reste dû</p>
                     <p className="text-sm font-semibold mt-0.5" style={{ color: '#E8A600' }}>{reste} €</p>
                   </div>
                 )}
@@ -293,7 +293,7 @@ function OrderCard({ order, expanded, onToggle }) {
           <div className="flex gap-6">
             {order.assignedTo && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: '#71717A' }}>Assigné à</p>
+                <p className="text-xs mb-0.5" style={{ color: '#8A7060' }}>Assigné à</p>
                 <p className="text-sm font-medium text-ink">
                   {Array.isArray(order.assignedTo)
                     ? order.assignedTo.map(p => ASSIGNED[p] ?? p).join(' + ')
@@ -303,11 +303,11 @@ function OrderCard({ order, expanded, onToggle }) {
             )}
             {order.clientPhone && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: '#71717A' }}>Téléphone</p>
+                <p className="text-xs mb-0.5" style={{ color: '#8A7060' }}>Téléphone</p>
                 <a
                   href={`tel:${order.clientPhone}`}
                   className="text-sm font-medium underline"
-                  style={{ color: '#18181B' }}
+                  style={{ color: '#432F2E' }}
                 >
                   {order.clientPhone}
                 </a>
@@ -333,11 +333,11 @@ function OrderCard({ order, expanded, onToggle }) {
                     <div className="flex items-center gap-2">
                       <div
                         className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: i === 0 ? '#E8E27A' : '#E7E5E4' }}
+                        style={{ backgroundColor: i === 0 ? '#EDD83D' : '#E8DFC0' }}
                       />
                       <span className="text-xs font-medium text-ink">{STATUS_LABELS[h.status]}</span>
                     </div>
-                    <span className="text-xs" style={{ color: '#71717A' }}>
+                    <span className="text-xs" style={{ color: '#8A7060' }}>
                       {format(parseISO(h.at), 'dd MMM à HH:mm', { locale: fr })}
                     </span>
                   </div>
@@ -361,19 +361,19 @@ function AnalysesView({ orders }) {
       <div className="grid grid-cols-2 gap-3 mb-6">
         <div
           className="rounded-3xl p-5 animate-fade-up"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)', minHeight: 112 }}
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)', minHeight: 112 }}
         >
           <p className="label-xs mb-3">Récupérées</p>
-          <p className="font-serif leading-none" style={{ fontSize: '2.75rem', color: '#18181B' }}>{done.length}</p>
-          <p className="text-xs mt-1.5" style={{ color: '#71717A' }}>commandes</p>
+          <p className="font-serif leading-none" style={{ fontSize: '2.75rem', color: '#432F2E' }}>{done.length}</p>
+          <p className="text-xs mt-1.5" style={{ color: '#8A7060' }}>commandes</p>
         </div>
         <div
           className="rounded-3xl p-5 animate-fade-up delay-50"
-          style={{ backgroundColor: '#F7F4C8', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.03)', minHeight: 112 }}
+          style={{ backgroundColor: '#FFF0B5', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.03)', minHeight: 112 }}
         >
           <p className="label-xs mb-3">CA encaissé</p>
-          <p className="font-serif leading-none" style={{ fontSize: '2.75rem', color: '#18181B' }}>{revenue}€</p>
-          <p className="text-xs mt-1.5" style={{ color: '#71717A' }}>toutes périodes</p>
+          <p className="font-serif leading-none" style={{ fontSize: '2.75rem', color: '#432F2E' }}>{revenue}€</p>
+          <p className="text-xs mt-1.5" style={{ color: '#8A7060' }}>toutes périodes</p>
         </div>
       </div>
 
@@ -385,10 +385,10 @@ function AnalysesView({ orders }) {
       {done.length === 0 ? (
         <div
           className="rounded-3xl text-center py-16 animate-fade-up"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4' }}
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0' }}
         >
           <p className="text-2xl mb-2">—</p>
-          <p className="text-sm" style={{ color: '#71717A' }}>Aucune commande récupérée</p>
+          <p className="text-sm" style={{ color: '#8A7060' }}>Aucune commande récupérée</p>
         </div>
       ) : (
         [...done]
@@ -397,14 +397,14 @@ function AnalysesView({ orders }) {
             <div
               key={o.id}
               className="rounded-3xl px-5 py-4 mb-2.5 flex items-center gap-3 animate-fade-up"
-              style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+              style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
             >
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-ink truncate">{o.clientName}</p>
-                <p className="text-xs truncate mt-0.5" style={{ color: '#71717A' }}>{o.articles}</p>
+                <p className="text-xs truncate mt-0.5" style={{ color: '#8A7060' }}>{o.articles}</p>
               </div>
               <div className="text-right flex-shrink-0">
-                <p className="text-xs tabular-nums" style={{ color: '#71717A' }}>
+                <p className="text-xs tabular-nums" style={{ color: '#8A7060' }}>
                   {format(parseISO(o.pickupDate), 'dd MMM', { locale: fr })}
                 </p>
                 {o.totalAmount > 0 && (
@@ -419,8 +419,8 @@ function AnalysesView({ orders }) {
 }
 
 // ── Manager Dashboard ─────────────────────────────────────────────────────
-const INACTIVE = '#A1A1AA'
-const ACTIVE   = '#18181B'
+const INACTIVE = '#B0A090'
+const ACTIVE   = '#432F2E'
 
 const NAV_ITEMS = [
   { id: 'home',     label: 'Accueil',  Icon: IconHome },
@@ -476,15 +476,15 @@ export default function ManagerDashboard() {
   }, [orders])
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F8F7F3' }}>
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFF0B5' }}>
 
       {/* ── Header ── */}
       <header
         className="px-5 pb-5"
         style={{
           paddingTop: 'max(52px, env(safe-area-inset-top))',
-          borderBottom: '1px solid #E7E5E4',
-          backgroundColor: '#F8F7F3',
+          borderBottom: '1px solid #E8DFC0',
+          backgroundColor: '#FFF0B5',
         }}
       >
         <div className="animate-fade-up">
@@ -492,7 +492,7 @@ export default function ManagerDashboard() {
           <h1 className="font-serif text-ink" style={{ fontSize: '2rem', lineHeight: 1.15 }}>
             {prenom ? `Bonjour ${prenom} 👋` : 'Bonjour 👋'}
           </h1>
-          <p className="text-sm mt-1" style={{ color: '#71717A' }}>
+          <p className="text-sm mt-1" style={{ color: '#8A7060' }}>
             {weekCount > 0
               ? `${weekCount} commande${weekCount > 1 ? 's' : ''} cette semaine`
               : 'Aucune commande cette semaine'}
@@ -525,10 +525,10 @@ export default function ManagerDashboard() {
             {dayOrders.length === 0 ? (
               <div
                 className="rounded-3xl text-center py-14 animate-fade-up delay-200"
-                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4' }}
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0' }}
               >
                 <p className="text-2xl mb-2">—</p>
-                <p className="text-sm" style={{ color: '#71717A' }}>Aucune commande ce jour</p>
+                <p className="text-sm" style={{ color: '#8A7060' }}>Aucune commande ce jour</p>
               </div>
             ) : (
               dayOrders.map(o => (
@@ -551,7 +551,7 @@ export default function ManagerDashboard() {
       <nav
         className="fixed bottom-0 left-0 right-0 bg-white max-w-lg mx-auto z-50"
         style={{
-          borderTop: '1px solid #E7E5E4',
+          borderTop: '1px solid #E8DFC0',
           paddingBottom: 'env(safe-area-inset-bottom)',
           boxShadow: '0 -4px 24px rgba(0,0,0,0.04)',
         }}
@@ -569,7 +569,7 @@ export default function ManagerDashboard() {
               >
                 <item.Icon />
                 <span className="text-[10px] font-semibold mt-0.5">{item.label}</span>
-                {active && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#E8E27A' }} />}
+                {active && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#EDD83D' }} />}
               </button>
             )
           })}
@@ -579,7 +579,7 @@ export default function ManagerDashboard() {
             onClick={() => navigate('/vendeur/nouvelle-commande')}
             className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform"
             style={{
-              backgroundColor: '#18181B',
+              backgroundColor: '#432F2E',
               boxShadow: '0 8px 32px rgba(24,24,27,0.25)',
               transform: 'translateY(-14px)',
               marginBottom: -14,
@@ -602,7 +602,7 @@ export default function ManagerDashboard() {
               >
                 <item.Icon />
                 <span className="text-[10px] font-semibold mt-0.5">{item.label}</span>
-                {active && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#E8E27A' }} />}
+                {active && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#EDD83D' }} />}
               </button>
             )
           })}

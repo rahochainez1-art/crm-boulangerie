@@ -11,9 +11,9 @@ import {
 import AppLayout from '../components/layout/AppLayout'
 
 const ROLE_META = {
-  vendeur:     { label: 'Vendeur·se',  bg: '#F7F4C8', color: '#4A4E10' },
+  vendeur:     { label: 'Vendeur·se',  bg: '#FFF0B5', color: '#4A4E10' },
   patissiere:  { label: 'Pâtissière',  bg: '#DCFCE7', color: '#166534' },
-  manager:     { label: 'Manager',     bg: '#F7F4C8', color: '#18181B' },
+  manager:     { label: 'Manager',     bg: '#FFF0B5', color: '#432F2E' },
   boulangerie: { label: 'Boulangerie', bg: '#FEF3C7', color: '#92400E' },
 }
 
@@ -25,7 +25,7 @@ function Section({ title, children }) {
   return (
     <div
       className="rounded-3xl p-5 space-y-4 animate-fade-up"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
     >
       <p className="label-xs">{title}</p>
       {children}
@@ -42,7 +42,7 @@ function Toggle({ enabled, onToggle }) {
     >
       <span
         className="absolute inset-0 rounded-full transition-colors duration-200"
-        style={{ backgroundColor: enabled ? '#18181B' : '#E7E5E4' }}
+        style={{ backgroundColor: enabled ? '#432F2E' : '#E8DFC0' }}
       />
       <span
         className="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform duration-200"
@@ -170,12 +170,12 @@ export default function Settings() {
             </div>
             <div>
               <p className="font-semibold text-ink leading-tight">{prenom.trim() || 'Ton prénom'}</p>
-              <p className="text-xs mt-0.5" style={{ color: '#71717A' }}>{meta.label}</p>
+              <p className="text-xs mt-0.5" style={{ color: '#8A7060' }}>{meta.label}</p>
             </div>
           </div>
 
           <div>
-            <p className="text-xs mb-2" style={{ color: '#71717A' }}>Prénom affiché</p>
+            <p className="text-xs mb-2" style={{ color: '#8A7060' }}>Prénom affiché</p>
             <div className="flex gap-2">
               <input
                 value={prenom}
@@ -189,7 +189,7 @@ export default function Settings() {
                 onClick={handleSavePrenom}
                 className="px-4 rounded-2xl text-sm font-semibold transition-all active:scale-95 flex-shrink-0"
                 style={{
-                  backgroundColor: prenomSaved ? '#DCFCE7' : '#18181B',
+                  backgroundColor: prenomSaved ? '#DCFCE7' : '#432F2E',
                   color: prenomSaved ? '#166534' : '#FFFFFF',
                   minWidth: 52,
                 }}
@@ -227,19 +227,19 @@ export default function Settings() {
           {notifStatus === 'granted' ? (
             <div className="flex items-center gap-3">
               <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#22C55E' }} />
-              <p className="text-sm" style={{ color: '#71717A' }}>Push activées</p>
+              <p className="text-sm" style={{ color: '#8A7060' }}>Push activées</p>
             </div>
           ) : notifStatus === 'denied' ? (
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#EF4444' }} />
-                <p className="text-sm" style={{ color: '#71717A' }}>Notifications bloquées</p>
+                <p className="text-sm" style={{ color: '#8A7060' }}>Notifications bloquées</p>
               </div>
-              <p className="text-xs" style={{ color: '#A1A1AA' }}>Autorise-les dans les réglages de ton navigateur.</p>
+              <p className="text-xs" style={{ color: '#B0A090' }}>Autorise-les dans les réglages de ton navigateur.</p>
             </div>
           ) : (
             <div>
-              <p className="text-sm mb-3" style={{ color: '#71717A' }}>
+              <p className="text-sm mb-3" style={{ color: '#8A7060' }}>
                 Reçois une alerte quand une commande passe au statut{' '}
                 <span className="font-semibold text-ink">Prêt</span>.
               </p>
@@ -252,11 +252,11 @@ export default function Settings() {
           {/* Sonnerie */}
           <div
             className="flex items-center justify-between pt-4"
-            style={{ borderTop: '1px solid #F1EFE8' }}
+            style={{ borderTop: '1px solid #F0EBD0' }}
           >
             <div>
               <p className="text-sm font-semibold text-ink">Sonnerie</p>
-              <p className="text-xs mt-0.5" style={{ color: '#71717A' }}>Son lors d'une nouvelle commande</p>
+              <p className="text-xs mt-0.5" style={{ color: '#8A7060' }}>Son lors d'une nouvelle commande</p>
             </div>
             <Toggle enabled={soundEnabled} onToggle={handleSoundToggle} />
           </div>
@@ -267,7 +267,7 @@ export default function Settings() {
           <Section title="Production">
             <div>
               <p className="text-sm font-semibold text-ink mb-0.5">Délai alerte urgence</p>
-              <p className="text-xs mb-4" style={{ color: '#71717A' }}>Une commande passe en rouge à moins de…</p>
+              <p className="text-xs mb-4" style={{ color: '#8A7060' }}>Une commande passe en rouge à moins de…</p>
               <div className="grid grid-cols-3 gap-2">
                 {[24, 48, 72].map(h => (
                   <button
@@ -275,9 +275,9 @@ export default function Settings() {
                     onClick={() => handleUrgencyChange(h)}
                     className="py-3 rounded-2xl text-sm font-semibold transition-all active:scale-95"
                     style={{
-                      backgroundColor: urgencyHours === h ? '#18181B' : '#F1EFE8',
-                      color:           urgencyHours === h ? '#FFFFFF'  : '#71717A',
-                      border:          urgencyHours === h ? 'none'     : '1px solid #E7E5E4',
+                      backgroundColor: urgencyHours === h ? '#432F2E' : '#F0EBD0',
+                      color:           urgencyHours === h ? '#FFFFFF'  : '#8A7060',
+                      border:          urgencyHours === h ? 'none'     : '1px solid #E8DFC0',
                     }}
                   >
                     {h}h
@@ -293,7 +293,7 @@ export default function Settings() {
           <Section title="Données">
             <div>
               <p className="text-sm font-semibold text-ink mb-0.5">Export CSV</p>
-              <p className="text-xs mb-4" style={{ color: '#71717A' }}>
+              <p className="text-xs mb-4" style={{ color: '#8A7060' }}>
                 Commandes du mois en cours — compatible Excel.
               </p>
               <button
@@ -305,9 +305,9 @@ export default function Settings() {
               </button>
             </div>
 
-            <div style={{ borderTop: '1px solid #F1EFE8', paddingTop: '1rem' }}>
+            <div style={{ borderTop: '1px solid #F0EBD0', paddingTop: '1rem' }}>
               <p className="text-sm font-semibold text-ink mb-0.5">Réinitialiser</p>
-              <p className="text-xs mb-4" style={{ color: '#71717A' }}>
+              <p className="text-xs mb-4" style={{ color: '#8A7060' }}>
                 Supprime définitivement toutes les commandes.
               </p>
               <button
@@ -330,7 +330,7 @@ export default function Settings() {
               { label: 'Version',     value: '1.0.0' },
             ].map(row => (
               <div key={row.label} className="flex justify-between items-center">
-                <span style={{ color: '#71717A' }}>{row.label}</span>
+                <span style={{ color: '#8A7060' }}>{row.label}</span>
                 <span className="font-semibold text-ink">{row.value}</span>
               </div>
             ))}

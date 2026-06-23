@@ -6,7 +6,7 @@ export default function AppLayout({ title, subtitle, action, children }) {
         className="px-5 pb-5"
         style={{
           paddingTop: 'max(52px, env(safe-area-inset-top))',
-          borderBottom: '1px solid #E7E5E4',
+          borderBottom: '1px solid #E8DFC0',
         }}
       >
         <div className="flex items-end justify-between gap-3">
@@ -19,7 +19,7 @@ export default function AppLayout({ title, subtitle, action, children }) {
               {title}
             </h1>
             {subtitle && (
-              <p className="text-sm mt-1 capitalize" style={{ color: '#71717A' }}>{subtitle}</p>
+              <p className="text-sm mt-1 capitalize" style={{ color: '#8A7060' }}>{subtitle}</p>
             )}
           </div>
           {action && <div className="flex-shrink-0 pb-0.5">{action}</div>}

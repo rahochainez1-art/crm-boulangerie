@@ -15,9 +15,9 @@ const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 const PRODUCTION_STATUSES = ['todo', 'inprogress', 'ready']
 const STATUS_PICKER = {
-  todo:       { label: 'Pas commencé', activeBg: '#18181B', activeColor: '#FFFFFF', idleBg: '#F1EFE8', idleColor: '#71717A' },
-  inprogress: { label: 'En cours',     activeBg: '#FEF3C7', activeColor: '#92400e', idleBg: '#F8F7F3', idleColor: '#71717A' },
-  ready:      { label: 'Prêt ✓',       activeBg: '#E8E27A', activeColor: '#18181B', idleBg: '#F8F7F3', idleColor: '#71717A' },
+  todo:       { label: 'Pas commencé', activeBg: '#432F2E', activeColor: '#FFFFFF', idleBg: '#F0EBD0', idleColor: '#8A7060' },
+  inprogress: { label: 'En cours',     activeBg: '#FEF3C7', activeColor: '#92400e', idleBg: '#FFF0B5', idleColor: '#8A7060' },
+  ready:      { label: 'Prêt ✓',       activeBg: '#EDD83D', activeColor: '#432F2E', idleBg: '#FFF0B5', idleColor: '#8A7060' },
 }
 
 function urgencyColor(pickupDate) {
@@ -44,37 +44,37 @@ function SummaryCard({ orders }) {
     <div className="grid grid-cols-2 gap-3 mb-6">
       <div
         className="rounded-3xl p-5 flex flex-col justify-between animate-fade-up"
-        style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)', minHeight: 108 }}
+        style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)', minHeight: 108 }}
       >
         <p className="label-xs">Semaine</p>
         <div>
-          <p className="font-serif leading-none mt-2" style={{ fontSize: '2.5rem', color: '#18181B' }}>
+          <p className="font-serif leading-none mt-2" style={{ fontSize: '2.5rem', color: '#432F2E' }}>
             {weekOrders.length}
           </p>
-          <p className="text-xs mt-1" style={{ color: '#71717A' }}>commande{weekOrders.length > 1 ? 's' : ''}</p>
+          <p className="text-xs mt-1" style={{ color: '#8A7060' }}>commande{weekOrders.length > 1 ? 's' : ''}</p>
         </div>
       </div>
 
       <div
         className="rounded-3xl p-5 flex flex-col justify-between animate-fade-up delay-50"
         style={{
-          backgroundColor: todoCount > 3 ? '#FEE2E2' : todoCount > 0 ? '#F7F4C8' : '#DCFCE7',
-          border: '1px solid #E7E5E4',
+          backgroundColor: todoCount > 3 ? '#FEE2E2' : todoCount > 0 ? '#FFF0B5' : '#DCFCE7',
+          border: '1px solid #E8DFC0',
           boxShadow: '0 4px 24px rgba(0,0,0,0.03)',
           minHeight: 108,
         }}
       >
-        <p className="label-xs" style={{ color: todoCount > 3 ? '#b91c1c' : '#71717A' }}>
+        <p className="label-xs" style={{ color: todoCount > 3 ? '#b91c1c' : '#8A7060' }}>
           {todoCount > 3 ? '⚠ Urgent' : 'Production'}
         </p>
         <div>
           <p
             className="font-serif leading-none mt-2"
-            style={{ fontSize: '2.5rem', color: todoCount > 3 ? '#b91c1c' : '#18181B' }}
+            style={{ fontSize: '2.5rem', color: todoCount > 3 ? '#b91c1c' : '#432F2E' }}
           >
             {todoCount}
           </p>
-          <p className="text-xs mt-1" style={{ color: todoCount > 3 ? '#b91c1c' : '#71717A' }}>à produire</p>
+          <p className="text-xs mt-1" style={{ color: todoCount > 3 ? '#b91c1c' : '#8A7060' }}>à produire</p>
         </div>
       </div>
     </div>
@@ -93,13 +93,13 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
   return (
     <div
       className="rounded-3xl p-5 mb-5 animate-fade-up delay-100"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
     >
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => { setViewMonth(m => subMonths(m, 1)); onSelectDay(null) }}
           className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-          style={{ color: '#71717A' }}
+          style={{ color: '#8A7060' }}
         >‹</button>
         <p className="font-semibold capitalize text-ink" style={{ fontSize: '0.95rem' }}>
           {format(viewMonth, 'MMMM yyyy', { locale: fr })}
@@ -107,20 +107,20 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
         <button
           onClick={() => { setViewMonth(m => addMonths(m, 1)); onSelectDay(null) }}
           className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-          style={{ color: '#71717A' }}
+          style={{ color: '#8A7060' }}
         >›</button>
       </div>
 
       <div className="flex items-center gap-1.5 mb-4">
-        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#E8E27A' }} />
-        <span className="text-xs" style={{ color: '#71717A' }}>
+        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#EDD83D' }} />
+        <span className="text-xs" style={{ color: '#8A7060' }}>
           <span className="font-semibold text-ink">{monthOrders.length}</span> commande{monthOrders.length > 1 ? 's' : ''} ce mois
         </span>
       </div>
 
       <div className="grid grid-cols-7 mb-1">
         {DAY_LABELS.map((d, i) => (
-          <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#A1A1AA', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             {d}
           </p>
         ))}
@@ -140,13 +140,13 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
               onClick={() => onSelectDay(isSelected ? null : day)}
               className="flex flex-col items-center py-1.5 rounded-2xl transition-all active:scale-95"
               style={{
-                backgroundColor: isSelected ? '#18181B' : isToday ? '#F7F4C8' : 'transparent',
+                backgroundColor: isSelected ? '#432F2E' : isToday ? '#FFF0B5' : 'transparent',
                 opacity: inMonth ? 1 : 0.15,
               }}
             >
               <span
                 className="text-sm font-medium leading-tight"
-                style={{ color: isSelected ? '#FFFFFF' : '#18181B' }}
+                style={{ color: isSelected ? '#FFFFFF' : '#432F2E' }}
               >
                 {format(day, 'd')}
               </span>
@@ -155,7 +155,7 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
                   <span
                     className="text-[8px] font-bold flex items-center justify-center"
                     style={{
-                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#E8E27A',
+                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#EDD83D',
                       color: isSelected ? '#fff' : '#4A4E10',
                       minWidth: 14, height: 14, padding: '0 3px', borderRadius: 9999,
                     }}
@@ -205,7 +205,7 @@ export default function PatissiereDashboard() {
   const initiale = prenom[0]?.toUpperCase() ?? 'P'
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F8F7F3' }}>
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFF0B5' }}>
 
       {/* Bannière nouvelle commande */}
       {newOrders.length > 0 && (
@@ -222,7 +222,7 @@ export default function PatissiereDashboard() {
         className="px-5 pb-5"
         style={{
           paddingTop: 'max(52px, env(safe-area-inset-top))',
-          borderBottom: '1px solid #E7E5E4',
+          borderBottom: '1px solid #E8DFC0',
         }}
       >
         <div className="flex items-center justify-between animate-fade-up">
@@ -234,7 +234,7 @@ export default function PatissiereDashboard() {
               <span className="text-sm font-bold" style={{ color: '#166534' }}>{initiale}</span>
             </div>
             <div>
-              <p className="text-xs" style={{ color: '#71717A' }}>{prenom ? `Bonjour ${prenom},` : 'Bonjour,'}</p>
+              <p className="text-xs" style={{ color: '#8A7060' }}>{prenom ? `Bonjour ${prenom},` : 'Bonjour,'}</p>
               <p className="font-serif text-ink leading-tight" style={{ fontSize: '1.05rem' }}>Pâtissière</p>
             </div>
           </div>
@@ -244,7 +244,7 @@ export default function PatissiereDashboard() {
                 onTouchStart={(e) => { e.preventDefault(); unlock() }}
                 onClick={unlock}
                 className="text-[11px] font-semibold px-3 py-1.5 rounded-xl border active:opacity-70 flex items-center gap-1"
-                style={{ backgroundColor: '#F7F4C8', color: '#4A4E10', borderColor: '#E8E27A' }}
+                style={{ backgroundColor: '#FFF0B5', color: '#4A4E10', borderColor: '#EDD83D' }}
               >
                 🔕 Son
               </button>
@@ -281,10 +281,10 @@ export default function PatissiereDashboard() {
         {dayOrders.length === 0 ? (
           <div
             className="rounded-3xl text-center py-14 animate-fade-up delay-200"
-            style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4' }}
+            style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0' }}
           >
             <p className="text-2xl mb-2">✓</p>
-            <p className="text-sm" style={{ color: '#71717A' }}>Aucune commande ce jour</p>
+            <p className="text-sm" style={{ color: '#8A7060' }}>Aucune commande ce jour</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -322,11 +322,11 @@ function NewOrderBanner({ newOrders, isUnlocked, onUnlock, onDismiss }) {
     >
       <div
         className="rounded-3xl px-5 py-4 flex items-start gap-3"
-        style={{ backgroundColor: '#18181B', boxShadow: '0 16px 48px rgba(0,0,0,0.3)' }}
+        style={{ backgroundColor: '#432F2E', boxShadow: '0 16px 48px rgba(0,0,0,0.3)' }}
       >
         <span className="text-xl flex-shrink-0 mt-0.5">🍰</span>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#E8E27A' }}>
+          <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#EDD83D' }}>
             {newOrders.length > 1 ? `${newOrders.length} nouvelles commandes` : 'Nouvelle commande'}
           </p>
           <p className="font-semibold text-white truncate">{last.clientName}</p>
@@ -336,7 +336,7 @@ function NewOrderBanner({ newOrders, isUnlocked, onUnlock, onDismiss }) {
               onTouchStart={(e) => { e.preventDefault(); onUnlock() }}
               onClick={onUnlock}
               className="mt-2 text-[11px] font-semibold px-3 py-1 rounded-xl active:opacity-70"
-              style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#E8E27A', border: '1px solid rgba(232,226,122,0.3)' }}
+              style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#EDD83D', border: '1px solid rgba(232,226,122,0.3)' }}
             >
               🔕 Activer le son
             </button>
@@ -369,7 +369,7 @@ function OrderCard({ order, isNew, expanded, onToggle }) {
       className="rounded-3xl overflow-hidden transition-all duration-500 animate-fade-up"
       style={{
         backgroundColor: '#FFFFFF',
-        border: isNew ? '2px solid #E8E27A' : '1px solid #E7E5E4',
+        border: isNew ? '2px solid #EDD83D' : '1px solid #E8DFC0',
         boxShadow: isNew
           ? '0 8px 32px rgba(232,226,122,0.2)'
           : '0 4px 24px rgba(0,0,0,0.04)',
@@ -384,17 +384,17 @@ function OrderCard({ order, isNew, expanded, onToggle }) {
       >
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-ink text-sm truncate">{order.clientName}</p>
-          <p className="text-xs truncate mt-0.5" style={{ color: '#71717A' }}>{order.articles}</p>
+          <p className="text-xs truncate mt-0.5" style={{ color: '#8A7060' }}>{order.articles}</p>
         </div>
         <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
-          <span className="text-xs font-semibold tabular-nums" style={{ color: '#71717A' }}>
+          <span className="text-xs font-semibold tabular-nums" style={{ color: '#8A7060' }}>
             {format(parseISO(order.pickupDate), 'HH:mm')}
           </span>
           <StatusPill status={order.status} />
         </div>
         <svg
           width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="#A1A1AA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          stroke="#B0A090" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           className="flex-shrink-0 transition-transform duration-200"
           style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
         >
@@ -403,7 +403,7 @@ function OrderCard({ order, isNew, expanded, onToggle }) {
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid #F1EFE8' }}>
+        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid #F0EBD0' }}>
 
           <div>
             <p className="label-xs mb-1.5">Articles</p>
@@ -432,7 +432,7 @@ function OrderCard({ order, isNew, expanded, onToggle }) {
                   style={{
                     backgroundColor: isActive ? cfg.activeBg : cfg.idleBg,
                     color:           isActive ? cfg.activeColor : cfg.idleColor,
-                    border:          isActive ? 'none' : '1px solid #E7E5E4',
+                    border:          isActive ? 'none' : '1px solid #E8DFC0',
                   }}
                 >
                   {cfg.label}
@@ -449,7 +449,7 @@ function OrderCard({ order, isNew, expanded, onToggle }) {
 
 function StatusPill({ status }) {
   const map = {
-    todo:       { label: 'À faire',  bg: '#F1EFE8', color: 'rgba(24,24,27,0.55)' },
+    todo:       { label: 'À faire',  bg: '#F0EBD0', color: 'rgba(24,24,27,0.55)' },
     inprogress: { label: 'En cours', bg: '#FEF3C7', color: '#92400e' },
     ready:      { label: 'Prêt ✓',   bg: '#DCFCE7', color: '#166534' },
   }

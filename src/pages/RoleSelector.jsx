@@ -51,7 +51,7 @@ const ROLES = [
     label:       'Vendeur·se',
     description: 'Saisir les commandes et voir les retraits du jour',
     Icon:        IconBag,
-    iconBg:      '#F7F4C8',
+    iconBg:      '#FFF0B5',
     iconColor:   '#4A4E10',
   },
   {
@@ -67,8 +67,8 @@ const ROLES = [
     label:       'Manager',
     description: 'Vue globale, modifications et historique',
     Icon:        IconChart,
-    iconBg:      '#F7F4C8',
-    iconColor:   '#18181B',
+    iconBg:      '#FFF0B5',
+    iconColor:   '#432F2E',
   },
   {
     id:          'boulangerie',
@@ -98,7 +98,7 @@ export default function RoleSelector() {
         >
           Bonjour,<br />qui êtes-vous ?
         </h1>
-        <p className="mt-4 text-base leading-relaxed" style={{ color: '#71717A' }}>
+        <p className="mt-4 text-base leading-relaxed" style={{ color: '#8A7060' }}>
           Choisissez votre rôle pour commencer.
         </p>
       </div>
@@ -112,7 +112,7 @@ export default function RoleSelector() {
             className="w-full text-left active:scale-[0.985] transition-all animate-fade-up"
             style={{
               backgroundColor: '#FFFFFF',
-              border: '1px solid #E7E5E4',
+              border: '1px solid #E8DFC0',
               borderRadius: 24,
               padding: '1.25rem 1.25rem',
               boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
@@ -144,7 +144,7 @@ export default function RoleSelector() {
               >
                 {r.label}
               </p>
-              <p className="text-sm mt-0.5 leading-snug" style={{ color: '#71717A' }}>
+              <p className="text-sm mt-0.5 leading-snug" style={{ color: '#8A7060' }}>
                 {r.description}
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function RoleSelector() {
             {/* Flèche */}
             <svg
               width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="#A1A1AA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              stroke="#B0A090" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
               className="flex-shrink-0"
             >
               <path d="M9 18l6-6-6-6"/>

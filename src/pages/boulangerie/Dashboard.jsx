@@ -11,9 +11,9 @@ import AppLayout from '../../components/layout/AppLayout'
 
 const PRODUCTION_STATUSES = ['todo', 'inprogress', 'ready']
 const STATUS_PICKER = {
-  todo:       { label: 'Pas commencé', activeBg: '#18181B', activeColor: '#FFFFFF', idleBg: '#F1EFE8', idleColor: '#71717A' },
-  inprogress: { label: 'En cours',     activeBg: '#FEF3C7', activeColor: '#92400e', idleBg: '#F8F7F3', idleColor: '#71717A' },
-  ready:      { label: 'Prêt ✓',       activeBg: '#E8E27A', activeColor: '#18181B', idleBg: '#F8F7F3', idleColor: '#71717A' },
+  todo:       { label: 'Pas commencé', activeBg: '#432F2E', activeColor: '#FFFFFF', idleBg: '#F0EBD0', idleColor: '#8A7060' },
+  inprogress: { label: 'En cours',     activeBg: '#FEF3C7', activeColor: '#92400e', idleBg: '#FFF0B5', idleColor: '#8A7060' },
+  ready:      { label: 'Prêt ✓',       activeBg: '#EDD83D', activeColor: '#432F2E', idleBg: '#FFF0B5', idleColor: '#8A7060' },
 }
 
 function urgencyColor(pickupDate) {
@@ -39,7 +39,7 @@ function SummaryCard({ orders }) {
 
   return (
     <div className="mb-6 animate-fade-up">
-      <p className="text-sm mb-1" style={{ color: '#71717A' }}>
+      <p className="text-sm mb-1" style={{ color: '#8A7060' }}>
         {prenom ? `Bonjour ${prenom} 👋` : 'Voici ton résumé 👋'}
       </p>
       <h2 className="font-serif text-ink leading-tight mb-5" style={{ fontSize: '1.75rem' }}>
@@ -53,37 +53,37 @@ function SummaryCard({ orders }) {
       <div className="grid grid-cols-2 gap-3">
         <div
           className="rounded-3xl p-5 flex flex-col justify-between animate-fade-up delay-50"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)', minHeight: 108 }}
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)', minHeight: 108 }}
         >
           <p className="label-xs">Semaine</p>
           <div>
-            <p className="font-serif leading-none mt-2" style={{ fontSize: '2.5rem', color: '#18181B' }}>
+            <p className="font-serif leading-none mt-2" style={{ fontSize: '2.5rem', color: '#432F2E' }}>
               {weekOrders.length}
             </p>
-            <p className="text-xs mt-1" style={{ color: '#71717A' }}>commande{weekOrders.length > 1 ? 's' : ''}</p>
+            <p className="text-xs mt-1" style={{ color: '#8A7060' }}>commande{weekOrders.length > 1 ? 's' : ''}</p>
           </div>
         </div>
 
         <div
           className="rounded-3xl p-5 flex flex-col justify-between animate-fade-up delay-100"
           style={{
-            backgroundColor: todoCount > 3 ? '#FEE2E2' : todoCount > 0 ? '#F7F4C8' : '#DCFCE7',
-            border: '1px solid #E7E5E4',
+            backgroundColor: todoCount > 3 ? '#FEE2E2' : todoCount > 0 ? '#FFF0B5' : '#DCFCE7',
+            border: '1px solid #E8DFC0',
             boxShadow: '0 4px 24px rgba(0,0,0,0.03)',
             minHeight: 108,
           }}
         >
-          <p className="label-xs" style={{ color: todoCount > 3 ? '#b91c1c' : '#71717A' }}>
+          <p className="label-xs" style={{ color: todoCount > 3 ? '#b91c1c' : '#8A7060' }}>
             {todoCount > 3 ? '⚠ Urgent' : 'Production'}
           </p>
           <div>
             <p
               className="font-serif leading-none mt-2"
-              style={{ fontSize: '2.5rem', color: todoCount > 3 ? '#b91c1c' : '#18181B' }}
+              style={{ fontSize: '2.5rem', color: todoCount > 3 ? '#b91c1c' : '#432F2E' }}
             >
               {todoCount}
             </p>
-            <p className="text-xs mt-1" style={{ color: todoCount > 3 ? '#b91c1c' : '#71717A' }}>à produire</p>
+            <p className="text-xs mt-1" style={{ color: todoCount > 3 ? '#b91c1c' : '#8A7060' }}>à produire</p>
           </div>
         </div>
       </div>
@@ -132,10 +132,10 @@ export default function BoulangerieDashboard() {
       {weekOrders.length === 0 ? (
         <div
           className="rounded-3xl text-center py-14 animate-fade-up delay-200"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4' }}
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0' }}
         >
           <p className="text-2xl mb-2">✓</p>
-          <p className="text-sm" style={{ color: '#71717A' }}>Rien cette semaine</p>
+          <p className="text-sm" style={{ color: '#8A7060' }}>Rien cette semaine</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -170,7 +170,7 @@ function OrderCard({ order, expanded, onToggle }) {
   return (
     <div
       className="rounded-3xl overflow-hidden animate-fade-up"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E5E4', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
     >
       <div className="h-1 rounded-t-3xl" style={{ backgroundColor: urgencyColor(order.pickupDate) }} />
 
@@ -180,17 +180,17 @@ function OrderCard({ order, expanded, onToggle }) {
       >
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-ink text-sm truncate">{order.clientName}</p>
-          <p className="text-xs truncate mt-0.5" style={{ color: '#71717A' }}>{order.articles}</p>
+          <p className="text-xs truncate mt-0.5" style={{ color: '#8A7060' }}>{order.articles}</p>
         </div>
         <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
-          <span className="text-xs font-semibold tabular-nums" style={{ color: '#71717A' }}>
+          <span className="text-xs font-semibold tabular-nums" style={{ color: '#8A7060' }}>
             {format(parseISO(order.pickupDate), 'HH:mm')}
           </span>
           <StatusPill status={order.status} />
         </div>
         <svg
           width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="#A1A1AA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          stroke="#B0A090" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           className="flex-shrink-0 transition-transform duration-200"
           style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
         >
@@ -199,9 +199,9 @@ function OrderCard({ order, expanded, onToggle }) {
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid #F1EFE8' }}>
+        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid #F0EBD0' }}>
 
-          <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#F1EFE8' }}>
+          <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#F0EBD0' }}>
             <p className="label-xs mb-1">Commande</p>
             <p className="font-medium text-ink text-sm leading-relaxed">{order.articles}</p>
           </div>
@@ -232,7 +232,7 @@ function OrderCard({ order, expanded, onToggle }) {
                   style={{
                     backgroundColor: isActive ? cfg.activeBg : cfg.idleBg,
                     color:           isActive ? cfg.activeColor : cfg.idleColor,
-                    border:          isActive ? 'none' : '1px solid #E7E5E4',
+                    border:          isActive ? 'none' : '1px solid #E8DFC0',
                   }}
                 >
                   {cfg.label}
@@ -249,7 +249,7 @@ function OrderCard({ order, expanded, onToggle }) {
 
 function StatusPill({ status }) {
   const map = {
-    todo:       { label: 'À faire',  bg: '#F1EFE8', color: 'rgba(24,24,27,0.55)' },
+    todo:       { label: 'À faire',  bg: '#F0EBD0', color: 'rgba(24,24,27,0.55)' },
     inprogress: { label: 'En cours', bg: '#FEF3C7', color: '#92400e' },
     ready:      { label: 'Prêt ✓',   bg: '#DCFCE7', color: '#166534' },
   }
