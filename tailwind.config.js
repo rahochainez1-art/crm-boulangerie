@@ -5,9 +5,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ['Satoshi', 'sans-serif'],
-        display: ['Clash Display', 'sans-serif'],
-        serif:   ['Clash Display', 'sans-serif'], // rétrocompat — même font
+        sans:    ['"Plus Jakarta Sans"', 'sans-serif'],
+        display: ['Syne', 'sans-serif'],
+        serif:   ['Syne', 'sans-serif'],
       },
       colors: {
         // ── Palette Au Grand Jour ─────────────────────────────

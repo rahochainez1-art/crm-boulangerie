@@ -11,7 +11,7 @@
   body {
     background-color: #FFF0B5;
     color: #432F2E;
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
@@ -29,12 +29,12 @@
   input, textarea, select {
     font-size: 1rem;
     line-height: 1.5rem;
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
   /* Titres en Clash Display */
   h1, h2, h3 {
-    font-family: 'Clash Display', sans-serif;
+    font-family: 'Syne', sans-serif;
   }
 }
 
@@ -61,7 +61,7 @@
     width: 100%;
     border: 1.5px solid transparent;
     transition: border-color 0.15s, background-color 0.15s;
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .field::placeholder { color: rgba(138,112,96,0.5); }
   .field:focus {
@@ -87,7 +87,7 @@
     cursor: pointer;
     transition: background-color 0.15s, transform 0.1s;
     letter-spacing: -0.01em;
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .btn-primary:active {
     background-color: #D9C530;
@@ -111,7 +111,7 @@
     border: 1.5px solid #E8DFC0;
     cursor: pointer;
     transition: background-color 0.15s, transform 0.1s;
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .btn-secondary:active {
     background-color: #FFF0B5;
@@ -126,7 +126,7 @@
     border-radius: 9999px;
     font-size: 0.72rem;
     font-weight: 700;
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .badge-todo       { background-color: #F5ECA0; color: #6B5800; }
   .badge-inprogress { background-color: #432F2E; color: #FFFFFF; }
@@ -140,7 +140,7 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: #8A7060;
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 }
 
@@ -151,7 +151,7 @@
   .scrollbar-none::-webkit-scrollbar { display: none; }
 
   /* Clash Display utilitaire */
-  .font-display { font-family: 'Clash Display', sans-serif; }
+  .font-display { font-family: 'Syne', sans-serif; }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(10px); }
