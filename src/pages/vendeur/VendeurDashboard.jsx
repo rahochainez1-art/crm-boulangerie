@@ -7,40 +7,7 @@ import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { subscribeOrders, setStatus } from '../../lib/orders'
 import { getPrenom } from '../../lib/settings'
-
-const BLAGUES = [
-  "🥐 Le croissant n'est pas français à l'origine ! Il vient de Vienne (Autriche). Marie-Antoinette l'aurait popularisé en France au XVIIIᵉ siècle. La forme en lune croissante rappelait le drapeau ottoman après la victoire de Vienne en 1683.",
-  "🧩 Je suis fabriqué avec de la farine, de l'eau et du sel. Je suis long, doré, croustillant. On me retrouve sous le bras de presque tous les Français. Qui suis-je ? (La baguette !)",
-  "🌍 La France est le pays qui consomme le plus de pain par habitant en Europe. Un Français mange en moyenne 130 g de pain par jour, soit une demi-baguette. 🥖",
-  "🥐 Un vrai croissant au beurre contient entre 25 et 30 % de beurre dans sa pâte. C'est ce qui lui donne ses couches feuilletées et son goût incomparable.",
-  "🧩 Je me compose de mille couches (enfin, 729 en théorie !), je suis crème et feuilleté. Mon nom signifie littéralement ce que je suis. Qui suis-je ? (Le mille-feuille !)",
-  "🌍 Le chocolat chaud a été inventé par les Mayas il y a plus de 3 000 ans. Ils le buvaient froid et épicé, sans sucre. ☕",
-  "🥐 Le Paris-Brest a été créé en 1910 par le pâtissier Louis Durand pour célébrer la course cycliste Paris-Brest-Paris. Sa forme ronde imite une roue de vélo. 🚴",
-  "🧩 Plus je sèche, plus je suis dure. Je commence tendre et dorée, mais je vieillis vite. La soupe m'aime encore quand personne d'autre ne veut de moi. Qui suis-je ? (La baguette rassis !)",
-  "🌍 La tour Eiffel mesure 6 cm de plus en été qu'en hiver. La chaleur dilate le métal. 🗼",
-  "🥐 Le macaron parisien (deux coques avec une ganache) a été inventé par la maison Ladurée au début du XXᵉ siècle. 🫐",
-  "🧩 Je suis ronde, je parfume toute la boulangerie, je suis feuilletée et je viens de Bretagne. Qui suis-je ? (Le kouign-amann !)",
-  "🌍 Le mot 'boulanger' vient du flamand 'boulenc', qui désignait celui qui faisait des pains ronds. 🍞",
-  "🥐 La pâte à choux gonfle uniquement grâce à la vapeur d'eau emprisonnée lors de la cuisson. Le four ne doit jamais être ouvert pendant la cuisson ! 💨",
-  "🧩 Je suis léger comme l'air, je fonds en bouche, et mon nom évoque la vitesse. On me garnit de crème et on me recouvre de fondant. Qui suis-je ? (L'éclair !)",
-  "🌍 Les abeilles visitent environ 2 millions de fleurs pour produire 500 g de miel. 🐝",
-  "🥐 Saint Honoré est le patron des boulangers et pâtissiers. Sa fête est le 16 mai. 🙏",
-  "🧩 On me pétrit, on me laisse reposer, on me façonne, on me cuit. Je suis l'âme de la boulangerie. Qui suis-je ? (La pâte !)",
-  "🌍 La France compte environ 33 000 boulangeries artisanales. Chaque jour, les Français achètent environ 6 millions de baguettes. 🇫🇷",
-  "🥐 La brioche doit son nom au verbe 'brier', qui signifie pétrir en normand. Elle contient jusqu'autant de beurre que de farine dans les recettes riches. 🧈",
-  "🧩 Je suis petit, doré, rectangulaire. Les financiers de la Bourse de Paris me mangeaient sans se salir les mains. Qui suis-je ? (Le financier !)",
-  "🌍 Le Groenland est la plus grande île du monde (non continentale). Sa superficie est 5 fois celle de la France. 🗺️",
-  "🥐 La loi française encadre strictement la baguette de tradition : sans additif, uniquement farine, eau, sel et levure. 🏆",
-  "🧩 Plus on me chauffe, plus je deviens solide. Je suis la preuve que la cuisine peut défier la logique. Qui suis-je ? (L'œuf en cuisson !)",
-  "🌍 Une banane n'est pas un fruit au sens botanique — c'est une baie ! Et les fraises sont des 'faux-fruits'. 🍓",
-  "🥐 Le feuilletage d'un croissant classique compte 27 couches, obtenues par 3 tours doubles. C'est le 'tourage'. 🧈",
-  "🧩 Je suis composée de 3 boules de tailles différentes, je suis beurrée et moelleuse. Qui suis-je ? (La brioche à tête !)",
-  "🌍 Le mot 'salaire' vient du latin 'salarium', car les soldats romains étaient parfois payés en sel. 🧂",
-  "🥐 L'Opéra est un gâteau parisien inventé par la maison Dalloyau. Ses couches : génoise café, crème au beurre café, ganache chocolat. 🎭",
-  "🧩 Je suis blanc, je viens de la mer, sans moi le pain est fade, trop de moi et il ne lève pas. Qui suis-je ? (Le sel !)",
-  "🌍 Le cacao est originaire d'Amérique centrale. Les fèves servaient de monnaie chez les Aztèques. 🍫",
-  "🥐 Le levain est vivant ! Certaines boulangeries entretiennent le même levain depuis des décennies. Il peut se transmettre comme un héritage. 🌱",
-]
+import StatusBadge from '../../components/ui/StatusBadge'
 
 const TABS = [
   { id: 'all',   label: 'Toutes' },
@@ -48,18 +15,18 @@ const TABS = [
 ]
 
 const STATUS_META = {
-  todo:       { label: 'À faire',   topColor: '#F0EBD0', bg: '#F0EBD0', color: 'rgba(35,39,38,0.65)' },
-  inprogress: { label: 'En cours',  topColor: '#FEE18B', bg: '#FEF3C7', color: '#92400e' },
-  ready:      { label: 'Prête ✓',   topColor: '#86EFAC', bg: '#C5E6D3', color: '#166534' },
-  done:       { label: 'Récupérée', topColor: '#D4D4D8', bg: '#F4F4F5', color: 'rgba(35,39,38,0.35)' },
+  todo:       { accentColor: '#EDD83D' },
+  inprogress: { accentColor: '#432F2E' },
+  ready:      { accentColor: '#10B981' },
+  done:       { accentColor: '#E5E7EB' },
 }
 
 function greeting(prenom) {
   const h = new Date().getHours()
   const name = prenom ? ` ${prenom}` : ''
-  if (h < 10) return `Bonne journée${name} 🌅`
-  if (h < 14) return `Coucou${name} 👋`
-  return `On tient bon${name} ! 💪`
+  if (h < 12) return `Bonjour${name} 👋`
+  if (h < 18) return `Bon après-midi${name} 👋`
+  return `Bonsoir${name} 👋`
 }
 
 export default function VendeurDashboard() {
@@ -70,6 +37,7 @@ export default function VendeurDashboard() {
   const [weekOffset, setWeekOffset]   = useState(0)
   const [prevReady, setPrevReady] = useState(new Set())
   const prenom = getPrenom()
+  const initiale = prenom ? prenom[0].toUpperCase() : 'V'
 
   useEffect(() => {
     return subscribeOrders((newOrders) => {
@@ -110,7 +78,9 @@ export default function VendeurDashboard() {
     [allOrders, selectedDay]
   )
 
-  const ready = dayOrders.filter(o => o.status === 'ready').length
+  const kpiTodo  = dayOrders.filter(o => o.status === 'todo' || o.status === 'inprogress').length
+  const kpiReady = dayOrders.filter(o => o.status === 'ready').length
+  const kpiDone  = dayOrders.filter(o => o.status === 'done').length
 
   const filtered = (
     tab === 'ready' ? dayOrders.filter(o => o.status === 'ready') : dayOrders
@@ -120,32 +90,35 @@ export default function VendeurDashboard() {
     return 0
   })
 
-  const blague = BLAGUES[(new Date().getDate() - 1) % BLAGUES.length]
-
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFF0B5' }}>
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5F2EB' }}>
 
-      {/* ── Header ─────────────────────────────────────────────────── */}
+      {/* ── Header compact ─────────────────────────────────────────── */}
       <header
         className="px-5 pb-4"
-        style={{ paddingTop: 'max(48px, env(safe-area-inset-top))' }}
+        style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}
       >
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="label-xs mb-2">Au Grand Jour</p>
-            <h1 className="font-serif text-ink leading-none" style={{ fontSize: '2.1rem' }}>
+        <div className="flex items-center justify-between">
+          <div className="animate-fade-up">
+            <h1
+              className="font-display"
+              style={{ fontSize: '1.625rem', color: '#111111', letterSpacing: '-0.025em', lineHeight: 1.15 }}
+            >
               {greeting(prenom)}
             </h1>
-            <p className="text-sm mt-1.5 capitalize" style={{ color: '#8A7060' }}>
-              {format(selectedDay, 'EEEE d MMMM', { locale: fr })}
+            <p
+              className="capitalize"
+              style={{ fontSize: '0.8125rem', color: '#8A7060', fontWeight: 500, fontFamily: 'Satoshi', marginTop: 2 }}
+            >
+              {format(new Date(), 'EEEE d MMMM', { locale: fr })}
             </p>
           </div>
           <div
-            className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 mt-1"
-            style={{ backgroundColor: 'rgba(35,39,38,0.08)' }}
+            className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 animate-fade-up"
+            style={{ backgroundColor: '#432F2E' }}
           >
-            <span className="text-base font-bold text-ink">
-              {prenom ? prenom[0].toUpperCase() : 'V'}
+            <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#FFFFFF', fontFamily: 'Satoshi' }}>
+              {initiale}
             </span>
           </div>
         </div>
@@ -153,21 +126,91 @@ export default function VendeurDashboard() {
 
       <div className="flex-1 overflow-y-auto pb-28">
 
+        {/* ── KPI Strip ───────────────────────────────────────────── */}
+        <div className="px-5 mb-5">
+          <div
+            className="flex rounded-2xl overflow-hidden"
+            style={{
+              backgroundColor: '#FFFFFF',
+              border: '1px solid rgba(67,47,46,0.08)',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(67,47,46,0.06)',
+            }}
+          >
+            {[
+              {
+                count: kpiTodo,
+                label: 'À préparer',
+                textColor: kpiTodo > 0 ? '#111111' : '#B0A090',
+                bg: null,
+              },
+              {
+                count: kpiReady,
+                label: 'Prêtes',
+                textColor: kpiReady > 0 ? '#065F46' : '#B0A090',
+                bg: kpiReady > 0 ? '#D1FAE5' : null,
+              },
+              {
+                count: kpiDone,
+                label: 'Récupérées',
+                textColor: '#8A7060',
+                bg: null,
+              },
+            ].map((kpi, i) => (
+              <div
+                key={i}
+                className="flex-1 flex flex-col items-center py-3.5"
+                style={{
+                  backgroundColor: kpi.bg || 'transparent',
+                  borderRight: i < 2 ? '1px solid rgba(67,47,46,0.08)' : 'none',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 800,
+                    color: kpi.textColor,
+                    fontFamily: 'Satoshi',
+                    lineHeight: 1,
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {kpi.count}
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.6875rem',
+                    fontWeight: 600,
+                    color: '#8A7060',
+                    fontFamily: 'Satoshi',
+                    marginTop: 4,
+                    letterSpacing: '0.01em',
+                  }}
+                >
+                  {kpi.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* ── Calendrier semaine ─────────────────────────────────────── */}
-        <div className="px-4 mb-5">
-          <div className="flex items-center justify-between mb-3">
+        <div className="px-5 mb-5">
+          <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => {
                 const prev = addWeeks(new Date(), weekOffset - 1)
                 setWeekOffset(o => o - 1)
                 setSelectedDay(startOfWeek(prev, { weekStartsOn: 1 }))
               }}
-              className="text-sm font-semibold active:opacity-50 transition-opacity"
-              style={{ color: '#8A7060' }}
+              className="active:opacity-50 transition-opacity"
+              style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi' }}
             >
               ← Préc
             </button>
-            <p className="font-semibold text-ink capitalize" style={{ fontSize: '0.9rem' }}>
+            <p
+              className="capitalize"
+              style={{ fontSize: '0.875rem', fontWeight: 600, color: '#432F2E', fontFamily: 'Satoshi' }}
+            >
               {format(weekDays[3], 'MMMM yyyy', { locale: fr })}
             </p>
             <button
@@ -176,8 +219,8 @@ export default function VendeurDashboard() {
                 setWeekOffset(o => o + 1)
                 setSelectedDay(startOfWeek(next, { weekStartsOn: 1 }))
               }}
-              className="text-sm font-semibold active:opacity-50 transition-opacity"
-              style={{ color: '#8A7060' }}
+              className="active:opacity-50 transition-opacity"
+              style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi' }}
             >
               Suiv →
             </button>
@@ -194,34 +237,55 @@ export default function VendeurDashboard() {
                 <button
                   key={day.toISOString()}
                   onClick={() => setSelectedDay(day)}
-                  className="flex-1 flex flex-col items-center py-3 rounded-2xl transition-all active:scale-95"
+                  className="flex-1 flex flex-col items-center py-3 transition-all active:scale-95"
                   style={{
+                    borderRadius: 14,
                     backgroundColor: isSelected
-                      ? '#432F2E'
+                      ? '#111111'
                       : isToday
-                      ? 'rgba(255,255,255,0.85)'
-                      : 'rgba(255,255,255,0.45)',
-                    border: isSelected ? 'none' : '1px solid rgba(221,217,176,0.6)',
+                      ? 'rgba(67,47,46,0.06)'
+                      : 'rgba(255,255,255,0.6)',
+                    border: isSelected
+                      ? 'none'
+                      : isToday
+                      ? '1.5px solid rgba(67,47,46,0.2)'
+                      : '1px solid rgba(67,47,46,0.08)',
                   }}
                 >
                   <span
-                    className="font-bold leading-none"
-                    style={{ fontSize: '1.15rem', color: isSelected ? '#fff' : '#432F2E' }}
+                    style={{
+                      fontSize: '1.0625rem',
+                      fontWeight: 700,
+                      lineHeight: 1,
+                      color: isSelected ? '#FFFFFF' : '#111111',
+                      fontFamily: 'Satoshi',
+                    }}
                   >
                     {format(day, 'd')}
                   </span>
                   <span
-                    className="capitalize mt-1"
-                    style={{ fontSize: 10, fontWeight: 600, color: isSelected ? 'rgba(255,255,255,0.55)' : '#8A7060' }}
+                    style={{
+                      fontSize: 9,
+                      fontWeight: 600,
+                      color: isSelected ? 'rgba(255,255,255,0.55)' : '#8A7060',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.07em',
+                      marginTop: 3,
+                      fontFamily: 'Satoshi',
+                    }}
                   >
                     {format(day, 'EEE', { locale: fr })}
                   </span>
                   <span
-                    className="w-1.5 h-1.5 rounded-full mt-1.5"
                     style={{
+                      width: 4,
+                      height: 4,
+                      borderRadius: 9999,
+                      marginTop: 5,
                       backgroundColor: hasOrders
                         ? isSelected ? 'rgba(255,255,255,0.45)' : '#EDD83D'
                         : 'transparent',
+                      display: 'block',
                     }}
                   />
                 </button>
@@ -230,103 +294,77 @@ export default function VendeurDashboard() {
           </div>
         </div>
 
-        {/* ── Bonne humeur du jour ───────────────────────────────────── */}
-        <div className="px-4 mb-4">
-          <div
-            className="rounded-3xl p-4"
-            style={{
-              backgroundColor: '#FFFEF8',
-              border: '1px solid rgba(221,217,176,0.5)',
-              boxShadow: '0 2px 12px rgba(35,39,38,0.05)',
-            }}
-          >
-            <p className="label-xs mb-2">Du jour ✨</p>
-            <p className="text-sm leading-relaxed" style={{ color: '#8A7060' }}>{blague}</p>
-          </div>
-        </div>
-
-        {/* ── Statut commandes prêtes ────────────────────────────────── */}
-        <div className="px-4 mb-4">
-          {ready === 0 ? (
-            <div
-              className="flex items-center gap-2.5 px-4 py-3 rounded-2xl"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.45)',
-                border: '1px solid rgba(221,217,176,0.5)',
-              }}
-            >
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#22C55E' }} />
-              <p className="text-sm font-medium" style={{ color: '#8A7060' }}>Tout est à jour</p>
-            </div>
-          ) : (
-            <div
-              className="rounded-2xl px-4 py-4 text-center animate-pulse"
-              style={{ backgroundColor: '#FEF3C7', border: '2px solid #FDE68A' }}
-            >
-              <p className="font-serif text-5xl font-bold text-amber-700 leading-none">{ready}</p>
-              <p className="text-sm font-semibold text-amber-800 mt-1">
-                commande{ready > 1 ? 's' : ''} prête{ready > 1 ? 's' : ''} à remettre
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* ── Tabs ──────────────────────────────────────────────────── */}
-        <div className="flex gap-2 px-4 mb-4">
+        {/* ── Chips de filtre ────────────────────────────────────────── */}
+        <div className="flex gap-2 px-5 mb-4 overflow-x-auto scrollbar-none">
           {TABS.map(t => {
-            const count = t.id === 'all' ? dayOrders.length : ready
+            const count = t.id === 'all' ? dayOrders.length : kpiReady
+            const isActive = tab === t.id
             return (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className="flex-1 py-2.5 text-sm font-semibold transition-all active:scale-95"
+                className="flex-shrink-0 active:scale-95 transition-transform"
                 style={{
+                  padding: '0.375rem 0.875rem',
                   borderRadius: 9999,
-                  backgroundColor: tab === t.id ? '#432F2E' : 'rgba(255,255,255,0.6)',
-                  color: tab === t.id ? '#FFFEF8' : '#8A7060',
-                  border: tab === t.id ? 'none' : '1px solid rgba(221,217,176,0.7)',
+                  backgroundColor: isActive ? '#432F2E' : 'rgba(67,47,46,0.07)',
+                  color: isActive ? '#FFFFFF' : '#8A7060',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'Satoshi',
+                  letterSpacing: '-0.01em',
                 }}
               >
-                {t.label}{count > 0 && ` ${count}`}
+                {t.label}{count > 0 && ` · ${count}`}
               </button>
             )
           })}
         </div>
 
-        {/* ── Titre section ─────────────────────────────────────────── */}
-        <div className="flex items-baseline justify-between px-4 mb-3">
-          <p className="font-semibold text-ink">
+        {/* ── En-tête section ─────────────────────────────────────────── */}
+        <div className="flex items-baseline justify-between px-5 mb-4">
+          <p
+            className="font-display"
+            style={{ fontSize: '1rem', color: '#111111', letterSpacing: '-0.015em' }}
+          >
             {isSameDay(selectedDay, new Date())
               ? "Aujourd'hui"
               : format(selectedDay, 'EEEE d MMMM', { locale: fr })}
           </p>
-          <p className="text-xs" style={{ color: '#8A7060' }}>
+          <p style={{ fontSize: '0.75rem', color: '#8A7060', fontWeight: 500, fontFamily: 'Satoshi' }}>
             {dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}
           </p>
         </div>
 
         {/* ── Liste commandes ───────────────────────────────────────── */}
-        <main className="px-4">
+        <div className="px-5">
           {filtered.length === 0 ? (
             <div
-              className="rounded-3xl text-center py-14"
+              className="rounded-2xl text-center py-14 animate-fade-up"
               style={{
-                backgroundColor: 'rgba(255,255,255,0.45)',
-                border: '1px solid rgba(221,217,176,0.5)',
+                backgroundColor: 'rgba(255,255,255,0.5)',
+                border: '1px solid rgba(67,47,46,0.07)',
               }}
             >
-              <p className="text-sm" style={{ color: '#8A7060' }}>
+              <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
                 {dayOrders.length === 0 ? 'Aucune commande ce jour-là' : 'Aucune commande ici'}
               </p>
             </div>
           ) : (
             <div className="space-y-3">
-              {filtered.map(order => (
-                <OrderCard key={order.id} order={order} onOpen={() => setSelected(order)} />
+              {filtered.map((order, i) => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  index={i}
+                  onOpen={() => setSelected(order)}
+                />
               ))}
             </div>
           )}
-        </main>
+        </div>
 
       </div>
 
@@ -336,79 +374,90 @@ export default function VendeurDashboard() {
 }
 
 /* ── Carte commande ───────────────────────────────────────────────────── */
-function OrderCard({ order, onOpen }) {
+function OrderCard({ order, index, onOpen }) {
   const reste = (order.totalAmount || 0) - (order.deposit || 0)
   const meta  = STATUS_META[order.status] ?? STATUS_META.todo
 
   return (
     <button
       onClick={onOpen}
-      className="w-full text-left rounded-3xl overflow-hidden transition-all active:scale-[0.98] active:opacity-75"
+      className="w-full text-left transition-all active:scale-[0.99] active:opacity-90 animate-fade-up"
       style={{
-        backgroundColor: '#FFFEF8',
-        border: '1px solid rgba(221,217,176,0.65)',
-        boxShadow: '0 2px 16px rgba(35,39,38,0.06)',
-        opacity: order.status === 'done' ? 0.45 : 1,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
+        border: '1px solid rgba(67,47,46,0.08)',
+        borderLeft: `3px solid ${meta.accentColor}`,
+        boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(67,47,46,0.06)',
+        opacity: order.status === 'done' ? 0.55 : 1,
+        overflow: 'hidden',
+        animationDelay: `${index * 0.04}s`,
       }}
     >
-      {/* Barre couleur statut en haut */}
-      <div className="h-1" style={{ backgroundColor: meta.topColor, borderRadius: '1.5rem 1.5rem 0 0' }} />
+      <div className="px-4 py-4">
 
-      <div className="px-4 pt-3.5 pb-4">
-        {/* Heure + badge statut */}
-        <div className="flex items-center justify-between mb-2.5">
+        {/* Heure + badge */}
+        <div className="flex items-start justify-between mb-2.5">
           <span
-            className="font-bold tabular-nums tracking-tight leading-none"
             style={{
-              fontSize: '2rem',
-              color: order.status === 'done' ? '#B0A090' : '#432F2E',
+              fontSize: '1.75rem',
+              fontWeight: 800,
+              color: order.status === 'done' ? '#B0A090' : '#111111',
+              letterSpacing: '-0.03em',
+              lineHeight: 1,
+              fontFamily: 'Satoshi',
+              fontVariantNumeric: 'tabular-nums',
             }}
           >
             {format(parseISO(order.pickupDate), 'HH:mm')}
           </span>
-          <span
-            className="text-[11px] font-semibold px-3 py-1 flex-shrink-0"
-            style={{ backgroundColor: meta.bg, color: meta.color, borderRadius: 9999 }}
-          >
-            {meta.label}
-          </span>
+          <StatusBadge status={order.status} />
         </div>
 
         {/* Nom client */}
         <p
-          className="font-semibold leading-tight truncate"
           style={{
-            fontSize: '1rem',
-            color: order.status === 'done' ? '#B0A090' : '#432F2E',
+            fontSize: '0.9375rem',
+            fontWeight: 600,
+            color: order.status === 'done' ? '#B0A090' : '#111111',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            fontFamily: 'Satoshi',
+            marginBottom: '0.25rem',
           }}
         >
           {order.clientName}
         </p>
 
         {/* Articles */}
-        <p className="text-sm truncate mt-0.5" style={{ color: '#8A7060' }}>
+        <p
+          style={{
+            fontSize: '0.8125rem',
+            color: '#8A7060',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            fontFamily: 'Satoshi',
+          }}
+        >
           {order.articles}
         </p>
 
-        {/* Badge paiement */}
+        {/* Paiement */}
         {order.status !== 'done' && reste > 0 && (
-          <div className="flex items-center gap-2 mt-3">
-            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#F59E0B' }} />
-            <span className="text-xs font-semibold" style={{ color: '#92400e' }}>
+          <div className="flex items-center gap-1.5" style={{ marginTop: '0.625rem' }}>
+            <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#F59E0B', flexShrink: 0, display: 'block' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi' }}>
               {reste} € à encaisser
             </span>
           </div>
         )}
         {order.status !== 'done' && reste === 0 && order.totalAmount > 0 && (
-          <div className="flex items-center gap-2 mt-3">
-            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#22C55E' }} />
-            <span className="text-xs font-semibold" style={{ color: '#166534' }}>Déjà soldé ✓</span>
-          </div>
-        )}
-        {order.status === 'done' && order.totalAmount > 0 && (
-          <div className="flex items-center gap-2 mt-3">
-            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#22C55E' }} />
-            <span className="text-xs font-semibold" style={{ color: '#166534' }}>Soldé ✓</span>
+          <div className="flex items-center gap-1.5" style={{ marginTop: '0.625rem' }}>
+            <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#22C55E', flexShrink: 0, display: 'block' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#166534', fontFamily: 'Satoshi' }}>
+              Soldé ✓
+            </span>
           </div>
         )}
       </div>
@@ -420,7 +469,6 @@ function OrderCard({ order, onOpen }) {
 function OrderSheet({ order, onClose }) {
   const pickup = parseISO(order.pickupDate)
   const reste  = (order.totalAmount || 0) - (order.deposit || 0)
-  const meta   = STATUS_META[order.status] ?? STATUS_META.todo
 
   const handleStatus = async (newStatus) => {
     await setStatus(order.id, newStatus)
@@ -430,40 +478,71 @@ function OrderSheet({ order, onClose }) {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
       <div
-        className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto z-50 rounded-t-3xl overflow-hidden"
-        style={{ backgroundColor: '#FFFEF8', paddingBottom: 'env(safe-area-inset-bottom)' }}
+        className="fixed inset-0 z-40"
+        style={{ backgroundColor: 'rgba(17,17,17,0.45)', backdropFilter: 'blur(4px)' }}
+        onClick={onClose}
+      />
+      <div
+        className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto z-50 animate-slide-up"
+        style={{
+          backgroundColor: '#FFFFFF',
+          borderRadius: '24px 24px 0 0',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          boxShadow: '0 -4px 40px rgba(67,47,46,0.15)',
+        }}
       >
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full" style={{ backgroundColor: '#E8DFC0' }} />
+        {/* Handle */}
+        <div className="flex justify-center pt-3 pb-2">
+          <div
+            className="rounded-full"
+            style={{ width: 36, height: 4, backgroundColor: 'rgba(67,47,46,0.12)' }}
+          />
         </div>
 
-        <div className="px-5 pt-2 pb-5" style={{ borderBottom: '1px solid #EEE9C8' }}>
+        {/* Header */}
+        <div
+          className="px-5 pt-1 pb-4"
+          style={{ borderBottom: '1px solid rgba(67,47,46,0.07)' }}
+        >
           <div className="flex items-start justify-between">
             <div>
-              <p className="label-xs mb-1">Retrait</p>
+              <p className="label-xs mb-2">Retrait</p>
               <p
-                className="font-bold tabular-nums tracking-tight leading-none"
-                style={{ fontSize: '2.5rem', color: '#432F2E' }}
+                style={{
+                  fontSize: '2.25rem',
+                  fontWeight: 800,
+                  letterSpacing: '-0.035em',
+                  color: '#111111',
+                  lineHeight: 1,
+                  fontFamily: 'Satoshi',
+                  fontVariantNumeric: 'tabular-nums',
+                }}
               >
                 {format(pickup, 'HH:mm')}
               </p>
-              <p className="text-sm capitalize mt-1" style={{ color: '#8A7060' }}>
+              <p
+                className="text-sm capitalize mt-1.5"
+                style={{ color: '#8A7060', fontWeight: 500, fontFamily: 'Satoshi' }}
+              >
                 {format(pickup, 'EEEE d MMMM', { locale: fr })}
               </p>
             </div>
             <div className="flex flex-col items-end gap-3">
-              <span
-                className="text-xs font-semibold px-3 py-1.5"
-                style={{ backgroundColor: meta.bg, color: meta.color, borderRadius: 9999 }}
-              >
-                {meta.label}
-              </span>
+              <StatusBadge status={order.status} />
               <button
                 onClick={onClose}
-                className="text-xs font-semibold px-3 py-1.5 rounded-full active:opacity-70"
-                style={{ backgroundColor: '#F0EBD0', color: '#8A7060' }}
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  padding: '0.375rem 0.75rem',
+                  borderRadius: 9999,
+                  backgroundColor: 'rgba(67,47,46,0.07)',
+                  color: '#8A7060',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'Satoshi',
+                }}
               >
                 Fermer
               </button>
@@ -471,81 +550,116 @@ function OrderSheet({ order, onClose }) {
           </div>
         </div>
 
+        {/* Contenu */}
         <div className="px-5 py-4 space-y-4 overflow-y-auto" style={{ maxHeight: '60vh' }}>
+
+          {/* Client */}
           <div>
-            <p className="label-xs mb-1">Client</p>
-            <p className="font-semibold text-ink" style={{ fontSize: '1.125rem' }}>{order.clientName}</p>
+            <p className="label-xs mb-1.5">Client</p>
+            <p style={{ fontSize: '1.0625rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>
+              {order.clientName}
+            </p>
             {order.clientPhone && (
               <a
                 href={`tel:${order.clientPhone}`}
-                className="text-sm underline mt-0.5 block active:opacity-70"
-                style={{ color: '#8A7060' }}
+                style={{ fontSize: '0.875rem', color: '#8A7060', textDecoration: 'underline', display: 'block', marginTop: 2 }}
               >
                 {order.clientPhone}
               </a>
             )}
           </div>
 
-          <div className="rounded-2xl px-4 py-3.5" style={{ backgroundColor: '#F0EBD0' }}>
-            <p className="label-xs mb-1.5">Commande</p>
-            <p className="font-semibold text-ink leading-snug">{order.articles}</p>
+          {/* Commande */}
+          <div
+            className="rounded-2xl px-4 py-3.5"
+            style={{ backgroundColor: 'rgba(67,47,46,0.04)' }}
+          >
+            <p className="label-xs mb-2">Commande</p>
+            <p style={{ fontWeight: 600, color: '#111111', lineHeight: 1.5, fontFamily: 'Satoshi' }}>
+              {order.articles}
+            </p>
           </div>
 
+          {/* Paiement */}
           {order.totalAmount > 0 && (
-            <div className="rounded-2xl px-4 py-3.5" style={{ backgroundColor: '#FFFEF8', border: '1px solid #EEE9C8' }}>
+            <div
+              className="rounded-2xl px-4 py-3.5"
+              style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid rgba(67,47,46,0.08)',
+              }}
+            >
               <p className="label-xs mb-3">Paiement</p>
               <div className="flex gap-6">
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#8A7060' }}>Total</p>
-                  <p className="font-bold text-ink">{order.totalAmount} €</p>
+                  <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Total</p>
+                  <p style={{ fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>{order.totalAmount} €</p>
                 </div>
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#8A7060' }}>Acompte</p>
-                  <p className="font-bold text-ink">{order.deposit || 0} €</p>
+                  <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Acompte</p>
+                  <p style={{ fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>{order.deposit || 0} €</p>
                 </div>
                 {reste > 0 ? (
                   <div>
-                    <p className="text-xs mb-1" style={{ color: '#8A7060' }}>Reste</p>
-                    <p className="font-bold" style={{ color: '#92400e' }}>{reste} €</p>
+                    <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Reste</p>
+                    <p style={{ fontWeight: 700, color: '#92400E', fontFamily: 'Satoshi' }}>{reste} €</p>
                   </div>
                 ) : (
                   <div>
-                    <p className="text-xs mb-1" style={{ color: '#8A7060' }}>Solde</p>
-                    <p className="font-bold" style={{ color: '#166534' }}>Soldé ✓</p>
+                    <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Solde</p>
+                    <p style={{ fontWeight: 700, color: '#166534', fontFamily: 'Satoshi' }}>Soldé ✓</p>
                   </div>
                 )}
               </div>
             </div>
           )}
 
+          {/* Notes */}
           {order.notes && (
             <div
               className="rounded-2xl px-4 py-3 flex gap-2.5"
               style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}
             >
-              <span className="flex-shrink-0">⚠</span>
-              <p className="text-sm leading-relaxed" style={{ color: '#92400e' }}>{order.notes}</p>
+              <span style={{ fontSize: '0.875rem', flexShrink: 0 }}>⚠</span>
+              <p style={{ fontSize: '0.8125rem', lineHeight: 1.5, color: '#92400E', fontFamily: 'Satoshi' }}>
+                {order.notes}
+              </p>
             </div>
           )}
 
+          {/* Actions statut */}
           {(order.status === 'ready' || order.status === 'done') && (
-            <div className="flex gap-2 pt-1">
+            <div className="flex gap-2.5 pt-1 pb-2">
               <button
                 onClick={() => handleStatus('ready')}
-                className="flex-1 py-3.5 text-sm font-semibold rounded-2xl transition-all active:scale-95"
+                className="flex-1 transition-all active:scale-95"
                 style={{
-                  backgroundColor: order.status !== 'done' ? '#F0EBD0' : '#F5F5F5',
+                  padding: '0.875rem',
+                  borderRadius: 14,
+                  backgroundColor: order.status !== 'done' ? 'rgba(67,47,46,0.07)' : 'rgba(67,47,46,0.04)',
                   color: order.status !== 'done' ? '#432F2E' : '#B0A090',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'Satoshi',
                 }}
               >
                 Pas encore
               </button>
               <button
                 onClick={() => handleStatus('done')}
-                className="flex-1 py-3.5 text-sm font-semibold rounded-2xl transition-all active:scale-95"
+                className="flex-1 transition-all active:scale-95"
                 style={{
-                  backgroundColor: order.status === 'done' ? '#C5E6D3' : '#F5F5F5',
-                  color: order.status === 'done' ? '#166534' : '#B0A090',
+                  padding: '0.875rem',
+                  borderRadius: 14,
+                  backgroundColor: order.status === 'done' ? '#432F2E' : 'rgba(67,47,46,0.07)',
+                  color: order.status === 'done' ? '#FFFFFF' : '#8A7060',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'Satoshi',
                 }}
               >
                 Récupérée ✓

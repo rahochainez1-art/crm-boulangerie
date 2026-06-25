@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useRole } from '../../context/RoleContext'
 
-const ACCENT = '#432F2E'
+const ACTIVE   = '#111111'
 const INACTIVE = '#B0A090'
 
 // ── Icônes ────────────────────────────────────────────────────────────────
@@ -47,31 +47,26 @@ const IconUser = () => (
     <circle cx="12" cy="7" r="4"/>
   </svg>
 )
-const IconPlus = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round">
-    <line x1="12" y1="5" x2="12" y2="19"/>
-    <line x1="5"  y1="12" x2="19" y2="12"/>
-  </svg>
-)
 
-// ── Nav shell commune ─────────────────────────────────────────────────────
-// L'élément fixed couvre TOUTE la largeur du viewport (left-0 right-0 sans max-w).
-// Le centrage max-w est appliqué sur un div INTÉRIEUR — pattern fiable sur Android/Samsung.
+// ── Enveloppe nav commune (glass morphism) ────────────────────────────────
 function NavShell({ children }) {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-50"
-      style={{ backgroundColor: '#FFFEF8' }}
+      style={{
+        backgroundColor: 'rgba(245,242,235,0.90)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+      }}
     >
       <div
         className="max-w-lg mx-auto"
         style={{
-          borderTop: '1px solid #E8DFC0',
-          paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
-          boxShadow: '0 -4px 24px rgba(67,47,46,0.06)',
+          borderTop: '1px solid rgba(67,47,46,0.08)',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 6px)',
         }}
       >
-        <div className="flex items-end pt-2 pb-2">
+        <div className="flex items-end pt-3 pb-1">
           {children}
         </div>
       </div>
@@ -79,42 +74,65 @@ function NavShell({ children }) {
   )
 }
 
+// ── Item de navigation ────────────────────────────────────────────────────
 function NavItem({ to, label, Icon, end = false }) {
   return (
     <NavLink to={to} end={end} className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors">
       {({ isActive }) => (
         <>
-          <span style={{ color: isActive ? ACCENT : INACTIVE }}><Icon /></span>
-          <span className="text-[10px] font-semibold mt-0.5" style={{ color: isActive ? ACCENT : INACTIVE }}>
+          <span style={{ color: isActive ? ACTIVE : INACTIVE }}>
+            <Icon />
+          </span>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: isActive ? 700 : 500,
+              color: isActive ? ACTIVE : INACTIVE,
+              fontFamily: 'Satoshi, sans-serif',
+              letterSpacing: '0.01em',
+            }}
+          >
             {label}
           </span>
-          {isActive && (
-            <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#EDD83D' }} />
-          )}
+          <span
+            style={{
+              width: isActive ? 16 : 0,
+              height: 2,
+              borderRadius: 9999,
+              backgroundColor: '#432F2E',
+              marginTop: 2,
+              transition: 'width 0.2s cubic-bezier(0.16,1,0.3,1)',
+              display: 'block',
+            }}
+          />
         </>
       )}
     </NavLink>
   )
 }
 
+// ── FAB central ──────────────────────────────────────────────────────────
 function PlusButton({ onClick }) {
   return (
     <button
       onClick={onClick}
       className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform"
       style={{
-        backgroundColor: '#EDD83D',
-        boxShadow: '0 8px 32px rgba(237,216,61,0.45)',
+        backgroundColor: '#432F2E',
+        boxShadow: '0 8px 24px rgba(67,47,46,0.35)',
         transform: 'translateY(-14px)',
         marginBottom: -14,
       }}
     >
-      <IconPlus />
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <line x1="5"  y1="12" x2="19" y2="12"/>
+      </svg>
     </button>
   )
 }
 
-// ── Nav vendeur ───────────────────────────────────────────────────────────
+// ── Avatar synchronisé ────────────────────────────────────────────────────
 function AvatarIcon({ isActive }) {
   const [avatar, setAvatar] = useState(() => localStorage.getItem('agj_profil_avatar'))
 
@@ -133,13 +151,19 @@ function AvatarIcon({ isActive }) {
       <img
         src={avatar} alt=""
         className="rounded-full object-cover"
-        style={{ width: 26, height: 26, border: isActive ? '2px solid #432F2E' : '2px solid transparent' }}
+        style={{
+          width: 24, height: 24,
+          border: isActive ? '2px solid #432F2E' : '2px solid transparent',
+          outline: 'none',
+          outlineOffset: 1,
+        }}
       />
     )
   }
   return <IconUser />
 }
 
+// ── Nav vendeur ───────────────────────────────────────────────────────────
 function VendeurNav() {
   const navigate = useNavigate()
   return (
@@ -150,9 +174,13 @@ function VendeurNav() {
       <NavLink to="/vendeur/profil" end className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors">
         {({ isActive }) => (
           <>
-            <span style={{ color: isActive ? ACCENT : INACTIVE }}><AvatarIcon isActive={isActive} /></span>
-            <span className="text-[10px] font-semibold mt-0.5" style={{ color: isActive ? ACCENT : INACTIVE }}>Profil</span>
-            {isActive && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#EDD83D' }} />}
+            <span style={{ color: isActive ? ACTIVE : INACTIVE }}>
+              <AvatarIcon isActive={isActive} />
+            </span>
+            <span style={{ fontSize: 10, fontWeight: isActive ? 700 : 500, color: isActive ? ACTIVE : INACTIVE, fontFamily: 'Satoshi, sans-serif', letterSpacing: '0.01em' }}>
+              Profil
+            </span>
+            <span style={{ width: isActive ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#432F2E', marginTop: 2, transition: 'width 0.2s cubic-bezier(0.16,1,0.3,1)', display: 'block' }} />
           </>
         )}
       </NavLink>
@@ -172,10 +200,10 @@ function PatissiereNav() {
   )
 }
 
-// ── Nav générique (boulangerie) ───────────────────────────────────────────
+// ── Nav boulangerie ───────────────────────────────────────────────────────
 const NAV_BOULANGERIE = [
-  { to: '/boulangerie', label: 'Production', Icon: IconHome,     end: true },
-  { to: '/calendrier',  label: 'Calendrier', Icon: IconList,     end: true },
+  { to: '/boulangerie', label: 'Production', Icon: IconHome, end: true },
+  { to: '/calendrier',  label: 'Calendrier', Icon: IconList, end: true },
   { to: '/settings',    label: 'Réglages',   Icon: IconSettings, end: false },
 ]
 

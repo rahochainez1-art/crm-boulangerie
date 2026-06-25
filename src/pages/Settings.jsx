@@ -8,29 +8,16 @@ import {
   getUrgencyHours, saveUrgencyHours,
   getSoundEnabled, saveSoundEnabled,
 } from '../lib/settings'
-import AppLayout from '../components/layout/AppLayout'
 
 const ROLE_META = {
-  vendeur:     { label: 'Vendeur·se',  bg: '#FFF0B5', color: '#4A4E10' },
+  vendeur:     { label: 'Vendeur·se',  bg: '#F0EBD0', color: '#432F2E' },
   patissiere:  { label: 'Pâtissière',  bg: '#DCFCE7', color: '#166534' },
-  manager:     { label: 'Manager',     bg: '#FFF0B5', color: '#432F2E' },
+  manager:     { label: 'Manager',     bg: '#E5F0F5', color: '#1D4E6B' },
   boulangerie: { label: 'Boulangerie', bg: '#FEF3C7', color: '#92400E' },
 }
 
 function safeNotifPermission() {
   try { return Notification?.permission ?? 'default' } catch { return 'default' }
-}
-
-function Section({ title, children }) {
-  return (
-    <div
-      className="rounded-3xl p-5 space-y-4 animate-fade-up"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
-    >
-      <p className="label-xs">{title}</p>
-      {children}
-    </div>
-  )
 }
 
 function Toggle({ enabled, onToggle }) {
@@ -42,12 +29,90 @@ function Toggle({ enabled, onToggle }) {
     >
       <span
         className="absolute inset-0 rounded-full transition-colors duration-200"
-        style={{ backgroundColor: enabled ? '#432F2E' : '#E8DFC0' }}
+        style={{ backgroundColor: enabled ? '#432F2E' : 'rgba(67,47,46,0.15)' }}
       />
       <span
-        className="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform duration-200"
+        className="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow-sm transition-transform duration-200"
         style={{ left: 1, transform: enabled ? 'translateX(20px)' : 'translateX(0)' }}
       />
+    </button>
+  )
+}
+
+function Row({ label, hint, children, noBorder = false }) {
+  return (
+    <div
+      className="flex items-center gap-3 py-3.5 px-4"
+      style={{ borderBottom: noBorder ? 'none' : '1px solid rgba(67,47,46,0.06)' }}
+    >
+      <div className="flex-1 min-w-0">
+        <p style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#111111', fontFamily: 'Satoshi' }}>
+          {label}
+        </p>
+        {hint && (
+          <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1 }}>
+            {hint}
+          </p>
+        )}
+      </div>
+      <div className="flex-shrink-0 flex items-center">{children}</div>
+    </div>
+  )
+}
+
+function Group({ title, children }) {
+  return (
+    <div>
+      {title && (
+        <p
+          className="px-1 mb-2"
+          style={{
+            fontSize: '0.6875rem',
+            fontWeight: 700,
+            color: '#8A7060',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            fontFamily: 'Satoshi',
+          }}
+        >
+          {title}
+        </p>
+      )}
+      <div
+        className="overflow-hidden"
+        style={{
+          backgroundColor: '#FFFFFF',
+          borderRadius: 18,
+          border: '1px solid rgba(67,47,46,0.07)',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(67,47,46,0.04)',
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function SmallButton({ onClick, disabled, danger, children }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        fontSize: '0.8125rem',
+        fontWeight: 600,
+        color: danger ? '#b91c1c' : '#432F2E',
+        padding: '0.3rem 0.875rem',
+        borderRadius: 9999,
+        backgroundColor: danger ? '#FEE2E2' : 'rgba(67,47,46,0.07)',
+        border: 'none',
+        cursor: disabled ? 'default' : 'pointer',
+        fontFamily: 'Satoshi',
+        opacity: disabled ? 0.45 : 1,
+        transition: 'opacity 0.15s',
+      }}
+    >
+      {children}
     </button>
   )
 }
@@ -152,30 +217,74 @@ export default function Settings() {
     finally { setClearing(false) }
   }
 
-  const initiale  = prenom.trim()[0]?.toUpperCase() ?? meta.label[0]
+  const initiale   = prenom.trim()[0]?.toUpperCase() ?? meta.label[0]
   const monthCount = orders.filter(o => o.pickupDate && isSameMonth(parseISO(o.pickupDate), new Date())).length
 
   return (
-    <AppLayout title="Paramètres">
-      <div className="space-y-4">
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5F2EB' }}>
 
-        {/* ── Mon profil ─────────────────────────────────────── */}
-        <Section title="Mon profil">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: meta.bg }}
-            >
-              <span className="text-2xl font-bold" style={{ color: meta.color }}>{initiale}</span>
-            </div>
-            <div>
-              <p className="font-semibold text-ink leading-tight">{prenom.trim() || 'Ton prénom'}</p>
-              <p className="text-xs mt-0.5" style={{ color: '#8A7060' }}>{meta.label}</p>
-            </div>
+      {/* ── Header ─────────────────────────────────────────────── */}
+      <header
+        className="px-5 pb-5"
+        style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}
+      >
+        <h1
+          className="font-display animate-fade-up"
+          style={{ fontSize: '1.625rem', color: '#111111', letterSpacing: '-0.025em', lineHeight: 1.15 }}
+        >
+          Réglages
+        </h1>
+      </header>
+
+      <main className="flex-1 px-4 pb-28 overflow-y-auto space-y-5">
+
+        {/* ── Profil hero ─────────────────────────────────────── */}
+        <div
+          className="flex items-center gap-4 px-4 py-4 rounded-2xl animate-fade-up"
+          style={{
+            backgroundColor: '#FFFFFF',
+            border: '1px solid rgba(67,47,46,0.07)',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(67,47,46,0.04)',
+          }}
+        >
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: meta.bg }}
+          >
+            <span style={{ fontSize: '1.5rem', fontWeight: 800, color: meta.color, fontFamily: 'Satoshi' }}>
+              {initiale}
+            </span>
           </div>
-
           <div>
-            <p className="text-xs mb-2" style={{ color: '#8A7060' }}>Prénom affiché</p>
+            <p style={{ fontSize: '1.0625rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', lineHeight: 1.2 }}>
+              {prenom.trim() || 'Mon profil'}
+            </p>
+            <span
+              style={{
+                display: 'inline-block',
+                marginTop: 5,
+                padding: '0.15rem 0.6rem',
+                borderRadius: 9999,
+                backgroundColor: meta.bg,
+                color: meta.color,
+                fontSize: '0.6875rem',
+                fontWeight: 700,
+                fontFamily: 'Satoshi',
+                letterSpacing: '0.01em',
+              }}
+            >
+              {meta.label}
+            </span>
+          </div>
+        </div>
+
+        {/* ── Préférences ────────────────────────────────────── */}
+        <Group title="Préférences">
+          {/* Prénom */}
+          <div className="px-4 py-3.5" style={{ borderBottom: '1px solid rgba(67,47,46,0.06)' }}>
+            <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 8 }}>
+              Prénom affiché
+            </p>
             <div className="flex gap-2">
               <input
                 value={prenom}
@@ -183,101 +292,100 @@ export default function Settings() {
                 onKeyDown={e => e.key === 'Enter' && handleSavePrenom()}
                 placeholder="Ex. Sarah…"
                 className="field flex-1"
+                style={{ padding: '0.625rem 0.875rem', fontSize: '0.9375rem' }}
                 maxLength={30}
               />
               <button
                 onClick={handleSavePrenom}
-                className="px-4 rounded-2xl text-sm font-semibold transition-all active:scale-95 flex-shrink-0"
+                className="flex-shrink-0 px-4 rounded-xl text-sm font-semibold transition-all active:scale-95"
                 style={{
-                  backgroundColor: prenomSaved ? '#DCFCE7' : '#432F2E',
+                  backgroundColor: prenomSaved ? '#D1FAE5' : '#432F2E',
                   color: prenomSaved ? '#166534' : '#FFFFFF',
-                  minWidth: 52,
+                  minWidth: 48,
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'Satoshi',
+                  fontWeight: 600,
                 }}
               >
                 {prenomSaved ? '✓' : 'OK'}
               </button>
             </div>
-            {prenomSaved && (
-              <p className="text-xs mt-1.5" style={{ color: '#22C55E' }}>Sauvegardé ✓</p>
-            )}
           </div>
-        </Section>
-
-        {/* ── Vue actuelle ───────────────────────────────────── */}
-        <Section title="Vue actuelle">
-          <div
-            className="flex items-center gap-3 rounded-2xl px-4 py-3"
-            style={{ backgroundColor: meta.bg }}
-          >
-            <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: 'rgba(255,255,255,0.6)' }}
-            >
-              <span className="text-sm font-bold" style={{ color: meta.color }}>{initiale}</span>
-            </div>
-            <p className="font-semibold text-ink">{meta.label}</p>
-          </div>
-          <button onClick={clearRole} className="btn-primary">
-            Changer de rôle
-          </button>
-        </Section>
-
-        {/* ── Notifications ──────────────────────────────────── */}
-        <Section title="Notifications">
-          {notifStatus === 'granted' ? (
-            <div className="flex items-center gap-3">
-              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#22C55E' }} />
-              <p className="text-sm" style={{ color: '#8A7060' }}>Push activées</p>
-            </div>
-          ) : notifStatus === 'denied' ? (
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#EF4444' }} />
-                <p className="text-sm" style={{ color: '#8A7060' }}>Notifications bloquées</p>
-              </div>
-              <p className="text-xs" style={{ color: '#B0A090' }}>Autorise-les dans les réglages de ton navigateur.</p>
-            </div>
-          ) : (
-            <div>
-              <p className="text-sm mb-3" style={{ color: '#8A7060' }}>
-                Reçois une alerte quand une commande passe au statut{' '}
-                <span className="font-semibold text-ink">Prêt</span>.
-              </p>
-              <button onClick={handleEnableNotifs} disabled={notifLoading} className="btn-primary disabled:opacity-50">
-                {notifLoading ? 'Activation...' : 'Activer les notifications'}
-              </button>
-            </div>
-          )}
 
           {/* Sonnerie */}
-          <div
-            className="flex items-center justify-between pt-4"
-            style={{ borderTop: '1px solid #F0EBD0' }}
-          >
-            <div>
-              <p className="text-sm font-semibold text-ink">Sonnerie</p>
-              <p className="text-xs mt-0.5" style={{ color: '#8A7060' }}>Son lors d'une nouvelle commande</p>
-            </div>
+          <Row label="Sonnerie" hint="Son lors d'une nouvelle commande" noBorder>
             <Toggle enabled={soundEnabled} onToggle={handleSoundToggle} />
-          </div>
-        </Section>
+          </Row>
+        </Group>
 
-        {/* ── Production (pâtissière / boulangerie) ──────────── */}
+        {/* ── Mode ───────────────────────────────────────────── */}
+        <Group title="Mode">
+          <Row label="Vue actuelle" noBorder>
+            <div className="flex items-center gap-2">
+              <span
+                style={{
+                  padding: '0.2rem 0.625rem',
+                  borderRadius: 9999,
+                  backgroundColor: meta.bg,
+                  color: meta.color,
+                  fontSize: '0.6875rem',
+                  fontWeight: 700,
+                  fontFamily: 'Satoshi',
+                }}
+              >
+                {meta.label}
+              </span>
+              <SmallButton onClick={clearRole}>Changer</SmallButton>
+            </div>
+          </Row>
+        </Group>
+
+        {/* ── Notifications ──────────────────────────────────── */}
+        <Group title="Notifications">
+          <Row
+            label="Notifications push"
+            hint={
+              notifStatus === 'granted' ? 'Activées sur cet appareil' :
+              notifStatus === 'denied'  ? 'Bloquées — autorise dans les réglages du navigateur' :
+              'Alerte quand une commande est prête'
+            }
+            noBorder
+          >
+            {notifStatus === 'granted' ? (
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#22C55E', display: 'block' }} />
+            ) : notifStatus === 'denied' ? (
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#EF4444', display: 'block' }} />
+            ) : (
+              <SmallButton onClick={handleEnableNotifs} disabled={notifLoading}>
+                {notifLoading ? '...' : 'Activer'}
+              </SmallButton>
+            )}
+          </Row>
+        </Group>
+
+        {/* ── Production ─────────────────────────────────────── */}
         {(role === 'patissiere' || role === 'boulangerie') && (
-          <Section title="Production">
-            <div>
-              <p className="text-sm font-semibold text-ink mb-0.5">Délai alerte urgence</p>
-              <p className="text-xs mb-4" style={{ color: '#8A7060' }}>Une commande passe en rouge à moins de…</p>
-              <div className="grid grid-cols-3 gap-2">
+          <Group title="Production">
+            <div className="px-4 py-3.5">
+              <p style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#111111', fontFamily: 'Satoshi', marginBottom: 4 }}>
+                Délai alerte urgence
+              </p>
+              <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 12 }}>
+                Une commande passe en rouge à moins de…
+              </p>
+              <div className="flex gap-2">
                 {[24, 48, 72].map(h => (
                   <button
                     key={h}
                     onClick={() => handleUrgencyChange(h)}
-                    className="py-3 rounded-2xl text-sm font-semibold transition-all active:scale-95"
+                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-95"
                     style={{
-                      backgroundColor: urgencyHours === h ? '#432F2E' : '#F0EBD0',
+                      backgroundColor: urgencyHours === h ? '#432F2E' : 'rgba(67,47,46,0.07)',
                       color:           urgencyHours === h ? '#FFFFFF'  : '#8A7060',
-                      border:          urgencyHours === h ? 'none'     : '1px solid #E8DFC0',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontFamily: 'Satoshi',
                     }}
                   >
                     {h}h
@@ -285,80 +393,65 @@ export default function Settings() {
                 ))}
               </div>
             </div>
-          </Section>
+          </Group>
         )}
 
-        {/* ── Export + réinitialisation (manager) ────────────── */}
+        {/* ── Données (manager) ──────────────────────────────── */}
         {role === 'manager' && (
-          <Section title="Données">
-            <div>
-              <p className="text-sm font-semibold text-ink mb-0.5">Export CSV</p>
-              <p className="text-xs mb-4" style={{ color: '#8A7060' }}>
-                Commandes du mois en cours — compatible Excel.
-              </p>
-              <button
-                onClick={handleExportCSV}
-                disabled={csvLoading || monthCount === 0}
-                className="btn-primary disabled:opacity-40"
-              >
-                {csvLoading ? 'Export en cours…' : monthCount === 0 ? 'Aucune commande ce mois' : `↓ Exporter — ${monthCount} commande${monthCount > 1 ? 's' : ''}`}
-              </button>
-            </div>
-
-            <div style={{ borderTop: '1px solid #F0EBD0', paddingTop: '1rem' }}>
-              <p className="text-sm font-semibold text-ink mb-0.5">Réinitialiser</p>
-              <p className="text-xs mb-4" style={{ color: '#8A7060' }}>
-                Supprime définitivement toutes les commandes.
-              </p>
-              <button
-                onClick={handleClearAll}
-                disabled={clearing}
-                className="w-full py-3 rounded-2xl text-sm font-semibold active:opacity-80 disabled:opacity-40 transition-opacity"
-                style={{ backgroundColor: '#FEE2E2', color: '#b91c1c', border: '1px solid #FECACA' }}
-              >
-                {clearing ? 'Suppression...' : '✕ Tout supprimer'}
-              </button>
-            </div>
-          </Section>
+          <Group title="Données">
+            <Row
+              label="Export CSV"
+              hint={monthCount > 0 ? `${monthCount} commande${monthCount > 1 ? 's' : ''} ce mois` : 'Aucune commande ce mois'}
+            >
+              <SmallButton onClick={handleExportCSV} disabled={csvLoading || monthCount === 0}>
+                {csvLoading ? '...' : '↓ Exporter'}
+              </SmallButton>
+            </Row>
+            <Row label="Réinitialiser" hint="Supprime toutes les commandes" noBorder>
+              <SmallButton onClick={handleClearAll} disabled={clearing} danger>
+                {clearing ? '...' : 'Supprimer'}
+              </SmallButton>
+            </Row>
+          </Group>
         )}
 
         {/* ── Application ────────────────────────────────────── */}
-        <Section title="Application">
-          <div className="space-y-2.5 text-sm">
-            {[
-              { label: 'Boulangerie', value: 'Au Grand Jour' },
-              { label: 'Version',     value: '1.0.0' },
-            ].map(row => (
-              <div key={row.label} className="flex justify-between items-center">
-                <span style={{ color: '#8A7060' }}>{row.label}</span>
-                <span className="font-semibold text-ink">{row.value}</span>
-              </div>
-            ))}
-          </div>
-        </Section>
+        <Group title="Application">
+          <Row label="Boulangerie">
+            <span style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Au Grand Jour</span>
+          </Row>
+          <Row label="Version" noBorder>
+            <span style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>1.0.0</span>
+          </Row>
+        </Group>
 
-        {/* ── Dev (local uniquement) ─────────────────────────── */}
+        {/* ── Dev ────────────────────────────────────────────── */}
         {import.meta.env.DEV && (
           <div
-            className="rounded-3xl p-5"
+            className="rounded-2xl p-4"
             style={{ backgroundColor: '#FFFBEB', border: '1px dashed #FDE68A' }}
           >
-            <p className="label-xs mb-1" style={{ color: '#92400E' }}>Dev · données test</p>
-            <p className="text-xs mb-4" style={{ color: '#92400E', opacity: 0.7 }}>
+            <p style={{
+              fontSize: '0.6875rem', fontWeight: 700, color: '#92400E',
+              letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'Satoshi', marginBottom: 6,
+            }}>
+              Dev · données test
+            </p>
+            <p style={{ fontSize: '0.75rem', color: '#92400E', opacity: 0.7, fontFamily: 'Satoshi', marginBottom: 12 }}>
               Injecte 7 fausses commandes avec statuts variés.
             </p>
             <button
               onClick={handleSeed}
               disabled={seeding}
-              className="w-full py-3 rounded-2xl text-sm font-semibold active:opacity-70 disabled:opacity-50"
-              style={{ backgroundColor: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A' }}
+              className="w-full py-2.5 rounded-xl text-sm font-semibold active:opacity-70 disabled:opacity-50"
+              style={{ backgroundColor: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontFamily: 'Satoshi' }}
             >
               {seeding ? 'Injection...' : 'Injecter des commandes test'}
             </button>
           </div>
         )}
 
-      </div>
-    </AppLayout>
+      </main>
+    </div>
   )
 }
