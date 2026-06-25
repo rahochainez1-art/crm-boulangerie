@@ -242,7 +242,7 @@ function Chip({ icon, label, urgent }) {
 }
 
 // ── KPI Strip ─────────────────────────────────────────────────────────────
-function KpiStrip({ orders }) {
+function KpiStrip({ orders, navigate }) {
   const today     = new Date()
   const yesterday = subDays(today, 1)
 
@@ -260,10 +260,13 @@ function KpiStrip({ orders }) {
     return differenceInHours(parseISO(o.pickupDate), today) <= 2
   })
 
+  const todayStr = format(today, 'yyyy-MM-dd')
+
   const kpis = [
     {
       Icon: IconClipboard, iconBg: '#FFF3CC', iconColor: '#92400E',
       value: todayAll.length, label: "Aujourd'hui",
+      onClick: () => navigate('/manager/toutes', { state: { date: todayStr } }),
       detail: todayDiff !== 0 ? (
         <span style={{ color: todayDiff > 0 ? '#10B981' : '#EF4444', fontSize: '0.6rem', fontWeight: 600, fontFamily: 'Satoshi' }}>
           {todayDiff > 0 ? `+${todayDiff}` : todayDiff} vs hier {todayDiff > 0 ? '↗' : '↘'}
@@ -273,6 +276,7 @@ function KpiStrip({ orders }) {
     {
       Icon: IconHourglass, iconBg: '#FFF3CC', iconColor: '#92400E',
       value: inProg.length, label: 'En cours',
+      onClick: () => navigate('/manager/toutes', { state: { status: 'inprogress' } }),
       detail: (
         <div>
           {patisInProg > 0 && (
@@ -293,11 +297,13 @@ function KpiStrip({ orders }) {
     {
       Icon: IconCheckCircle, iconBg: '#DCFCE7', iconColor: '#166534',
       value: readyNow, label: 'Prêtes',
+      onClick: () => navigate('/manager/toutes', { state: { status: 'ready' } }),
       detail: null,
     },
     {
       Icon: IconAlertCircle, iconBg: '#FEE2E2', iconColor: '#DC2626',
       value: urgentOrders.length, label: 'Urgentes', urgent: urgentOrders.length > 0,
+      onClick: () => navigate('/manager/toutes', { state: { status: 'urgent' } }),
       detail: urgentOrders.length > 0 ? (
         <span style={{ color: '#DC2626', fontSize: '0.6rem', fontWeight: 600, fontFamily: 'Satoshi' }}>Retrait &lt; 2h</span>
       ) : null,
@@ -307,7 +313,8 @@ function KpiStrip({ orders }) {
   return (
     <div className="grid grid-cols-4 gap-2 mb-5">
       {kpis.map((k, i) => (
-        <div key={i} className="rounded-[16px] p-3 animate-fade-up"
+        <button key={i} onClick={k.onClick}
+          className="rounded-[16px] p-3 animate-fade-up text-left active:scale-[0.95] transition-transform"
           style={{ backgroundColor: '#FFFFFF', border: k.urgent ? '1px solid rgba(220,38,38,0.18)' : '1px solid rgba(67,47,46,0.07)', boxShadow: '0 2px 12px rgba(67,47,46,0.04)', animationDelay: `${i * 0.06}s` }}>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center justify-center" style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: k.iconBg, color: k.iconColor, flexShrink: 0 }}>
@@ -321,14 +328,14 @@ function KpiStrip({ orders }) {
             {k.label}
           </p>
           {k.detail && <div>{k.detail}</div>}
-        </div>
+        </button>
       ))}
     </div>
   )
 }
 
 // ── À surveiller ──────────────────────────────────────────────────────────
-function SurveillanceCard({ orders, onViewAll }) {
+function SurveillanceCard({ orders, onViewAll, navigate }) {
   const today = new Date()
   const urgent = orders.filter(o => {
     if (!o.pickupDate || o.status === 'done' || o.status === 'cancelled') return false
@@ -362,7 +369,8 @@ function SurveillanceCard({ orders, onViewAll }) {
         const poleColor = isPatis ? '#166534'  : '#92400E'
 
         return (
-          <div key={o.id} className="flex items-center gap-3 px-4 py-3.5"
+          <button key={o.id} onClick={() => navigate('/manager/toutes', { state: { orderId: o.id } })}
+            className="flex items-center gap-3 px-4 py-3.5 w-full text-left active:bg-black/[0.02]"
             style={{ borderTop: i > 0 ? '1px solid rgba(67,47,46,0.06)' : undefined }}>
             <p style={{ fontSize: '1rem', fontWeight: 700, color: '#DC2626', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums', minWidth: 42, flexShrink: 0 }}>
               {format(parseISO(o.pickupDate), 'HH:mm')}
@@ -391,7 +399,7 @@ function SurveillanceCard({ orders, onViewAll }) {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C0B8A8" strokeWidth="2.5" strokeLinecap="round">
               <path d="M9 18l6-6-6-6"/>
             </svg>
-          </div>
+          </button>
         )
       })}
     </div>
@@ -415,7 +423,7 @@ function ProgressBlocks({ value, max, color }) {
 const DAY_LABELS_CAL = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 const DAY_ABR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
-function PlanningWidget({ orders, onViewAll }) {
+function PlanningWidget({ orders, onViewAll, navigate }) {
   const [planTab, setPlanTab] = useState('3jours')
   const [viewMonth, setViewMonth] = useState(new Date())
 
@@ -443,9 +451,9 @@ function PlanningWidget({ orders, onViewAll }) {
 
       {/* Contenu */}
       <div className="px-4 pb-4">
-        {planTab === '3jours' && <Vue3Jours orders={orders} />}
-        {planTab === 'Semaine' && <VueSemaine orders={orders} />}
-        {planTab === 'Mois' && <VueMois orders={orders} viewMonth={viewMonth} setViewMonth={setViewMonth} />}
+        {planTab === '3jours' && <Vue3Jours orders={orders} navigate={navigate} />}
+        {planTab === 'Semaine' && <VueSemaine orders={orders} navigate={navigate} />}
+        {planTab === 'Mois' && <VueMois orders={orders} viewMonth={viewMonth} setViewMonth={setViewMonth} navigate={navigate} />}
       </div>
 
       {/* Voir tout */}
@@ -464,15 +472,13 @@ function PlanningWidget({ orders, onViewAll }) {
 }
 
 // ── Vue 3 jours ────────────────────────────────────────────────────────────
-function Vue3Jours({ orders }) {
+function Vue3Jours({ orders, navigate }) {
   const today = new Date()
   const cols  = [
     { label: 'Aujourd\'hui', badge: 'Aujourd\'hui', badgeBg: '#FFF0B5', badgeColor: '#92400E', day: today },
     { label: 'Demain',       badge: 'Demain',       badgeBg: '#DCFCE7', badgeColor: '#166534', day: addDays(today, 1) },
     { label: 'Après-demain', badge: 'Après-demain', badgeBg: '#E5F0F5', badgeColor: '#1D4E6B', day: addDays(today, 2) },
   ]
-
-  const maxForDay = (day) => orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day) && o.status !== 'cancelled').length
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
@@ -486,8 +492,10 @@ function Vue3Jours({ orders }) {
         const urgent     = dayOrders.filter(o => o.status !== 'done' && differenceInHours(parseISO(o.pickupDate), new Date()) <= 2).length
         const toWatch    = dayOrders.filter(o => o.status !== 'done' && differenceInHours(parseISO(o.pickupDate), new Date()) <= 5 && differenceInHours(parseISO(o.pickupDate), new Date()) > 2).length
 
+        const dateStr = format(day, 'yyyy-MM-dd')
         return (
-          <div key={label}>
+          <button key={label} onClick={() => navigate('/manager/toutes', { state: { date: dateStr } })}
+            className="text-left w-full active:opacity-70 transition-opacity" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
             {/* Header colonne */}
             <div style={{ marginBottom: 4 }}>
               <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', marginBottom: 3 }}>
@@ -531,7 +539,7 @@ function Vue3Jours({ orders }) {
                 <p style={{ fontSize: '0.5625rem', fontWeight: 700, color: '#166534', fontFamily: 'Satoshi' }}>✓ Aucune urgence</p>
               )}
             </div>
-          </div>
+          </button>
         )
       })}
     </div>
@@ -539,7 +547,7 @@ function Vue3Jours({ orders }) {
 }
 
 // ── Vue Semaine ────────────────────────────────────────────────────────────
-function VueSemaine({ orders }) {
+function VueSemaine({ orders, navigate }) {
   const today     = new Date()
   const weekStart = startOfWeek(today, { weekStartsOn: 1 })
   const weekDays  = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
@@ -554,15 +562,16 @@ function VueSemaine({ orders }) {
         const ratio   = count / maxC
         const barH    = Math.max(Math.round(ratio * 28 + 4), 4)
         return (
-          <div key={i} className="flex flex-col items-center rounded-xl py-2"
-            style={{ backgroundColor: isToday ? '#FFF8D6' : 'transparent' }}>
+          <button key={i} onClick={() => navigate('/manager/toutes', { state: { date: format(day, 'yyyy-MM-dd') } })}
+            className="flex flex-col items-center rounded-xl py-2 active:opacity-60 transition-opacity"
+            style={{ backgroundColor: isToday ? '#FFF8D6' : 'transparent', border: 'none', cursor: 'pointer' }}>
             <p style={{ fontSize: '0.5rem', fontWeight: 700, color: isToday ? '#92400E' : '#8A7060', fontFamily: 'Satoshi', textAlign: 'center', marginBottom: 2 }}>
               {DAY_ABR[i]}<br/>{format(day, 'd')}
             </p>
             <p style={{ fontSize: '1rem', fontWeight: 700, color: isToday ? '#432F2E' : '#111111', fontFamily: 'Satoshi', lineHeight: 1.2 }}>{count}</p>
             <p style={{ fontSize: '0.4375rem', color: isToday ? '#92400E' : '#B0A090', fontFamily: 'Satoshi', marginBottom: 5 }}>cmdes</p>
             <div style={{ width: 24, height: barH, borderRadius: 4, backgroundColor: isToday ? '#EDD83D' : '#E8E0D5' }} />
-          </div>
+          </button>
         )
       })}
     </div>
@@ -570,7 +579,7 @@ function VueSemaine({ orders }) {
 }
 
 // ── Vue Mois ───────────────────────────────────────────────────────────────
-function VueMois({ orders, viewMonth, setViewMonth }) {
+function VueMois({ orders, viewMonth, setViewMonth, navigate }) {
   const mStart   = startOfMonth(viewMonth)
   const mEnd     = endOfMonth(viewMonth)
   const calStart = startOfWeek(mStart, { weekStartsOn: 1 })
@@ -597,7 +606,10 @@ function VueMois({ orders, viewMonth, setViewMonth }) {
           const count   = inMonth ? orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day)).length : 0
           const isToday = isSameDay(day, new Date())
           return (
-            <div key={day.toISOString()} className="flex flex-col items-center py-1" style={{ opacity: inMonth ? 1 : 0.15 }}>
+            <button key={day.toISOString()}
+              onClick={() => count > 0 && inMonth && navigate('/manager/toutes', { state: { date: format(day, 'yyyy-MM-dd') } })}
+              className="flex flex-col items-center py-1 active:opacity-60 transition-opacity"
+              style={{ opacity: inMonth ? 1 : 0.15, background: 'none', border: 'none', cursor: count > 0 && inMonth ? 'pointer' : 'default' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: isToday ? 700 : 500, color: isToday ? '#432F2E' : '#111111', fontFamily: 'Satoshi', lineHeight: 1.3, backgroundColor: isToday ? '#FFF0B5' : 'transparent', borderRadius: 8, padding: '0 3px' }}>
                 {format(day, 'd')}
               </span>
@@ -606,7 +618,7 @@ function VueMois({ orders, viewMonth, setViewMonth }) {
                   {count}
                 </span>
               )}
-            </div>
+            </button>
           )
         })}
       </div>
@@ -685,9 +697,9 @@ export default function ManagerDashboard() {
 
       {/* ── Main ── */}
       <main className="flex-1 px-4 pt-2 pb-36 overflow-y-auto">
-        <KpiStrip orders={orders} />
-        <SurveillanceCard orders={orders} onViewAll={() => navigate('/manager/toutes')} />
-        <PlanningWidget orders={orders} onViewAll={() => navigate('/manager/toutes')} />
+        <KpiStrip orders={orders} navigate={navigate} />
+        <SurveillanceCard orders={orders} navigate={navigate} onViewAll={() => navigate('/manager/toutes')} />
+        <PlanningWidget orders={orders} navigate={navigate} onViewAll={() => navigate('/manager/toutes')} />
       </main>
 
       {/* ── Bottom nav ── */}
