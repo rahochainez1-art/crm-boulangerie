@@ -14,11 +14,11 @@ const TABS = [
   { id: 'ready', label: 'Prêtes' },
 ]
 
-const STATUS_META = {
-  todo:       { accentColor: '#432F2E' },
-  inprogress: { accentColor: '#432F2E' },
-  ready:      { accentColor: '#10B981' },
-  done:       { accentColor: 'rgba(67,47,46,0.18)' },
+const CARD_STYLE = {
+  todo:       { bg: '#FFF0B5', border: 'rgba(237,216,61,0.45)', shadow: '0 4px 20px rgba(237,216,61,0.18)' },
+  inprogress: { bg: '#FFF0B5', border: 'rgba(237,216,61,0.45)', shadow: '0 4px 20px rgba(237,216,61,0.18)' },
+  ready:      { bg: '#E5F0F5', border: 'rgba(184,213,229,0.7)', shadow: '0 4px 20px rgba(229,240,245,0.4)' },
+  done:       { bg: 'rgba(255,240,181,0.28)', border: 'rgba(237,216,61,0.18)', shadow: 'none' },
 }
 
 function greeting(prenom) {
@@ -376,36 +376,35 @@ export default function VendeurDashboard() {
 /* ── Carte commande ───────────────────────────────────────────────────── */
 function OrderCard({ order, index, onOpen }) {
   const reste = (order.totalAmount || 0) - (order.deposit || 0)
-  const meta  = STATUS_META[order.status] ?? STATUS_META.todo
+  const card  = CARD_STYLE[order.status] ?? CARD_STYLE.todo
+  const isDone = order.status === 'done'
 
   return (
     <button
       onClick={onOpen}
-      className="w-full text-left transition-all active:scale-[0.99] active:opacity-90 animate-fade-up"
+      className="w-full text-left transition-all active:scale-[0.98] active:opacity-90 animate-fade-up"
       style={{
-        backgroundColor: '#FFF0B5',
-        borderRadius: 20,
-        border: '1px solid rgba(237,216,61,0.4)',
-        borderLeft: `3px solid ${meta.accentColor}`,
-        boxShadow: '0 2px 8px rgba(237,216,61,0.2)',
-        opacity: order.status === 'done' ? 0.55 : 1,
+        backgroundColor: card.bg,
+        borderRadius: 24,
+        border: `1px solid ${card.border}`,
+        boxShadow: card.shadow,
+        opacity: isDone ? 0.6 : 1,
         overflow: 'hidden',
         animationDelay: `${index * 0.04}s`,
       }}
     >
-      <div className="px-4 py-4">
+      <div className="px-5 py-5">
 
-        {/* Heure + badge */}
-        <div className="flex items-start justify-between mb-2.5">
+        {/* Top row : heure + badge statut */}
+        <div className="flex items-center justify-between mb-3">
           <span
             style={{
-              fontSize: '1.75rem',
-              fontWeight: 800,
-              color: order.status === 'done' ? '#B0A090' : '#111111',
-              letterSpacing: '-0.03em',
-              lineHeight: 1,
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              color: isDone ? '#B0A090' : '#8A7060',
               fontFamily: 'Satoshi',
-              fontVariantNumeric: 'tabular-nums',
+              letterSpacing: '0.02em',
+              textTransform: 'uppercase',
             }}
           >
             {format(parseISO(order.pickupDate), 'HH:mm')}
@@ -413,17 +412,16 @@ function OrderCard({ order, index, onOpen }) {
           <StatusBadge status={order.status} />
         </div>
 
-        {/* Nom client */}
+        {/* Nom client — hero */}
         <p
           style={{
-            fontSize: '0.9375rem',
-            fontWeight: 600,
-            color: order.status === 'done' ? '#B0A090' : '#111111',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            fontSize: '1.25rem',
+            fontWeight: 800,
+            color: isDone ? '#B0A090' : '#111111',
             fontFamily: 'Satoshi',
-            marginBottom: '0.25rem',
+            letterSpacing: '-0.02em',
+            lineHeight: 1.2,
+            marginBottom: '0.375rem',
           }}
         >
           {order.clientName}
@@ -433,7 +431,7 @@ function OrderCard({ order, index, onOpen }) {
         <p
           style={{
             fontSize: '0.8125rem',
-            color: '#8A7060',
+            color: isDone ? '#C0B0A0' : '#8A7060',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -443,19 +441,44 @@ function OrderCard({ order, index, onOpen }) {
           {order.articles}
         </p>
 
-        {/* Paiement */}
-        {order.status !== 'done' && reste > 0 && (
-          <div className="flex items-center gap-1.5" style={{ marginTop: '0.625rem' }}>
-            <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#F59E0B', flexShrink: 0, display: 'block' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi' }}>
+        {/* Paiement pill */}
+        {!isDone && reste > 0 && (
+          <div style={{ marginTop: '0.875rem' }}>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: '0.2rem 0.625rem',
+                borderRadius: 9999,
+                backgroundColor: '#432F2E',
+                color: '#FFFFFF',
+                fontSize: '0.6875rem',
+                fontWeight: 700,
+                fontFamily: 'Satoshi',
+                letterSpacing: '0.01em',
+              }}
+            >
               {reste} € à encaisser
             </span>
           </div>
         )}
-        {order.status !== 'done' && reste === 0 && order.totalAmount > 0 && (
-          <div className="flex items-center gap-1.5" style={{ marginTop: '0.625rem' }}>
-            <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#22C55E', flexShrink: 0, display: 'block' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#166534', fontFamily: 'Satoshi' }}>
+        {!isDone && reste === 0 && order.totalAmount > 0 && (
+          <div style={{ marginTop: '0.875rem' }}>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: '0.2rem 0.625rem',
+                borderRadius: 9999,
+                backgroundColor: 'rgba(34,197,94,0.15)',
+                color: '#166534',
+                fontSize: '0.6875rem',
+                fontWeight: 700,
+                fontFamily: 'Satoshi',
+              }}
+            >
               Soldé ✓
             </span>
           </div>
