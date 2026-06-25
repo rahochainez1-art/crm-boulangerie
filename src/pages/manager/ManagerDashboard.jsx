@@ -428,8 +428,8 @@ function PlanningWidget({ orders, onViewAll, navigate }) {
   const [viewMonth, setViewMonth] = useState(new Date())
 
   return (
-    <div className="rounded-[20px] mb-4 overflow-hidden animate-fade-up"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 2px 16px rgba(67,47,46,0.06)' }}>
+    <div className="rounded-[20px] mb-4 animate-fade-up"
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 2px 16px rgba(67,47,46,0.06)', overflow: 'clip' }}>
 
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
@@ -473,21 +473,22 @@ function PlanningWidget({ orders, onViewAll, navigate }) {
 
 // ── Vue 3 jours ────────────────────────────────────────────────────────────
 const COLS_CONFIG = [
-  { badge: 'Aujourd\'hui', colBg: '#EDE8E0', badgeBg: '#D9CFC4', badgeColor: '#5C3D2B', urgentBorder: null },
-  { badge: 'Demain',       colBg: '#FFFBEA', badgeBg: '#FEF3C7', badgeColor: '#92400E', urgentBorder: '#E8D88C' },
-  { badge: 'Après-demain', colBg: '#F4F3F1', badgeBg: '#E5E5E0', badgeColor: '#6B6B60', urgentBorder: '#D0CDC8' },
+  { badge: 'Demain',       colBg: '#FFFBEA', badgeBg: '#FEF3C7', badgeColor: '#92400E', urgentBorder: '#E8D88C',  offset: 1 },
+  { badge: 'Après-demain', colBg: '#F4F3F1', badgeBg: '#E5E5E0', badgeColor: '#6B6B60', urgentBorder: '#D0CDC8',  offset: 2 },
+  { badge: 'Dans 3 jours', colBg: '#EDE8E0', badgeBg: '#D9CFC4', badgeColor: '#5C3D2B', urgentBorder: '#C8BEB4', offset: 3 },
 ]
 
 function Vue3Jours({ orders, navigate }) {
   const today = new Date()
 
   return (
-    <div style={{ display: 'flex', gap: 10, overflowX: 'auto', marginLeft: -16, marginRight: -16, paddingLeft: 16, paddingRight: 16, paddingBottom: 4, scrollSnapType: 'x mandatory' }}>
-      {COLS_CONFIG.map(({ badge, colBg, badgeBg, badgeColor, urgentBorder }, colIdx) => {
-        const day       = addDays(today, colIdx)
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(180px, 1fr))', gap: 8, overflowX: 'auto', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', paddingBottom: 4 }}>
+      {COLS_CONFIG.map(({ badge, colBg, badgeBg, badgeColor, urgentBorder, offset }) => {
+        const day       = addDays(today, offset)
         const dateStr   = format(day, 'yyyy-MM-dd')
-        const dayLabel  = format(day, 'EEEE d MMMM', { locale: fr })
-        const dayLabelC = dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)
+        const dayName   = format(day, 'EEEE', { locale: fr })
+        const dayName1  = dayName.charAt(0).toUpperCase() + dayName.slice(1)
+        const dayDate   = format(day, 'd MMMM', { locale: fr })
 
         const dayOrders = orders
           .filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day) && o.status !== 'cancelled')
@@ -498,51 +499,51 @@ function Vue3Jours({ orders, navigate }) {
         ).length
 
         return (
-          <div key={colIdx} style={{ flexShrink: 0, width: 'min(252px, 78vw)', backgroundColor: colBg, borderRadius: 20, padding: 16, display: 'flex', flexDirection: 'column', gap: 10, scrollSnapAlign: 'start' }}>
+          <div key={offset} style={{ backgroundColor: colBg, borderRadius: 16, padding: 12, display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0, scrollSnapAlign: 'start' }}>
 
             {/* Header */}
             <div>
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
-                <h3 className="font-display" style={{ fontSize: '1.1875rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1.2 }}>
-                  {dayLabelC}
-                </h3>
-                <span style={{ flexShrink: 0, fontSize: '0.625rem', fontWeight: 700, padding: '3px 8px', borderRadius: 9999, backgroundColor: badgeBg, color: badgeColor, fontFamily: 'Satoshi', marginTop: 3 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 4, marginBottom: 3 }}>
+                <div className="font-display" style={{ fontSize: '1rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1.2, minWidth: 0 }}>
+                  <div>{dayName1}</div>
+                  <div>{dayDate}</div>
+                </div>
+                <span style={{ flexShrink: 0, fontSize: '0.5rem', fontWeight: 700, padding: '2px 6px', borderRadius: 9999, backgroundColor: badgeBg, color: badgeColor, fontFamily: 'Satoshi', marginTop: 2, whiteSpace: 'nowrap' }}>
                   {badge}
                 </span>
               </div>
-              <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
-                {dayOrders.length} commande{dayOrders.length !== 1 ? 's' : ''}
+              <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
+                {dayOrders.length} cmde{dayOrders.length !== 1 ? 's' : ''}
               </p>
             </div>
 
             {/* Cartes commandes */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
               {dayOrders.length === 0 ? (
-                <div style={{ backgroundColor: 'rgba(255,255,255,0.65)', borderRadius: 14, padding: '18px 12px', textAlign: 'center' }}>
-                  <p style={{ fontSize: '0.75rem', color: '#B0A090', fontFamily: 'Satoshi' }}>Aucune commande</p>
+                <div style={{ backgroundColor: 'rgba(255,255,255,0.65)', borderRadius: 11, padding: '14px 8px', textAlign: 'center' }}>
+                  <p style={{ fontSize: '0.625rem', color: '#B0A090', fontFamily: 'Satoshi' }}>Aucune commande</p>
                 </div>
               ) : dayOrders.map(order => (
                 <button key={order.id}
                   onClick={() => navigate('/manager/toutes', { state: { orderId: order.id } })}
                   className="active:scale-[0.97] transition-transform"
-                  style={{ backgroundColor: '#FFFFFF', borderRadius: 14, padding: 12, textAlign: 'left', border: 'none', cursor: 'pointer', width: '100%' }}>
+                  style={{ backgroundColor: '#FFFFFF', borderRadius: 11, padding: 10, textAlign: 'left', border: 'none', cursor: 'pointer', width: '100%' }}>
                   {/* Ligne heure */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                    <div style={{ width: 38, height: 38, borderRadius: 9999, backgroundColor: 'rgba(67,47,46,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.8" strokeLinecap="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12 6 12 12 16 14"/>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
+                    <div style={{ width: 30, height: 30, borderRadius: 9999, backgroundColor: 'rgba(67,47,46,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.8" strokeLinecap="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                       </svg>
                     </div>
-                    <p style={{ fontSize: '1.1875rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.02em', flex: 1, fontVariantNumeric: 'tabular-nums' }}>
+                    <p style={{ fontSize: '1rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.02em', flex: 1, fontVariantNumeric: 'tabular-nums' }}>
                       {format(parseISO(order.pickupDate), 'HH:mm')}
                     </p>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C0B8A8" strokeWidth="2" strokeLinecap="round">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C0B8A8" strokeWidth="2" strokeLinecap="round">
                       <polyline points="6 9 12 15 18 9"/>
                     </svg>
                   </div>
                   {/* Articles */}
-                  <p style={{ fontSize: '0.8125rem', color: '#5C4A38', fontFamily: 'Satoshi', lineHeight: 1.45, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <p style={{ fontSize: '0.6875rem', color: '#5C4A38', fontFamily: 'Satoshi', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {order.articles}
                   </p>
                 </button>
@@ -553,13 +554,12 @@ function Vue3Jours({ orders, navigate }) {
             <button
               onClick={() => navigate('/manager/toutes', { state: { date: dateStr, ...(urgent > 0 ? { status: 'urgent' } : {}) } })}
               style={{
-                marginTop: 'auto',
-                padding: '14px 12px',
-                borderRadius: 14,
-                border: urgent > 0 ? 'none' : `1.5px solid ${urgentBorder ?? '#D0CDC8'}`,
+                padding: '11px 8px',
+                borderRadius: 11,
+                border: urgent > 0 ? 'none' : `1.5px solid ${urgentBorder}`,
                 backgroundColor: urgent > 0 ? '#432F2E' : 'transparent',
                 color: urgent > 0 ? '#FFFFFF' : '#8A7060',
-                fontSize: '0.9375rem',
+                fontSize: '0.75rem',
                 fontWeight: 700,
                 fontFamily: 'Satoshi',
                 cursor: 'pointer',
