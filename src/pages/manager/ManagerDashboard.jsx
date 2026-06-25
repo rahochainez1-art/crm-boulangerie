@@ -3,21 +3,18 @@ import {
   format, parseISO, isSameDay, isSameMonth,
   startOfWeek, endOfWeek, eachDayOfInterval,
   startOfMonth, endOfMonth, addMonths, subMonths,
-  addDays, differenceInHours,
+  addDays, subDays, differenceInHours,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useNavigate } from 'react-router-dom'
-import { subscribeOrders, STATUS_LABELS } from '../../lib/orders'
+import { subscribeOrders, isAssignedTo } from '../../lib/orders'
 import { getPrenom } from '../../lib/settings'
-import StatusBadge from '../../components/ui/StatusBadge'
 
 const ASSIGNED = {
   patissiere:  'Pâtisserie',
   boulangerie: 'Boulangerie',
   vendeur:     'Vendeur·se',
 }
-const STATUS_PRIORITY = { todo: 0, inprogress: 1, ready: 2, done: 3 }
-const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 // ── Illustration ──────────────────────────────────────────────────────────
 function IllustrationBoulangerie() {
@@ -44,36 +41,58 @@ function IllustrationBoulangerie() {
   )
 }
 
-// ── Icônes KPI ────────────────────────────────────────────────────────────
+// ── Icônes ────────────────────────────────────────────────────────────────
 const IconClipboard = () => (
-  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
     <rect x="8" y="2" width="8" height="4" rx="1"/>
     <path d="M9 12h6M9 16h4"/>
   </svg>
 )
 const IconHourglass = () => (
-  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M5 22h14M5 2h14"/>
     <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
     <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
   </svg>
 )
 const IconCheckCircle = () => (
-  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
     <polyline points="22 4 12 14.01 9 11.01"/>
   </svg>
 )
 const IconAlertCircle = () => (
-  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10"/>
     <line x1="12" y1="8" x2="12" y2="12"/>
     <line x1="12" y1="16" x2="12.01" y2="16"/>
   </svg>
 )
-
-// ── Icônes nav ────────────────────────────────────────────────────────────
+const IconCalendar = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8"  y1="2" x2="8"  y2="6"/>
+    <line x1="3"  y1="10" x2="21" y2="10"/>
+  </svg>
+)
+const IconAlertSmall = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+)
+const IconCakeSmall = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/>
+    <path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/>
+    <path d="M2 21h20"/>
+    <path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/>
+    <circle cx="12" cy="6" r="1" fill="#432F2E"/>
+  </svg>
+)
 const IconHome = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
@@ -82,20 +101,9 @@ const IconHome = () => (
 )
 const IconList = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="8" y1="6"  x2="21" y2="6"/>
-    <line x1="8" y1="12" x2="21" y2="12"/>
-    <line x1="8" y1="18" x2="21" y2="18"/>
-    <line x1="3" y1="6"  x2="3.01" y2="6"/>
-    <line x1="3" y1="12" x2="3.01" y2="12"/>
-    <line x1="3" y1="18" x2="3.01" y2="18"/>
-  </svg>
-)
-const IconAnalytics = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="20" x2="18" y2="10"/>
-    <line x1="12" y1="20" x2="12" y2="4"/>
-    <line x1="6"  y1="20" x2="6"  y2="14"/>
-    <line x1="2"  y1="20" x2="22" y2="20"/>
+    <line x1="8" y1="6"  x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+    <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+    <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
   </svg>
 )
 const IconSettings = () => (
@@ -105,155 +113,296 @@ const IconSettings = () => (
   </svg>
 )
 
-// ── KPI strip (4 colonnes) ─────────────────────────────────────────────────
-function StatWidgets({ orders }) {
-  const today      = new Date()
-  const todayCount = orders.filter(o =>
-    o.pickupDate && isSameDay(parseISO(o.pickupDate), today) && o.status !== 'cancelled'
-  ).length
-  const inProgress = orders.filter(o => o.status === 'inprogress').length
-  const ready      = orders.filter(o => o.status === 'ready').length
-  const urgent     = orders.filter(o => {
-    if (!o.pickupDate || o.status === 'done' || o.status === 'cancelled') return false
-    const h = differenceInHours(parseISO(o.pickupDate), today)
-    return h >= 0 && h <= 24 && o.status !== 'ready'
+// ── Chip info header ───────────────────────────────────────────────────────
+function Chip({ icon, label, urgent }) {
+  return (
+    <div
+      className="inline-flex items-center gap-1.5"
+      style={{
+        padding: '0.28rem 0.65rem',
+        borderRadius: 9999,
+        backgroundColor: urgent ? '#FEE2E2' : '#F5F2EB',
+        border: `1px solid ${urgent ? 'rgba(220,38,38,0.2)' : 'rgba(67,47,46,0.09)'}`,
+      }}
+    >
+      <span style={{ color: urgent ? '#DC2626' : '#8A7060', display: 'flex', alignItems: 'center' }}>{icon}</span>
+      <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: urgent ? '#DC2626' : '#432F2E', fontFamily: 'Satoshi', whiteSpace: 'nowrap' }}>
+        {label}
+      </span>
+    </div>
+  )
+}
+
+// ── KPI Strip ─────────────────────────────────────────────────────────────
+function KpiStrip({ orders }) {
+  const today     = new Date()
+  const yesterday = subDays(today, 1)
+
+  const todayAll      = orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), today) && o.status !== 'cancelled')
+  const yesterdayAll  = orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), yesterday) && o.status !== 'cancelled')
+  const todayDiff     = todayAll.length - yesterdayAll.length
+
+  const inProg        = orders.filter(o => o.status === 'inprogress')
+  const patisInProg   = inProg.filter(o => isAssignedTo(o, 'patissiere')).length
+  const boulaInProg   = inProg.filter(o => isAssignedTo(o, 'boulangerie')).length
+
+  const readyNow      = orders.filter(o => o.status === 'ready').length
+  const readyYesterday = orders.filter(o => {
+    if (o.status !== 'ready') return false
+    const h = o.statusHistory?.find(h => h.status === 'ready')
+    if (!h) return false
+    return isSameDay(parseISO(h.at), yesterday)
   }).length
+  const readyDiff = readyNow - readyYesterday
+
+  const urgentOrders = todayAll.filter(o => {
+    if (o.status === 'done' || o.status === 'cancelled') return false
+    const h = differenceInHours(parseISO(o.pickupDate), today)
+    return h <= 2
+  })
 
   const kpis = [
-    { label: "Aujourd'hui", value: todayCount, iconBg: '#FFF8D6', iconColor: '#432F2E', Icon: IconClipboard },
-    { label: 'En cours',    value: inProgress, iconBg: '#FFF8D6', iconColor: '#92400E', Icon: IconHourglass },
-    { label: 'Prêtes',      value: ready,      iconBg: '#DCFCE7', iconColor: '#166534', Icon: IconCheckCircle },
-    { label: 'Urgentes',    value: urgent,     iconBg: '#FEE2E2', iconColor: '#DC2626', Icon: IconAlertCircle, urgent: urgent > 0 },
+    {
+      Icon: IconClipboard,
+      iconBg: '#FFF8D6', iconColor: '#92400E',
+      value: todayAll.length,
+      label: "Aujourd'hui",
+      detail: todayDiff !== 0 ? (
+        <span style={{ color: todayDiff > 0 ? '#10B981' : '#EF4444', fontSize: '0.625rem', fontWeight: 600, fontFamily: 'Satoshi' }}>
+          {todayDiff > 0 ? `+${todayDiff}` : todayDiff} vs hier {todayDiff > 0 ? '↗' : '↘'}
+        </span>
+      ) : null,
+    },
+    {
+      Icon: IconHourglass,
+      iconBg: '#FFF8D6', iconColor: '#92400E',
+      value: inProg.length,
+      label: 'En cours',
+      detail: (
+        <div style={{ marginTop: 6 }}>
+          {patisInProg > 0 && (
+            <div className="flex items-center gap-1 mb-0.5">
+              <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#F472B6', display: 'block', flexShrink: 0 }} />
+              <span style={{ fontSize: '0.6rem', color: '#8A7060', fontFamily: 'Satoshi' }}>{patisInProg} pâtisserie</span>
+            </div>
+          )}
+          {boulaInProg > 0 && (
+            <div className="flex items-center gap-1">
+              <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#EDD83D', display: 'block', flexShrink: 0 }} />
+              <span style={{ fontSize: '0.6rem', color: '#8A7060', fontFamily: 'Satoshi' }}>{boulaInProg} boulangerie</span>
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      Icon: IconCheckCircle,
+      iconBg: '#DCFCE7', iconColor: '#166534',
+      value: readyNow,
+      label: 'Prêtes',
+      detail: readyDiff !== 0 ? (
+        <span style={{ color: '#10B981', fontSize: '0.625rem', fontWeight: 600, fontFamily: 'Satoshi' }}>
+          {readyDiff > 0 ? `+${readyDiff}` : readyDiff} vs hier ↗
+        </span>
+      ) : null,
+    },
+    {
+      Icon: IconAlertCircle,
+      iconBg: '#FEE2E2', iconColor: '#DC2626',
+      value: urgentOrders.length,
+      label: 'Urgentes',
+      urgent: urgentOrders.length > 0,
+      detail: urgentOrders.length > 0 ? (
+        <span style={{ color: '#DC2626', fontSize: '0.625rem', fontWeight: 600, fontFamily: 'Satoshi' }}>
+          Retrait &lt; 2h
+        </span>
+      ) : null,
+    },
   ]
 
   return (
     <div className="grid grid-cols-4 gap-2 mb-5">
       {kpis.map((k, i) => (
         <div
-          key={k.label}
-          className="rounded-[16px] p-3 flex flex-col items-center animate-fade-up"
+          key={i}
+          className="rounded-[18px] p-3 animate-fade-up"
           style={{
             backgroundColor: '#FFFFFF',
             border: k.urgent ? '1px solid rgba(220,38,38,0.18)' : '1px solid rgba(67,47,46,0.07)',
-            boxShadow: k.urgent
-              ? '0 2px 12px rgba(220,38,38,0.08)'
-              : '0 2px 12px rgba(67,47,46,0.05)',
+            boxShadow: k.urgent ? '0 2px 12px rgba(220,38,38,0.08)' : '0 2px 12px rgba(67,47,46,0.05)',
             animationDelay: `${i * 0.06}s`,
           }}
         >
-          <div
-            className="flex items-center justify-center mb-2"
-            style={{ width: 40, height: 40, borderRadius: 9999, backgroundColor: k.iconBg, color: k.iconColor }}
-          >
-            <k.Icon />
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-center" style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: k.iconBg, color: k.iconColor, flexShrink: 0 }}>
+              <k.Icon />
+            </div>
+            <p className="font-display" style={{ fontSize: '1.75rem', color: k.urgent ? '#DC2626' : '#111111', letterSpacing: '-0.04em', lineHeight: 1 }}>
+              {k.value}
+            </p>
           </div>
-          <p style={{ fontSize: '0.5625rem', fontWeight: 600, color: k.urgent ? '#DC2626' : '#8A7060', fontFamily: 'Satoshi', textAlign: 'center', lineHeight: 1.3, marginBottom: 3 }}>
+          <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: k.urgent ? '#DC2626' : '#111111', fontFamily: 'Satoshi', marginBottom: 4 }}>
             {k.label}
           </p>
-          <p className="font-display" style={{ fontSize: '1.5rem', color: k.urgent ? '#DC2626' : '#111111', letterSpacing: '-0.03em', lineHeight: 1 }}>
-            {k.value}
-          </p>
-          <p style={{ fontSize: '0.5rem', color: k.urgent ? '#DC2626' : '#B0A090', fontFamily: 'Satoshi', marginTop: 2 }}>
-            commandes
-          </p>
+          {k.detail && <div>{k.detail}</div>}
         </div>
       ))}
     </div>
   )
 }
 
-// ── Calendrier mensuel ────────────────────────────────────────────────────
-function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectDay }) {
-  const mStart   = startOfMonth(viewMonth)
-  const mEnd     = endOfMonth(viewMonth)
-  const calStart = startOfWeek(mStart, { weekStartsOn: 1 })
-  const calEnd   = endOfWeek(mEnd,     { weekStartsOn: 1 })
-  const days     = eachDayOfInterval({ start: calStart, end: calEnd })
-  const monthOrders = orders.filter(o => o.pickupDate && isSameMonth(parseISO(o.pickupDate), viewMonth))
+// ── À surveiller aujourd'hui ───────────────────────────────────────────────
+function SurveillanceCard({ orders, onViewAll }) {
+  const today = new Date()
+  const urgent = orders.filter(o => {
+    if (!o.pickupDate || o.status === 'done' || o.status === 'cancelled') return false
+    if (!isSameDay(parseISO(o.pickupDate), today)) return false
+    const h = differenceInHours(parseISO(o.pickupDate), today)
+    return h <= 2
+  }).sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
+
+  if (urgent.length === 0) return null
 
   return (
     <div
-      className="rounded-[20px] p-5 mb-5 animate-fade-up delay-100"
-      style={{
-        backgroundColor: '#FFFFFF',
-        border: '1px solid rgba(67,47,46,0.07)',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(67,47,46,0.06)',
-      }}
+      className="rounded-[20px] mb-5 overflow-hidden animate-fade-up"
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 2px 16px rgba(67,47,46,0.06)' }}
     >
-      <div className="flex items-center justify-between mb-4">
-        <button
-          onClick={() => { setViewMonth(m => subMonths(m, 1)); onSelectDay(null) }}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5"
-          style={{ color: '#8A7060', fontSize: '1.25rem' }}
-        >‹</button>
-        <p className="capitalize font-satoshi" style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111' }}>
-          {format(viewMonth, 'MMMM yyyy', { locale: fr })}
-        </p>
-        <button
-          onClick={() => { setViewMonth(m => addMonths(m, 1)); onSelectDay(null) }}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5"
-          style={{ color: '#8A7060', fontSize: '1.25rem' }}
-        >›</button>
-      </div>
-
-      <div className="flex items-center gap-1.5 mb-4">
-        <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#EDD83D', display: 'block' }} />
-        <span style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
-          <span style={{ fontWeight: 700, color: '#111111' }}>{monthOrders.length}</span>
-          {' '}commande{monthOrders.length > 1 ? 's' : ''} ce mois
-        </span>
-      </div>
-
-      <div className="grid grid-cols-7 mb-1">
-        {DAY_LABELS.map((d, i) => (
-          <p key={i} className="text-center py-1" style={{ fontSize: '9px', fontWeight: 700, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'Satoshi' }}>
-            {d}
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 pt-4 pb-3">
+        <div className="flex items-center gap-2">
+          <p style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>
+            À surveiller aujourd'hui
           </p>
-        ))}
+          <span style={{ minWidth: 20, height: 20, borderRadius: 9999, backgroundColor: '#FEE2E2', color: '#DC2626', fontSize: '0.6875rem', fontWeight: 700, fontFamily: 'Satoshi', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px' }}>
+            {urgent.length}
+          </span>
+        </div>
+        <button onClick={onViewAll} style={{ fontSize: '0.75rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi', display: 'flex', alignItems: 'center', gap: 2, background: 'none', border: 'none', cursor: 'pointer' }}>
+          Voir tout
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-y-1">
-        {days.map(day => {
-          const inMonth    = isSameMonth(day, viewMonth)
-          const count      = inMonth ? orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day)).length : 0
-          const isSelected = selectedDay && isSameDay(day, selectedDay)
-          const isToday    = isSameDay(day, new Date())
+      {/* Rows */}
+      {urgent.map((o, i) => {
+        const poleStr = Array.isArray(o.assignedTo)
+          ? o.assignedTo.map(p => ASSIGNED[p] ?? p).join(' + ')
+          : (ASSIGNED[o.assignedTo] ?? '—')
+        const isPatis = o.assignedTo === 'patissiere' || (Array.isArray(o.assignedTo) && o.assignedTo.includes('patissiere'))
+        const poleBg    = isPatis ? '#DCFCE7' : '#FEF3C7'
+        const poleColor = isPatis ? '#166534'  : '#92400E'
+
+        return (
+          <div
+            key={o.id}
+            className="flex items-center gap-3 px-4 py-3"
+            style={{ borderTop: i > 0 ? '1px solid rgba(67,47,46,0.06)' : undefined }}
+          >
+            {/* Heure rouge */}
+            <p style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#DC2626', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums', minWidth: 40, flexShrink: 0 }}>
+              {format(parseISO(o.pickupDate), 'HH:mm')}
+            </p>
+            {/* Icône cake */}
+            <div style={{ flexShrink: 0 }}>
+              <IconCakeSmall />
+            </div>
+            {/* Article + client + urgent */}
+            <div className="flex-1 min-w-0">
+              <p style={{ fontWeight: 700, fontSize: '0.9375rem', color: '#111111', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {o.articles}
+              </p>
+              <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1 }}>{o.clientName}</p>
+              <div className="flex items-center gap-1 mt-1">
+                <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#EF4444', display: 'block' }} />
+                <span style={{ fontSize: '0.625rem', fontWeight: 700, color: '#EF4444', fontFamily: 'Satoshi' }}>Urgent</span>
+              </div>
+            </div>
+            {/* Pôle + retrait */}
+            <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+              <span style={{ backgroundColor: poleBg, color: poleColor, padding: '2px 10px', borderRadius: 9999, fontSize: '0.6875rem', fontWeight: 600, fontFamily: 'Satoshi' }}>
+                {poleStr}
+              </span>
+              <div className="text-right">
+                <p style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Retrait</p>
+                <p style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#DC2626', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums' }}>
+                  {format(parseISO(o.pickupDate), 'HH:mm')}
+                </p>
+              </div>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C0B8A8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ── Mini bar chart ─────────────────────────────────────────────────────────
+function MiniBar({ ratio, isToday }) {
+  const color  = isToday ? '#EDD83D' : '#E8E0D5'
+  const seeds  = [0.35, 0.65, 1, 0.55, 0.8, 0.42]
+  const heights = seeds.map(s => Math.max(Math.round(s * ratio * 13 + 1), 2))
+  return (
+    <svg width="30" height="14" viewBox="0 0 30 14" style={{ display: 'block', marginTop: 6 }}>
+      {heights.map((h, i) => (
+        <rect key={i} x={i * 5} y={14 - h} width="4" height={h} rx="1" fill={color} />
+      ))}
+    </svg>
+  )
+}
+
+// ── Planning semaine ───────────────────────────────────────────────────────
+function WeekPlanningCard({ orders }) {
+  const today     = new Date()
+  const weekStart = startOfWeek(today, { weekStartsOn: 1 })
+  const weekDays  = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
+  const DAY_ABR   = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+
+  const counts = weekDays.map(d =>
+    orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), d) && o.status !== 'cancelled').length
+  )
+  const maxCount = Math.max(...counts, 1)
+
+  return (
+    <div
+      className="rounded-[20px] p-4 mb-5 animate-fade-up"
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 2px 16px rgba(67,47,46,0.06)' }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div style={{ color: '#432F2E' }}><IconCalendar /></div>
+          <p style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>
+            Planning de la semaine
+          </p>
+        </div>
+      </div>
+
+      {/* Jours */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+        {weekDays.map((day, i) => {
+          const isToday = isSameDay(day, today)
+          const count   = counts[i]
+          const ratio   = count / maxCount
 
           return (
-            <button
-              key={day.toISOString()}
-              disabled={!inMonth}
-              onClick={() => onSelectDay(isSelected ? null : day)}
-              className="flex flex-col items-center py-1.5 rounded-xl transition-all active:scale-95"
-              style={{
-                backgroundColor: isSelected ? '#432F2E' : isToday ? '#FFF0B5' : 'transparent',
-                opacity: inMonth ? 1 : 0.12,
-              }}
+            <div
+              key={i}
+              className="flex flex-col items-center rounded-2xl py-2"
+              style={{ backgroundColor: isToday ? '#FFF8D6' : 'transparent' }}
             >
-              <span style={{
-                fontSize: '0.8125rem',
-                fontWeight: isSelected || isToday ? 700 : 500,
-                color: isSelected ? '#FFFFFF' : '#111111',
-                fontFamily: 'Satoshi',
-                lineHeight: 1.3,
-              }}>
-                {format(day, 'd')}
-              </span>
-              <div className="h-3 flex items-center justify-center mt-0.5">
-                {count > 0 && (
-                  <span style={{
-                    fontSize: 8, fontWeight: 700,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: isSelected ? 'rgba(255,255,255,0.22)' : '#EDD83D',
-                    color: isSelected ? '#fff' : '#4A4E10',
-                    minWidth: 14, height: 14, padding: '0 3px',
-                    borderRadius: 9999, fontFamily: 'Satoshi',
-                  }}>
-                    {count}
-                  </span>
-                )}
-              </div>
-            </button>
+              <p style={{ fontSize: '0.5625rem', fontWeight: 700, color: isToday ? '#92400E' : '#8A7060', fontFamily: 'Satoshi', textAlign: 'center', marginBottom: 2 }}>
+                {DAY_ABR[i]}<br />{format(day, 'd')}
+              </p>
+              <p style={{ fontSize: '1rem', fontWeight: 700, color: isToday ? '#432F2E' : '#111111', fontFamily: 'Satoshi', lineHeight: 1.2 }}>
+                {count}
+              </p>
+              <p style={{ fontSize: '0.5rem', color: isToday ? '#92400E' : '#B0A090', fontFamily: 'Satoshi' }}>cmdes</p>
+              <MiniBar ratio={ratio} isToday={isToday} />
+            </div>
           )
         })}
       </div>
@@ -261,281 +410,165 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
   )
 }
 
-// ── Carte commande (liste compacte) ───────────────────────────────────────
-function OrderCard({ order, expanded, onToggle }) {
-  const reste  = (order.totalAmount || 0) - (order.deposit || 0)
-  const isDone = order.status === 'done'
+// ── À anticiper sur 3 jours ────────────────────────────────────────────────
+function AnticipationCard({ orders, onViewAll }) {
+  const today = new Date()
+  const cols  = [
+    { label: 'Demain',       day: addDays(today, 1), iconBg: '#DCFCE7', iconColor: '#166534', countColor: '#166634', dotColor: '#10B981' },
+    { label: 'Après-demain', day: addDays(today, 2), iconBg: '#FEF3C7', iconColor: '#92400E', countColor: '#D97706', dotColor: '#F59E0B' },
+    { label: 'Dans 3 jours', day: addDays(today, 3), iconBg: '#FEE2E2', iconColor: '#991B1B', countColor: '#DC2626', dotColor: '#EF4444' },
+  ]
 
   return (
     <div
-      className="rounded-[18px] overflow-hidden mb-2.5 animate-fade-up"
-      style={{
-        backgroundColor: '#FFFFFF',
-        border: '1px solid rgba(67,47,46,0.07)',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(67,47,46,0.04)',
-        opacity: isDone ? 0.55 : 1,
-      }}
+      className="rounded-[20px] p-4 mb-4 animate-fade-up"
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 2px 16px rgba(67,47,46,0.06)' }}
     >
-      <button
-        className="w-full px-4 py-3.5 flex items-center gap-3 text-left active:bg-black/[0.015]"
-        onClick={onToggle}
-      >
-        {/* Heure badge */}
-        <div
-          className="flex-shrink-0"
-          style={{ backgroundColor: '#FFF0B5', padding: '0.3rem 0.55rem', borderRadius: 10 }}
-        >
-          <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#432F2E', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums' }}>
-            {format(parseISO(order.pickupDate), 'HH:mm')}
-          </span>
-        </div>
+      <div className="flex items-center gap-2 mb-4">
+        <div style={{ color: '#432F2E' }}><IconCalendar /></div>
+        <p style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>
+          À anticiper sur 3 jours
+        </p>
+      </div>
 
-        {/* Nom + article */}
-        <div className="flex-1 min-w-0">
-          <p style={{ fontWeight: 700, color: '#111111', fontSize: '0.9375rem', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {order.articles}
-          </p>
-          <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {order.clientName}
-          </p>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+        {cols.map(({ label, day, iconBg, iconColor, countColor, dotColor }) => {
+          const dayOrders = orders
+            .filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day) && o.status !== 'cancelled')
+            .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
 
-        <StatusBadge status={order.status} />
-
-        <svg
-          width="14" height="14" viewBox="0 0 24 24" fill="none"
-          stroke="#C0B8A8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          className="flex-shrink-0 transition-transform duration-200"
-          style={{ transform: expanded ? 'rotate(90deg)' : 'none' }}
-        >
-          <path d="M9 18l6-6-6-6"/>
-        </svg>
-      </button>
-
-      {expanded && (
-        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid rgba(67,47,46,0.06)' }}>
-
-          <div>
-            <p className="label-xs mb-1.5">Articles</p>
-            <p style={{ fontSize: '0.875rem', color: '#111111', lineHeight: 1.5, fontFamily: 'Satoshi' }}>
-              {order.articles}
-            </p>
-          </div>
-
-          {order.totalAmount > 0 && (
-            <div>
-              <p className="label-xs mb-2">Paiement</p>
-              <div className="flex gap-6">
-                <div>
-                  <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Total</p>
-                  <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi', marginTop: 2 }}>{order.totalAmount} €</p>
+          return (
+            <div key={label}>
+              {/* Header */}
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-center" style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: iconBg, color: iconColor }}>
+                  <IconCalendar size={14} />
                 </div>
-                {order.deposit > 0 && (
-                  <div>
-                    <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Acompte</p>
-                    <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi', marginTop: 2 }}>{order.deposit} €</p>
-                  </div>
-                )}
-                {reste > 0 && (
-                  <div>
-                    <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Reste dû</p>
-                    <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi', marginTop: 2 }}>{reste} €</p>
-                  </div>
-                )}
+                <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: countColor, fontFamily: 'Satoshi' }}>
+                  {dayOrders.length} commandes
+                </span>
               </div>
-            </div>
-          )}
+              <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', marginBottom: 8 }}>
+                {label}
+              </p>
 
-          <div className="flex gap-6">
-            {order.assignedTo && (
-              <div>
-                <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Assigné à</p>
-                <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#111111', fontFamily: 'Satoshi' }}>
-                  {Array.isArray(order.assignedTo)
-                    ? order.assignedTo.map(p => ASSIGNED[p] ?? p).join(' + ')
-                    : (ASSIGNED[order.assignedTo] ?? order.assignedTo)}
-                </p>
-              </div>
-            )}
-            {order.clientPhone && (
-              <div>
-                <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Téléphone</p>
-                <a href={`tel:${order.clientPhone}`} style={{ fontSize: '0.875rem', fontWeight: 500, color: '#432F2E', textDecoration: 'underline', fontFamily: 'Satoshi' }}>
-                  {order.clientPhone}
-                </a>
-              </div>
-            )}
-          </div>
-
-          {order.notes && (
-            <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
-              <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi' }}>⚠ {order.notes}</p>
-            </div>
-          )}
-
-          {order.statusHistory?.length > 0 && (
-            <div>
-              <p className="label-xs mb-2">Historique</p>
-              <div className="space-y-2">
-                {[...order.statusHistory].reverse().map((h, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: i === 0 ? '#EDD83D' : 'rgba(67,47,46,0.15)' }} />
-                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>{STATUS_LABELS[h.status]}</span>
-                    </div>
-                    <span style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
-                      {format(parseISO(h.at), 'dd MMM à HH:mm', { locale: fr })}
+              {/* Orders */}
+              <div className="space-y-1.5">
+                {dayOrders.slice(0, 2).map(o => (
+                  <div key={o.id} className="flex items-start gap-1.5">
+                    <span style={{ fontSize: '0.5625rem', fontWeight: 700, color: '#8A7060', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums', flexShrink: 0, paddingTop: 1 }}>
+                      {format(parseISO(o.pickupDate), 'HH:mm')}
+                    </span>
+                    <span style={{ fontSize: '0.5625rem', color: '#111111', fontFamily: 'Satoshi', fontWeight: 600, lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                      {o.articles}
                     </span>
                   </div>
                 ))}
+                {dayOrders.length > 2 && (
+                  <button style={{ fontSize: '0.5625rem', fontWeight: 700, color: dotColor, fontFamily: 'Satoshi', display: 'flex', alignItems: 'center', gap: 2, background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 4 }}>
+                    +{dayOrders.length - 2} autres
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                  </button>
+                )}
+                {dayOrders.length === 0 && (
+                  <p style={{ fontSize: '0.5625rem', color: '#B0A090', fontFamily: 'Satoshi' }}>Aucune commande</p>
+                )}
               </div>
             </div>
-          )}
+          )
+        })}
+      </div>
+
+      {/* Voir tout */}
+      <button
+        onClick={onViewAll}
+        className="w-full flex items-center justify-between mt-5 pt-4 active:opacity-70"
+        style={{ borderTop: '1px solid rgba(67,47,46,0.07)', background: 'none', border: 'none', cursor: 'pointer', padding: '12px 0 0 0' }}
+      >
+        <div className="flex items-center gap-2">
+          <div style={{ color: '#432F2E' }}><IconCalendar /></div>
+          <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>
+            Voir tout le planning
+          </span>
         </div>
-      )}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C0B8A8" strokeWidth="2.5" strokeLinecap="round">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
     </div>
   )
 }
 
-// ── Vue Analyses ──────────────────────────────────────────────────────────
-function AnalysesView({ orders }) {
-  const done    = orders.filter(o => o.status === 'done')
-  const revenue = done.reduce((s, o) => s + (o.totalAmount || 0), 0)
-
-  return (
-    <>
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        {[
-          { label: 'Récupérées', value: done.length, sub: 'commandes', dot: '#10B981' },
-          { label: 'CA encaissé', value: `${revenue}€`, sub: 'toutes périodes', dot: '#EDD83D' },
-        ].map((w, i) => (
-          <div key={i} className="rounded-[20px] p-5 flex flex-col animate-fade-up"
-            style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(67,47,46,0.06)', minHeight: 108 }}>
-            <div className="flex items-center gap-1.5 mb-auto">
-              <span style={{ width: 6, height: 6, borderRadius: 9999, backgroundColor: w.dot, display: 'block' }} />
-              <p className="label-xs">{w.label}</p>
-            </div>
-            <p className="font-display" style={{ fontSize: '2.25rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1, marginTop: '0.625rem' }}>{w.value}</p>
-            <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 4 }}>{w.sub}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex items-center justify-between mb-4">
-        <p className="font-display" style={{ fontSize: '1rem', color: '#111111' }}>Historique</p>
-        <span className="label-xs">{done.length}</span>
-      </div>
-
-      {done.length === 0 ? (
-        <div className="rounded-[20px] text-center py-16 animate-fade-up"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)' }}>
-          <p style={{ fontSize: '1.5rem', marginBottom: 8, color: '#B0A090' }}>—</p>
-          <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Aucune commande récupérée</p>
-        </div>
-      ) : (
-        [...done].sort((a, b) => new Date(b.pickupDate) - new Date(a.pickupDate)).map(o => (
-          <div key={o.id} className="rounded-[18px] px-4 py-3.5 mb-2.5 flex items-center gap-3 animate-fade-up"
-            style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
-            <div className="flex-1 min-w-0">
-              <p style={{ fontWeight: 600, fontSize: '0.875rem', color: '#111111', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.articles}</p>
-              <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>{o.clientName}</p>
-            </div>
-            <div className="text-right flex-shrink-0">
-              <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums' }}>
-                {format(parseISO(o.pickupDate), 'dd MMM', { locale: fr })}
-              </p>
-              {o.totalAmount > 0 && (
-                <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', marginTop: 2 }}>{o.totalAmount}€</p>
-              )}
-            </div>
-          </div>
-        ))
-      )}
-    </>
-  )
-}
-
-// ── Nav ───────────────────────────────────────────────────────────────────
+// ── Nav constants ─────────────────────────────────────────────────────────
 const ACTIVE   = '#111111'
 const INACTIVE = '#B0A090'
-const NAV_ITEMS = [
-  { id: 'home',     label: 'Accueil',  Icon: IconHome },
-  { id: 'toutes',   label: 'Toutes',   Icon: IconList },
-  { id: 'analyses', label: 'Analyses', Icon: IconAnalytics },
-  { id: 'reglages', label: 'Réglages', Icon: IconSettings },
-]
 
 // ── Manager Dashboard ─────────────────────────────────────────────────────
 export default function ManagerDashboard() {
-  const [orders, setOrders]           = useState([])
-  const [tab, setTab]                 = useState('home')
-  const [viewMonth, setViewMonth]     = useState(new Date())
-  const [selectedDay, setSelectedDay] = useState(() => new Date())
-  const [expandedId, setExpandedId]   = useState(null)
-  const navigate = useNavigate()
+  const [orders, setOrders] = useState([])
+  const [tab, setTab]       = useState('home')
+  const navigate            = useNavigate()
 
   useEffect(() => subscribeOrders(setOrders), [])
 
   const changeTab = (t) => {
-    if (t === 'reglages') { navigate('/settings'); return }
-    if (t === 'toutes')   { navigate('/manager/toutes'); return }
+    if (t === 'reglages')  { navigate('/settings'); return }
+    if (t === 'commandes') { navigate('/manager/toutes'); return }
     setTab(t)
-    setExpandedId(null)
   }
 
-  const dayOrders = useMemo(() => {
-    if (!selectedDay) return []
-    return orders
-      .filter(o => o.pickupDate && o.status !== 'cancelled' && isSameDay(parseISO(o.pickupDate), selectedDay))
-      .sort((a, b) => {
-        const pa = STATUS_PRIORITY[a.status] ?? 99
-        const pb = STATUS_PRIORITY[b.status] ?? 99
-        if (pa !== pb) return pa - pb
-        return new Date(a.pickupDate) - new Date(b.pickupDate)
-      })
-  }, [orders, selectedDay])
-
-  const sectionTitle = useMemo(() => {
-    if (!selectedDay) return 'Sélectionne un jour'
-    if (isSameDay(selectedDay, new Date())) return "Aujourd'hui"
-    return format(selectedDay, 'EEEE d MMMM', { locale: fr })
-  }, [selectedDay])
-
+  const today = new Date()
   const prenom = getPrenom()
-  const weekCount = useMemo(() => {
-    const ws = startOfWeek(new Date(), { weekStartsOn: 1 })
-    const we = addDays(ws, 6)
-    return orders.filter(o => {
-      if (!o.pickupDate || o.status === 'cancelled') return false
-      const d = parseISO(o.pickupDate)
-      return d >= ws && d <= we
-    }).length
-  }, [orders])
+
+  const todayCount = useMemo(() =>
+    orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), today) && o.status !== 'cancelled').length,
+  [orders])
+
+  const urgentCount = useMemo(() =>
+    orders.filter(o => {
+      if (!o.pickupDate || o.status === 'done' || o.status === 'cancelled') return false
+      if (!isSameDay(parseISO(o.pickupDate), today)) return false
+      return differenceInHours(parseISO(o.pickupDate), today) <= 2
+    }).length,
+  [orders])
+
+  const dateLabel = useMemo(() => {
+    const s = format(today, 'EEEE d MMMM', { locale: fr })
+    return s.charAt(0).toUpperCase() + s.slice(1)
+  }, [])
+
+  const NAV = [
+    { id: 'home',      label: 'Accueil',   Icon: IconHome },
+    { id: 'commandes', label: 'Commandes', Icon: IconList },
+    { id: 'planning',  label: 'Planning',  Icon: IconCalendar },
+    { id: 'reglages',  label: 'Réglages',  Icon: IconSettings },
+  ]
 
   return (
     <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFFFFF' }}>
 
-      {/* ── Header avec illustration ── */}
-      <header
-        className="px-5 pb-3"
-        style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}
-      >
+      {/* ── Header ── */}
+      <header className="px-5 pb-3" style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}>
         <div className="flex items-start justify-between animate-fade-up">
-          <div className="flex-1 pr-2 pt-1">
-            <p className="label-xs mb-3">Au Grand Jour · Manager</p>
-            <h1
-              className="font-display"
-              style={{ fontSize: '2rem', color: '#111111', letterSpacing: '-0.025em', lineHeight: 1.1 }}
-            >
-              {prenom ? `Bonjour ${prenom} 👋` : 'Bonjour 👋'}
-            </h1>
-            <p style={{ fontSize: '0.8125rem', color: '#8A7060', marginTop: 6, fontFamily: 'Satoshi', fontWeight: 500 }}>
-              {weekCount > 0
-                ? `${weekCount} commande${weekCount > 1 ? 's' : ''} cette semaine`
-                : 'Aucune commande cette semaine'}
+
+          <div className="flex-1 pr-2">
+            <p style={{ fontSize: '0.625rem', fontWeight: 700, color: '#8A7060', fontFamily: 'Satoshi', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>
+              Au Grand Jour · Manager
             </p>
+            <h1 className="font-display" style={{ fontSize: '2.25rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: 14 }}>
+              Bonjour{prenom ? ` ${prenom}` : ''} ! 👋
+            </h1>
+            {/* Chips */}
+            <div className="flex flex-wrap gap-1.5">
+              <Chip icon={<IconCalendar size={12} />} label={dateLabel} />
+              <Chip icon={<IconCalendar size={12} />} label={`${todayCount} commandes aujourd'hui`} />
+              {urgentCount > 0 && (
+                <Chip icon={<IconAlertSmall />} label={`${urgentCount} urgente${urgentCount > 1 ? 's' : ''}`} urgent />
+              )}
+            </div>
           </div>
-          <div style={{ width: 128, height: 118, flexShrink: 0 }}>
+
+          <div style={{ width: 118, height: 108, flexShrink: 0 }}>
             <IllustrationBoulangerie />
           </div>
         </div>
@@ -546,74 +579,36 @@ export default function ManagerDashboard() {
 
         {tab === 'home' && (
           <>
-            <StatWidgets orders={orders} />
-
-            <MonthCalendar
-              orders={orders}
-              viewMonth={viewMonth}
-              setViewMonth={setViewMonth}
-              selectedDay={selectedDay}
-              onSelectDay={(day) => setSelectedDay(day ?? new Date())}
-            />
-
-            <div className="flex items-center justify-between mb-3 animate-fade-up delay-150">
-              <p className="font-display capitalize" style={{ fontSize: '1rem', color: '#111111' }}>
-                {sectionTitle}
-              </p>
-              <span className="label-xs">{dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}</span>
-            </div>
-
-            {dayOrders.length === 0 ? (
-              <div className="rounded-[20px] text-center py-14 animate-fade-up delay-200"
-                style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)' }}>
-                <p style={{ fontSize: '1.5rem', color: '#B0A090', marginBottom: 8 }}>—</p>
-                <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Aucune commande ce jour</p>
-              </div>
-            ) : (
-              dayOrders.map(o => (
-                <OrderCard
-                  key={o.id}
-                  order={o}
-                  expanded={expandedId === o.id}
-                  onToggle={() => setExpandedId(prev => prev === o.id ? null : o.id)}
-                />
-              ))
-            )}
+            <KpiStrip orders={orders} />
+            <SurveillanceCard orders={orders} onViewAll={() => navigate('/manager/toutes')} />
+            <WeekPlanningCard orders={orders} />
+            <AnticipationCard orders={orders} onViewAll={() => navigate('/manager/toutes')} />
           </>
         )}
 
-        {tab === 'analyses' && <AnalysesView orders={orders} />}
+        {tab === 'planning' && (
+          <PlanningView orders={orders} />
+        )}
+
       </main>
 
       {/* ── Bottom nav ── */}
       <nav
         className="fixed bottom-0 left-0 right-0 z-50"
-        style={{
-          backgroundColor: 'rgba(255,255,255,0.92)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-        }}
+        style={{ backgroundColor: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
       >
-        <div
-          className="max-w-lg mx-auto"
-          style={{
-            borderTop: '1px solid rgba(67,47,46,0.08)',
-            paddingBottom: 'max(env(safe-area-inset-bottom), 6px)',
-          }}
-        >
+        <div className="max-w-lg mx-auto" style={{ borderTop: '1px solid rgba(67,47,46,0.08)', paddingBottom: 'max(env(safe-area-inset-bottom), 6px)' }}>
           <div className="flex items-end pt-3 pb-1">
 
-            {NAV_ITEMS.slice(0, 2).map(item => {
+            {NAV.slice(0, 2).map(item => {
               const active = tab === item.id
               return (
                 <button key={item.id} onClick={() => changeTab(item.id)}
-                  className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
+                  className="flex-1 flex flex-col items-center gap-0.5 pb-1"
                   style={{ color: active ? ACTIVE : INACTIVE }}>
                   <item.Icon />
-                  <span style={{ fontSize: 10, fontWeight: active ? 700 : 500, color: active ? ACTIVE : INACTIVE, fontFamily: 'Satoshi', letterSpacing: '0.01em' }}>
-                    {item.label}
-                  </span>
-                  <span style={{ width: active ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#432F2E', marginTop: 2, transition: 'width 0.2s cubic-bezier(0.16,1,0.3,1)', display: 'block' }} />
+                  <span style={{ fontSize: 10, fontWeight: active ? 700 : 500, color: active ? ACTIVE : INACTIVE, fontFamily: 'Satoshi' }}>{item.label}</span>
+                  <span style={{ width: active ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#EDD83D', marginTop: 2, transition: 'width 0.2s', display: 'block' }} />
                 </button>
               )
             })}
@@ -630,17 +625,15 @@ export default function ManagerDashboard() {
               </svg>
             </button>
 
-            {NAV_ITEMS.slice(2).map(item => {
+            {NAV.slice(2).map(item => {
               const active = tab === item.id
               return (
                 <button key={item.id} onClick={() => changeTab(item.id)}
-                  className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
+                  className="flex-1 flex flex-col items-center gap-0.5 pb-1"
                   style={{ color: active ? ACTIVE : INACTIVE }}>
                   <item.Icon />
-                  <span style={{ fontSize: 10, fontWeight: active ? 700 : 500, color: active ? ACTIVE : INACTIVE, fontFamily: 'Satoshi', letterSpacing: '0.01em' }}>
-                    {item.label}
-                  </span>
-                  <span style={{ width: active ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#432F2E', marginTop: 2, transition: 'width 0.2s cubic-bezier(0.16,1,0.3,1)', display: 'block' }} />
+                  <span style={{ fontSize: 10, fontWeight: active ? 700 : 500, color: active ? ACTIVE : INACTIVE, fontFamily: 'Satoshi' }}>{item.label}</span>
+                  <span style={{ width: active ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#EDD83D', marginTop: 2, transition: 'width 0.2s', display: 'block' }} />
                 </button>
               )
             })}
@@ -649,6 +642,150 @@ export default function ManagerDashboard() {
         </div>
       </nav>
 
+    </div>
+  )
+}
+
+// ── Vue Planning (tab) ────────────────────────────────────────────────────
+function PlanningView({ orders }) {
+  const [viewMonth, setViewMonth] = useState(new Date())
+  const [selectedDay, setSelectedDay] = useState(() => new Date())
+  const [expandedId, setExpandedId]   = useState(null)
+  const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
+
+  const mStart   = startOfMonth(viewMonth)
+  const mEnd     = endOfMonth(viewMonth)
+  const calStart = startOfWeek(mStart, { weekStartsOn: 1 })
+  const calEnd   = endOfWeek(mEnd, { weekStartsOn: 1 })
+  const days     = eachDayOfInterval({ start: calStart, end: calEnd })
+
+  const dayOrders = useMemo(() => {
+    if (!selectedDay) return []
+    return orders
+      .filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), selectedDay) && o.status !== 'cancelled')
+      .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
+  }, [orders, selectedDay])
+
+  const sectionTitle = useMemo(() => {
+    if (!selectedDay) return 'Sélectionne un jour'
+    if (isSameDay(selectedDay, new Date())) return "Aujourd'hui"
+    return format(selectedDay, 'EEEE d MMMM', { locale: fr })
+  }, [selectedDay])
+
+  return (
+    <>
+      {/* Calendrier mensuel */}
+      <div className="rounded-[20px] p-4 mb-5" style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 2px 16px rgba(67,47,46,0.06)' }}>
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={() => setViewMonth(m => subMonths(m, 1))} className="w-9 h-9 flex items-center justify-center rounded-xl" style={{ color: '#8A7060', fontSize: '1.25rem' }}>‹</button>
+          <p className="capitalize" style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>
+            {format(viewMonth, 'MMMM yyyy', { locale: fr })}
+          </p>
+          <button onClick={() => setViewMonth(m => addMonths(m, 1))} className="w-9 h-9 flex items-center justify-center rounded-xl" style={{ color: '#8A7060', fontSize: '1.25rem' }}>›</button>
+        </div>
+
+        <div className="grid grid-cols-7 mb-1">
+          {DAY_LABELS.map((d, i) => (
+            <p key={i} className="text-center" style={{ fontSize: '9px', fontWeight: 700, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'Satoshi' }}>{d}</p>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-y-1">
+          {days.map(day => {
+            const inMonth    = isSameMonth(day, viewMonth)
+            const count      = inMonth ? orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day)).length : 0
+            const isSelected = selectedDay && isSameDay(day, selectedDay)
+            const isToday    = isSameDay(day, new Date())
+            return (
+              <button key={day.toISOString()} disabled={!inMonth}
+                onClick={() => setSelectedDay(isSelected ? new Date() : day)}
+                className="flex flex-col items-center py-1.5 rounded-xl"
+                style={{ backgroundColor: isSelected ? '#432F2E' : isToday ? '#FFF0B5' : 'transparent', opacity: inMonth ? 1 : 0.12 }}>
+                <span style={{ fontSize: '0.8125rem', fontWeight: isSelected || isToday ? 700 : 500, color: isSelected ? '#FFFFFF' : '#111111', fontFamily: 'Satoshi', lineHeight: 1.3 }}>
+                  {format(day, 'd')}
+                </span>
+                <div className="h-3 flex items-center justify-center mt-0.5">
+                  {count > 0 && (
+                    <span style={{ fontSize: 8, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: isSelected ? 'rgba(255,255,255,0.22)' : '#EDD83D', color: isSelected ? '#fff' : '#4A4E10', minWidth: 14, height: 14, padding: '0 3px', borderRadius: 9999, fontFamily: 'Satoshi' }}>
+                      {count}
+                    </span>
+                  )}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Liste du jour */}
+      <div className="flex items-center justify-between mb-3">
+        <p className="font-display capitalize" style={{ fontSize: '1rem', color: '#111111' }}>{sectionTitle}</p>
+        <span className="label-xs">{dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}</span>
+      </div>
+      {dayOrders.length === 0 ? (
+        <div className="rounded-[20px] text-center py-14" style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)' }}>
+          <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Aucune commande ce jour</p>
+        </div>
+      ) : (
+        dayOrders.map(o => (
+          <PlanOrderRow key={o.id} order={o} expanded={expandedId === o.id} onToggle={() => setExpandedId(p => p === o.id ? null : o.id)} />
+        ))
+      )}
+    </>
+  )
+}
+
+function PlanOrderRow({ order, expanded, onToggle }) {
+  const reste  = (order.totalAmount || 0) - (order.deposit || 0)
+  const isDone = order.status === 'done'
+  return (
+    <div className="rounded-[18px] overflow-hidden mb-2.5" style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 1px 2px rgba(0,0,0,0.03)', opacity: isDone ? 0.55 : 1 }}>
+      <button className="w-full px-4 py-3.5 flex items-center gap-3 text-left" onClick={onToggle}>
+        <div style={{ backgroundColor: '#FFF0B5', padding: '0.3rem 0.55rem', borderRadius: 10, flexShrink: 0 }}>
+          <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#432F2E', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums' }}>
+            {format(parseISO(order.pickupDate), 'HH:mm')}
+          </span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p style={{ fontWeight: 700, color: '#111111', fontSize: '0.9375rem', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{order.articles}</p>
+          <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{order.clientName}</p>
+        </div>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', backgroundColor: 'rgba(67,47,46,0.07)', color: '#432F2E', padding: '0.2rem 0.65rem', borderRadius: 9999, fontSize: '0.6875rem', fontWeight: 700, fontFamily: 'Satoshi', flexShrink: 0 }}>
+          {order.status === 'done' ? 'Récupérée' : order.status === 'ready' ? 'Prête' : order.status === 'inprogress' ? 'En cours' : 'À faire'}
+        </span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C0B8A8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transform: expanded ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+      {expanded && (
+        <div className="px-5 pb-4 pt-3 space-y-3" style={{ borderTop: '1px solid rgba(67,47,46,0.06)' }}>
+          <p style={{ fontSize: '0.875rem', color: '#111111', lineHeight: 1.5, fontFamily: 'Satoshi' }}>{order.articles}</p>
+          {order.clientPhone && (
+            <a href={`tel:${order.clientPhone}`} style={{ fontSize: '0.875rem', fontWeight: 600, color: '#432F2E', textDecoration: 'underline', fontFamily: 'Satoshi', display: 'block' }}>
+              {order.clientPhone}
+            </a>
+          )}
+          {order.totalAmount > 0 && (
+            <div className="flex gap-6">
+              <div>
+                <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Total</p>
+                <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi', marginTop: 2 }}>{order.totalAmount} €</p>
+              </div>
+              {reste > 0 && (
+                <div>
+                  <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Reste dû</p>
+                  <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi', marginTop: 2 }}>{reste} €</p>
+                </div>
+              )}
+            </div>
+          )}
+          {order.notes && (
+            <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
+              <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi' }}>⚠ {order.notes}</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
