@@ -361,20 +361,31 @@ function KpiStrip({ orders, navigate }) {
     <div className="grid grid-cols-4 gap-2 mb-5">
       {kpis.map((k, i) => (
         <button key={i} onClick={k.onClick}
-          className="rounded-[16px] p-3 animate-fade-up text-left active:scale-[0.95] transition-transform"
-          style={{ backgroundColor: '#FFFFFF', border: k.urgent ? '1px solid rgba(220,38,38,0.18)' : '1px solid rgba(67,47,46,0.07)', boxShadow: '0 2px 12px rgba(67,47,46,0.04)', animationDelay: `${i * 0.06}s` }}>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center justify-center" style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: k.iconBg, color: k.iconColor, flexShrink: 0 }}>
-              <k.Icon size={20} />
-            </div>
-            <p className="font-display" style={{ fontSize: '1.75rem', color: k.urgent ? '#DC2626' : '#111111', letterSpacing: '-0.04em', lineHeight: 1 }}>
-              {k.value}
-            </p>
+          className="rounded-[16px] animate-fade-up text-left active:scale-[0.95] transition-transform flex flex-col"
+          style={{
+            backgroundColor: '#FFFFFF',
+            border: k.urgent ? '1px solid rgba(220,38,38,0.18)' : '1px solid rgba(67,47,46,0.07)',
+            boxShadow: '0 2px 12px rgba(67,47,46,0.04)',
+            animationDelay: `${i * 0.06}s`,
+            padding: '11px 10px 11px 10px',
+            minHeight: 108,
+          }}>
+          {/* Icône */}
+          <div style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: k.iconBg, color: k.iconColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <k.Icon size={20} />
           </div>
-          <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: k.urgent ? '#DC2626' : '#111111', fontFamily: 'Satoshi', marginBottom: 5 }}>
+          {/* Nombre */}
+          <p className="font-display" style={{ fontSize: '1.75rem', color: k.urgent ? '#DC2626' : '#111111', letterSpacing: '-0.04em', lineHeight: 1, marginTop: 6 }}>
+            {k.value}
+          </p>
+          {/* Label */}
+          <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: k.urgent ? '#DC2626' : '#432F2E', fontFamily: 'Satoshi', marginTop: 4 }}>
             {k.label}
           </p>
-          {k.detail && <div>{k.detail}</div>}
+          {/* Détail — espace réservé même si vide */}
+          <div style={{ marginTop: 4, minHeight: 14 }}>
+            {k.detail}
+          </div>
         </button>
       ))}
     </div>
