@@ -15,10 +15,10 @@ const TABS = [
 ]
 
 const STATUS_META = {
-  todo:       { accentColor: '#EDD83D' },
+  todo:       { accentColor: '#432F2E' },
   inprogress: { accentColor: '#432F2E' },
   ready:      { accentColor: '#10B981' },
-  done:       { accentColor: '#E5E7EB' },
+  done:       { accentColor: 'rgba(67,47,46,0.18)' },
 }
 
 function greeting(prenom) {
@@ -91,7 +91,7 @@ export default function VendeurDashboard() {
   })
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5F2EB' }}>
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFFFFF' }}>
 
       {/* ── Header compact ─────────────────────────────────────────── */}
       <header
@@ -131,9 +131,9 @@ export default function VendeurDashboard() {
           <div
             className="flex rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: '#FFFFFF',
-              border: '1px solid rgba(67,47,46,0.08)',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(67,47,46,0.06)',
+              backgroundColor: '#FFF0B5',
+              border: '1px solid rgba(237,216,61,0.4)',
+              boxShadow: '0 2px 12px rgba(237,216,61,0.2)',
             }}
           >
             {[
@@ -146,8 +146,8 @@ export default function VendeurDashboard() {
               {
                 count: kpiReady,
                 label: 'Prêtes',
-                textColor: kpiReady > 0 ? '#065F46' : '#B0A090',
-                bg: kpiReady > 0 ? '#D1FAE5' : null,
+                textColor: kpiReady > 0 ? '#1D4E6B' : '#B0A090',
+                bg: kpiReady > 0 ? '#E5F0F5' : null,
               },
               {
                 count: kpiDone,
@@ -161,7 +161,7 @@ export default function VendeurDashboard() {
                 className="flex-1 flex flex-col items-center py-3.5"
                 style={{
                   backgroundColor: kpi.bg || 'transparent',
-                  borderRight: i < 2 ? '1px solid rgba(67,47,46,0.08)' : 'none',
+                  borderRight: i < 2 ? '1px solid rgba(237,216,61,0.35)' : 'none',
                 }}
               >
                 <span
@@ -241,15 +241,15 @@ export default function VendeurDashboard() {
                   style={{
                     borderRadius: 14,
                     backgroundColor: isSelected
-                      ? '#111111'
+                      ? '#432F2E'
                       : isToday
-                      ? 'rgba(67,47,46,0.06)'
-                      : 'rgba(255,255,255,0.6)',
+                      ? '#E5F0F5'
+                      : '#FFF0B5',
                     border: isSelected
                       ? 'none'
                       : isToday
-                      ? '1.5px solid rgba(67,47,46,0.2)'
-                      : '1px solid rgba(67,47,46,0.08)',
+                      ? '1.5px solid #B8D5E5'
+                      : '1px solid rgba(237,216,61,0.4)',
                   }}
                 >
                   <span
@@ -307,11 +307,11 @@ export default function VendeurDashboard() {
                 style={{
                   padding: '0.375rem 0.875rem',
                   borderRadius: 9999,
-                  backgroundColor: isActive ? '#432F2E' : 'rgba(67,47,46,0.07)',
-                  color: isActive ? '#FFFFFF' : '#8A7060',
+                  backgroundColor: isActive ? '#432F2E' : '#FFF0B5',
+                  color: isActive ? '#FFFFFF' : '#432F2E',
                   fontSize: '0.8125rem',
                   fontWeight: 600,
-                  border: 'none',
+                  border: isActive ? 'none' : '1px solid rgba(237,216,61,0.5)',
                   cursor: 'pointer',
                   fontFamily: 'Satoshi',
                   letterSpacing: '-0.01em',
@@ -344,8 +344,8 @@ export default function VendeurDashboard() {
             <div
               className="rounded-2xl text-center py-14 animate-fade-up"
               style={{
-                backgroundColor: 'rgba(255,255,255,0.5)',
-                border: '1px solid rgba(67,47,46,0.07)',
+                backgroundColor: '#FFF0B5',
+                border: '1px solid rgba(237,216,61,0.35)',
               }}
             >
               <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
@@ -383,11 +383,11 @@ function OrderCard({ order, index, onOpen }) {
       onClick={onOpen}
       className="w-full text-left transition-all active:scale-[0.99] active:opacity-90 animate-fade-up"
       style={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#FFF0B5',
         borderRadius: 20,
-        border: '1px solid rgba(67,47,46,0.08)',
+        border: '1px solid rgba(237,216,61,0.4)',
         borderLeft: `3px solid ${meta.accentColor}`,
-        boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(67,47,46,0.06)',
+        boxShadow: '0 2px 8px rgba(237,216,61,0.2)',
         opacity: order.status === 'done' ? 0.55 : 1,
         overflow: 'hidden',
         animationDelay: `${index * 0.04}s`,

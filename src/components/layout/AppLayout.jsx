@@ -1,12 +1,12 @@
 export default function AppLayout({ title, subtitle, action, children }) {
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto">
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFFFFF' }}>
 
       <header
         className="px-5 pb-5"
         style={{
           paddingTop: 'max(52px, env(safe-area-inset-top))',
-          borderBottom: '1px solid #E8DFC0',
+          borderBottom: '1px solid rgba(237,216,61,0.3)',
         }}
       >
         <div className="flex items-end justify-between gap-3">

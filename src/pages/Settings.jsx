@@ -43,7 +43,7 @@ function Row({ label, hint, children, noBorder = false }) {
   return (
     <div
       className="flex items-center gap-3 py-3.5 px-4"
-      style={{ borderBottom: noBorder ? 'none' : '1px solid rgba(67,47,46,0.06)' }}
+      style={{ borderBottom: noBorder ? 'none' : '1px solid rgba(237,216,61,0.35)' }}
     >
       <div className="flex-1 min-w-0">
         <p style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#111111', fontFamily: 'Satoshi' }}>
@@ -81,10 +81,10 @@ function Group({ title, children }) {
       <div
         className="overflow-hidden"
         style={{
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#FFF0B5',
           borderRadius: 18,
-          border: '1px solid rgba(67,47,46,0.07)',
-          boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(67,47,46,0.04)',
+          border: '1px solid rgba(237,216,61,0.4)',
+          boxShadow: '0 2px 12px rgba(237,216,61,0.18)',
         }}
       >
         {children}
@@ -104,7 +104,7 @@ function SmallButton({ onClick, disabled, danger, children }) {
         color: danger ? '#b91c1c' : '#432F2E',
         padding: '0.3rem 0.875rem',
         borderRadius: 9999,
-        backgroundColor: danger ? '#FEE2E2' : 'rgba(67,47,46,0.07)',
+        backgroundColor: danger ? '#FEE2E2' : '#FFF0B5',
         border: 'none',
         cursor: disabled ? 'default' : 'pointer',
         fontFamily: 'Satoshi',
@@ -221,7 +221,7 @@ export default function Settings() {
   const monthCount = orders.filter(o => o.pickupDate && isSameMonth(parseISO(o.pickupDate), new Date())).length
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5F2EB' }}>
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFFFFF' }}>
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <header
@@ -242,9 +242,9 @@ export default function Settings() {
         <div
           className="flex items-center gap-4 px-4 py-4 rounded-2xl animate-fade-up"
           style={{
-            backgroundColor: '#FFFFFF',
-            border: '1px solid rgba(67,47,46,0.07)',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(67,47,46,0.04)',
+            backgroundColor: '#FFF0B5',
+            border: '1px solid rgba(237,216,61,0.4)',
+            boxShadow: '0 2px 12px rgba(237,216,61,0.18)',
           }}
         >
           <div
@@ -281,7 +281,7 @@ export default function Settings() {
         {/* ── Préférences ────────────────────────────────────── */}
         <Group title="Préférences">
           {/* Prénom */}
-          <div className="px-4 py-3.5" style={{ borderBottom: '1px solid rgba(67,47,46,0.06)' }}>
+          <div className="px-4 py-3.5" style={{ borderBottom: '1px solid rgba(237,216,61,0.35)' }}>
             <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 8 }}>
               Prénom affiché
             </p>
@@ -381,7 +381,7 @@ export default function Settings() {
                     onClick={() => handleUrgencyChange(h)}
                     className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-95"
                     style={{
-                      backgroundColor: urgencyHours === h ? '#432F2E' : 'rgba(67,47,46,0.07)',
+                      backgroundColor: urgencyHours === h ? '#432F2E' : 'rgba(237,216,61,0.3)',
                       color:           urgencyHours === h ? '#FFFFFF'  : '#8A7060',
                       border: 'none',
                       cursor: 'pointer',

@@ -54,7 +54,7 @@ function NavShell({ children }) {
     <nav
       className="fixed bottom-0 left-0 right-0 z-50"
       style={{
-        backgroundColor: 'rgba(245,242,235,0.90)',
+        backgroundColor: 'rgba(255,255,255,0.92)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
       }}
