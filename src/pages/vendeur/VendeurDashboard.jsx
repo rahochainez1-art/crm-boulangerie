@@ -378,12 +378,12 @@ function OrderCard({ order, index, onOpen }) {
   const reste  = (order.totalAmount || 0) - (order.deposit || 0)
   const card   = CARD_STYLE[order.status] ?? CARD_STYLE.todo
   const isDone = order.status === 'done'
-  const hasPay = !isDone && order.totalAmount > 0
+  const hasPay = order.totalAmount > 0
+  const isToday = (() => { try { return isSameDay(parseISO(order.pickupDate), new Date()) } catch { return false } })()
 
   return (
-    <button
-      onClick={onOpen}
-      className="w-full text-left transition-all active:scale-[0.985] animate-fade-up"
+    <div
+      className="animate-fade-up"
       style={{
         backgroundColor: card.bg,
         borderRadius: 22,
@@ -394,98 +394,124 @@ function OrderCard({ order, index, onOpen }) {
         animationDelay: `${index * 0.045}s`,
       }}
     >
-      {/* ── Zone 1 : Heure + Statut ── */}
-      <div
-        className="flex items-center justify-between px-5 pt-4 pb-3"
-        style={{ borderBottom: `1px solid ${isDone ? 'rgba(67,47,46,0.05)' : 'rgba(67,47,46,0.08)'}` }}
-      >
-        <span
+      {/* ── Zone 1 : Heure pill + Statut ── */}
+      <div className="flex items-start justify-between px-4 pt-4 pb-4">
+        <div
           style={{
-            fontSize: '1.625rem',
-            fontWeight: 800,
-            color: isDone ? '#C0B8A8' : '#111111',
-            fontFamily: 'Satoshi',
-            letterSpacing: '-0.04em',
-            lineHeight: 1,
-            fontVariantNumeric: 'tabular-nums',
+            backgroundColor: 'rgba(255,255,255,0.7)',
+            borderRadius: 14,
+            padding: '9px 13px',
+            backdropFilter: 'blur(4px)',
           }}
         >
-          {format(parseISO(order.pickupDate), 'HH:mm')}
-        </span>
+          <div className="flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isDone ? '#C0B8A8' : '#432F2E'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+            </svg>
+            <span style={{ fontSize: '1.375rem', fontWeight: 800, color: isDone ? '#C0B8A8' : '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+              {format(parseISO(order.pickupDate), 'HH:mm')}
+            </span>
+          </div>
+          <p style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi', marginTop: 3 }}>
+            {isToday ? "Aujourd'hui" : format(parseISO(order.pickupDate), 'EEE d MMM', { locale: fr })}
+          </p>
+        </div>
         <StatusBadge status={order.status} />
       </div>
 
-      {/* ── Zone 2 : Contenu ── */}
-      <div className="px-5 py-3.5">
-        <p
-          style={{
-            fontSize: '1rem',
-            fontWeight: 700,
-            color: isDone ? '#B0A090' : '#111111',
-            fontFamily: 'Satoshi',
-            letterSpacing: '-0.015em',
-            marginBottom: 3,
-          }}
-        >
-          {order.clientName}
-        </p>
-        <p
-          style={{
-            fontSize: '0.8125rem',
-            color: isDone ? '#C0B0A0' : '#7A6A5A',
-            fontFamily: 'Satoshi',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {order.articles}
-        </p>
+      {/* Séparateur */}
+      <div style={{ height: 1, backgroundColor: 'rgba(67,47,46,0.07)', margin: '0 16px' }} />
 
-        {/* Paiement — séparé visuellement */}
-        {hasPay && (
-          <div
-            className="flex items-center mt-3 pt-3"
-            style={{ borderTop: `1px solid ${card.border}` }}
-          >
-            {reste > 0 ? (
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  padding: '0.2rem 0.65rem',
-                  borderRadius: 9999,
-                  backgroundColor: '#432F2E',
-                  color: '#FFFFFF',
-                  fontSize: '0.6875rem',
-                  fontWeight: 700,
-                  fontFamily: 'Satoshi',
-                  letterSpacing: '0.01em',
-                }}
-              >
-                {reste} € à encaisser
-              </span>
-            ) : (
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  padding: '0.2rem 0.65rem',
-                  borderRadius: 9999,
-                  backgroundColor: 'rgba(34,197,94,0.13)',
-                  color: '#15803D',
-                  fontSize: '0.6875rem',
-                  fontWeight: 700,
-                  fontFamily: 'Satoshi',
-                }}
-              >
-                Soldé ✓
-              </span>
-            )}
+      {/* ── Zone 2 : Client + Articles ── */}
+      <div className="px-4 pt-4 pb-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <p style={{ fontSize: '1.625rem', fontWeight: 800, color: isDone ? '#B0A090' : '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 4 }}>
+              {order.clientName}
+            </p>
+            <p style={{ fontSize: '0.875rem', color: isDone ? '#C0B0A0' : '#7A6A5A', fontFamily: 'Satoshi' }}>
+              {order.articles}
+            </p>
           </div>
-        )}
+          {order.clientPhone && !isDone && (
+            <a
+              href={`tel:${order.clientPhone}`}
+              onClick={e => e.stopPropagation()}
+              className="flex-shrink-0 flex items-center justify-center active:opacity-70"
+              style={{ width: 38, height: 38, borderRadius: 9999, backgroundColor: 'rgba(255,255,255,0.65)', color: '#432F2E' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </a>
+          )}
+        </div>
       </div>
-    </button>
+
+      {/* ── Zone 3 : Paiement 3 colonnes ── */}
+      {hasPay && (
+        <>
+          <div style={{ height: 1, backgroundColor: 'rgba(67,47,46,0.07)', margin: '0 16px' }} />
+          <div className="flex">
+            {/* Payé */}
+            <div className="flex-1 px-4 py-3">
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(21,128,61,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803D" strokeWidth="2.2" strokeLinecap="round">
+                  <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>
+              </div>
+              <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Payé</p>
+              <p style={{ fontSize: '1rem', fontWeight: 800, color: '#15803D', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+                {(order.deposit || 0).toFixed(2)} €
+              </p>
+            </div>
+            {/* Reste */}
+            <div className="flex-1 px-4 py-3" style={{ borderLeft: '1px solid rgba(67,47,46,0.07)', borderRight: '1px solid rgba(67,47,46,0.07)' }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: reste > 0 ? 'rgba(237,210,60,0.25)' : 'rgba(21,128,61,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={reste > 0 ? '#92400E' : '#15803D'} strokeWidth="2.2" strokeLinecap="round">
+                  <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M12 9v6M9 12h6"/>
+                </svg>
+              </div>
+              <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Reste à payer</p>
+              <p style={{ fontSize: '1rem', fontWeight: 800, color: reste > 0 ? '#92400E' : '#15803D', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+                {reste.toFixed(2)} €
+              </p>
+            </div>
+            {/* Total */}
+            <div className="flex-1 px-4 py-3">
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(67,47,46,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+                </svg>
+              </div>
+              <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Total</p>
+              <p style={{ fontSize: '1rem', fontWeight: 800, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+                {order.totalAmount.toFixed(2)} €
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── Zone 4 : Footer ── */}
+      <div className="flex items-center justify-between px-4 py-3" style={{ borderTop: '1px solid rgba(67,47,46,0.07)' }}>
+        {hasPay ? (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0.3rem 0.75rem', borderRadius: 9999, backgroundColor: reste === 0 ? 'rgba(21,128,61,0.1)' : 'rgba(237,210,60,0.3)', color: reste === 0 ? '#15803D' : '#92400E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi' }}>
+            {reste === 0 ? '✓ Soldé' : 'Solde partiel'}
+          </span>
+        ) : (
+          <span />
+        )}
+        <button
+          onClick={onOpen}
+          className="flex items-center gap-1 active:opacity-70"
+          style={{ padding: '0.3rem 0.875rem', borderRadius: 9999, backgroundColor: 'rgba(255,255,255,0.65)', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', border: 'none', cursor: 'pointer' }}
+        >
+          Voir le détail
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
   )
 }
 
