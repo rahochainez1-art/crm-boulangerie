@@ -100,48 +100,122 @@ function IllustrationBoulangerie() {
 }
 
 // ── Icônes ────────────────────────────────────────────────────────────────
+const W = { strokeWidth: '1.9', strokeLinecap: 'round', strokeLinejoin: 'round' }
+
 const IconFleurBadge = () => (
   <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
     <path d="M11 4 C10.2 7 8 8 5 7.5 C7.5 10 7.5 13 5 14.5 C8 14 10.2 15 11 18 C11.8 15 14 14 17 14.5 C14.5 13 14.5 10 17 7.5 C14 8 11.8 7 11 4Z" fill="#B8860B"/>
     <circle cx="11" cy="11" r="3" fill="#EDD83D"/>
   </svg>
 )
-const IconClipboard = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/>
-    <path d="M9 12h6M9 16h4"/>
+
+/* Calendrier — avec rangée de points + date cerclée */
+const IconCalendar = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
+    <rect x="3" y="5" width="18" height="16" rx="3"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+    <line x1="8" y1="2.5" x2="8" y2="7"/>
+    <line x1="16" y1="2.5" x2="16" y2="7"/>
+    <circle cx="8"  cy="14.5" r="0.8" fill="currentColor" stroke="none"/>
+    <circle cx="12" cy="14.5" r="0.8" fill="currentColor" stroke="none"/>
+    <circle cx="8"  cy="18.5" r="0.8" fill="currentColor" stroke="none"/>
+    <circle cx="16.5" cy="18.5" r="2.2"/>
   </svg>
 )
-const IconHourglass = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 22h14M5 2h14"/>
-    <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
-    <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+
+/* Sablier — avec sable en bas */
+const IconHourglass = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
+    <line x1="5.5" y1="2.5" x2="18.5" y2="2.5"/>
+    <line x1="5.5" y1="21.5" x2="18.5" y2="21.5"/>
+    <path d="M7 2.5 H17 L12 12 L17 21.5 H7 L12 12 Z"/>
+    <path d="M9.5 19.5 Q12 17 14.5 19.5" fill="rgba(67,47,46,0.25)" stroke="none"/>
   </svg>
 )
-const IconCheckCircle = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+
+/* Cercle avec coche */
+const IconCheckCircle = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
+    <circle cx="12" cy="12" r="9.5"/>
+    <polyline points="8 12.5 10.5 15.5 16 9"/>
   </svg>
 )
-const IconAlertCircle = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+
+/* Triangle d'avertissement */
+const IconAlertCircle = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
+    <path d="M10.5 3.8 L2.5 18.5 a1.8 1.8 0 0 0 1.6 2.7 H19.9 a1.8 1.8 0 0 0 1.6-2.7 L13.5 3.8 a1.8 1.8 0 0 0-3 0 Z"/>
+    <line x1="12" y1="10" x2="12" y2="14.5"/>
+    <circle cx="12" cy="17.5" r="0.8" fill="currentColor" stroke="none"/>
   </svg>
 )
-const IconCalendar = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
-    <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+
+/* Presse-papiers avec liste à puces */
+const IconClipboard = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
+    <rect x="5" y="4.5" width="14" height="17" rx="2.5"/>
+    <path d="M9 4.5 V3.5 a3 3 0 0 1 6 0 V4.5"/>
+    <circle cx="8.5" cy="11" r="1" fill="currentColor" stroke="none"/>
+    <line x1="11.5" y1="11" x2="17" y2="11"/>
+    <circle cx="8.5" cy="15" r="1" fill="currentColor" stroke="none"/>
+    <line x1="11.5" y1="15" x2="17" y2="15"/>
+    <circle cx="8.5" cy="19" r="1" fill="currentColor" stroke="none"/>
+    <line x1="11.5" y1="19" x2="15" y2="19"/>
   </svg>
 )
+
+/* Engrenage — 8 dents */
+const IconSettings = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
+    <path d="M12 2.5 L13.8 5.3 L17 4.7 L17.8 8 L21 9.5 L19.8 12.5 L21.5 15.3 L18.8 17.2 L18.5 20.5 L15.2 20 L13 22.5 L10.5 20.5 L7.5 21.5 L6.8 18.2 L3.5 17.2 L4.2 14 L2 12 L3.5 9.5 L2.5 6.5 L5.8 5.8 L6.5 2.5 L9.8 3.8 Z"/>
+    <circle cx="12" cy="12" r="3.5"/>
+  </svg>
+)
+
+/* Document planning avec bullet + lignes */
+const IconPlanningDoc = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
+    <rect x="4" y="2" width="16" height="20" rx="2.5"/>
+    <circle cx="8"  cy="8.5"  r="1" fill="currentColor" stroke="none"/>
+    <line x1="11"  y1="8.5"  x2="18" y2="8.5"/>
+    <circle cx="8"  cy="13"  r="1" fill="currentColor" stroke="none"/>
+    <line x1="11"  y1="13"   x2="18" y2="13"/>
+    <circle cx="8"  cy="17.5" r="1" fill="currentColor" stroke="none"/>
+    <line x1="11"  y1="17.5" x2="16" y2="17.5"/>
+  </svg>
+)
+
+/* Maison */
+const IconHome = ({ size = 22 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
+    <path d="M3 10 L12 3 L21 10 V20 a1 1 0 0 1-1 1 H4 a1 1 0 0 1-1-1 Z"/>
+    <path d="M9 21 V13 h6 v8"/>
+  </svg>
+)
+
+/* Presse-papiers nav (Commandes) */
+const IconList = ({ size = 22 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
+    <rect x="5" y="3" width="14" height="18" rx="2.5"/>
+    <path d="M9 3 V2 a3 3 0 0 1 6 0 V3"/>
+    <circle cx="8.5" cy="10" r="1" fill="currentColor" stroke="none"/>
+    <line x1="11.5" y1="10" x2="17" y2="10"/>
+    <circle cx="8.5" cy="14.5" r="1" fill="currentColor" stroke="none"/>
+    <line x1="11.5" y1="14.5" x2="17" y2="14.5"/>
+    <circle cx="8.5" cy="19" r="1" fill="currentColor" stroke="none"/>
+    <line x1="11.5" y1="19" x2="15" y2="19"/>
+  </svg>
+)
+
+/* Icônes secondaires */
 const IconAlertSmall = () => (
   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    <path d="M10.5 3.8 L2.5 18.5 a1.8 1.8 0 0 0 1.6 2.7 H19.9 a1.8 1.8 0 0 0 1.6-2.7 L13.5 3.8 a1.8 1.8 0 0 0-3 0 Z"/>
+    <line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/>
   </svg>
 )
 const IconCakeSmall = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/>
     <path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/>
     <path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/>
@@ -159,33 +233,6 @@ const IconCakePole = () => (
 const IconBreadPole = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 10a5 5 0 0 1 5-5h8a5 5 0 0 1 0 10H6l-3 3V10z"/>
-  </svg>
-)
-const IconCupcakePole = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2a4 4 0 0 1 4 4H8a4 4 0 0 1 4-4z"/>
-    <path d="M6.5 6h11l-1.5 10h-8L6.5 6z"/>
-    <path d="M9 16v4"/><path d="M12 16v4"/><path d="M15 16v4"/>
-    <path d="M8 20h8"/>
-  </svg>
-)
-const IconHome = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
-    <path d="M9 21V12h6v9"/>
-  </svg>
-)
-const IconList = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="8" y1="6"  x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-    <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
-    <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-  </svg>
-)
-const IconSettings = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="3"/>
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
   </svg>
 )
 
@@ -264,7 +311,7 @@ function KpiStrip({ orders, navigate }) {
 
   const kpis = [
     {
-      Icon: IconClipboard, iconBg: '#FFF3CC', iconColor: '#92400E',
+      Icon: IconCalendar, iconBg: '#FFF0B5', iconColor: '#432F2E',
       value: todayAll.length, label: "Aujourd'hui",
       onClick: () => navigate('/manager/toutes', { state: { date: todayStr } }),
       detail: todayDiff !== 0 ? (
@@ -274,7 +321,7 @@ function KpiStrip({ orders, navigate }) {
       ) : null,
     },
     {
-      Icon: IconHourglass, iconBg: '#FFF3CC', iconColor: '#92400E',
+      Icon: IconHourglass, iconBg: '#DCEEF8', iconColor: '#432F2E',
       value: inProg.length, label: 'En cours',
       onClick: () => navigate('/manager/toutes', { state: { status: 'inprogress' } }),
       detail: (
@@ -282,26 +329,26 @@ function KpiStrip({ orders, navigate }) {
           {patisInProg > 0 && (
             <div className="flex items-center gap-1 mb-0.5">
               <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#F472B6', display: 'block', flexShrink: 0 }} />
-              <span style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi' }}>{patisInProg} pâtisserie</span>
+              <span style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi' }}>{patisInProg} pâtis.</span>
             </div>
           )}
           {boulaInProg > 0 && (
             <div className="flex items-center gap-1">
               <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#EDD83D', display: 'block', flexShrink: 0 }} />
-              <span style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi' }}>{boulaInProg} boulangerie</span>
+              <span style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi' }}>{boulaInProg} boula.</span>
             </div>
           )}
         </div>
       ),
     },
     {
-      Icon: IconCheckCircle, iconBg: '#DCFCE7', iconColor: '#166534',
+      Icon: IconCheckCircle, iconBg: '#EBEBEB', iconColor: '#432F2E',
       value: readyNow, label: 'Prêtes',
       onClick: () => navigate('/manager/toutes', { state: { status: 'ready' } }),
       detail: null,
     },
     {
-      Icon: IconAlertCircle, iconBg: '#FEE2E2', iconColor: '#DC2626',
+      Icon: IconAlertCircle, iconBg: urgentOrders.length > 0 ? '#FEE2E2' : '#FFF0B5', iconColor: urgentOrders.length > 0 ? '#DC2626' : '#432F2E',
       value: urgentOrders.length, label: 'Urgentes', urgent: urgentOrders.length > 0,
       onClick: () => navigate('/manager/toutes', { state: { status: 'urgent' } }),
       detail: urgentOrders.length > 0 ? (
@@ -317,8 +364,8 @@ function KpiStrip({ orders, navigate }) {
           className="rounded-[16px] p-3 animate-fade-up text-left active:scale-[0.95] transition-transform"
           style={{ backgroundColor: '#FFFFFF', border: k.urgent ? '1px solid rgba(220,38,38,0.18)' : '1px solid rgba(67,47,46,0.07)', boxShadow: '0 2px 12px rgba(67,47,46,0.04)', animationDelay: `${i * 0.06}s` }}>
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center justify-center" style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: k.iconBg, color: k.iconColor, flexShrink: 0 }}>
-              <k.Icon />
+            <div className="flex items-center justify-center" style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: k.iconBg, color: k.iconColor, flexShrink: 0 }}>
+              <k.Icon size={20} />
             </div>
             <p className="font-display" style={{ fontSize: '1.75rem', color: k.urgent ? '#DC2626' : '#111111', letterSpacing: '-0.04em', lineHeight: 1 }}>
               {k.value}
@@ -687,10 +734,10 @@ export default function ManagerDashboard() {
   }, [])
 
   const NAV = [
-    { id: 'home',      label: 'Accueil',   Icon: IconHome, action: () => {} },
-    { id: 'commandes', label: 'Commandes', Icon: IconList, action: () => navigate('/manager/toutes') },
-    { id: 'planning',  label: 'Planning',  Icon: IconCalendar, action: () => navigate('/manager/toutes') },
-    { id: 'reglages',  label: 'Réglages',  Icon: IconSettings, action: () => navigate('/settings') },
+    { id: 'home',      label: 'Accueil',   Icon: IconHome,        action: () => {} },
+    { id: 'commandes', label: 'Commandes', Icon: IconList,        action: () => navigate('/manager/toutes') },
+    { id: 'planning',  label: 'Planning',  Icon: IconPlanningDoc, action: () => navigate('/manager/toutes') },
+    { id: 'reglages',  label: 'Réglages',  Icon: IconSettings,    action: () => navigate('/settings') },
   ]
 
   return (
