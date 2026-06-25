@@ -76,25 +76,67 @@ function IllustrationLys() {
 }
 
 function IllustrationBoulangerie() {
+  const S = '#432F2E'
+  const W = '1.9'
+  const WS = '1.5'
   return (
-    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-      <path d="M108 22 C140 14 182 28 192 72 C202 116 180 155 148 165 C116 175 76 160 64 128 C52 96 60 50 86 34 C94 28 100 24 108 22Z" fill="#FFF0B5"/>
-      <path d="M52 150 C63 133 96 130 106 154 C116 178 92 196 68 189 C44 182 41 167 52 150Z" fill="#FAE0C8"/>
-      <ellipse cx="108" cy="176" rx="30" ry="5.5" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
-      <rect x="104" y="150" width="8" height="27" rx="4" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
-      <ellipse cx="108" cy="150" rx="24" ry="4.5" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
-      <ellipse cx="108" cy="106" rx="27" ry="5" fill="#FEFEFE" stroke="#432F2E" strokeWidth="1.9"/>
-      <path d="M81 106 L81 150" stroke="#432F2E" strokeWidth="1.9"/>
-      <path d="M135 106 L135 150" stroke="#432F2E" strokeWidth="1.9"/>
-      <path d="M81 150 Q108 156 135 150" stroke="#432F2E" strokeWidth="1.9" fill="none"/>
-      <path d="M81 127 C85 121 89 133 93 127 C97 121 101 133 105 127 C109 121 113 133 117 127 C121 121 125 133 129 127 L135 127" stroke="#432F2E" strokeWidth="1.6" strokeLinecap="round" fill="none"/>
-      <path d="M108 99 C106 94 106 89 109 86 C112 83 116 85 115 89 C114 93 110 92 111 88" stroke="#432F2E" strokeWidth="1.9" strokeLinecap="round" fill="none"/>
-      <circle cx="108" cy="101" r="2.5" fill="white" stroke="#432F2E" strokeWidth="1.6"/>
-      <path d="M136 154 C138 138 158 129 173 136 C184 141 186 158 176 168 C166 178 140 174 136 160 Z" fill="white" stroke="#432F2E" strokeWidth="1.9" strokeLinejoin="round"/>
-      <path d="M147 136 C145 148 146 159 147 168" stroke="#432F2E" strokeWidth="1.4" strokeLinecap="round"/>
-      <path d="M159 131 C157 144 158 156 159 166" stroke="#432F2E" strokeWidth="1.4" strokeLinecap="round"/>
-      <ellipse cx="120" cy="180" rx="14" ry="9.5" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
-      <path d="M109 179 C113 173 128 173 131 179" stroke="#432F2E" strokeWidth="1.4" strokeLinecap="round" fill="none"/>
+    <svg viewBox="0 0 200 210" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+      {/* ── Blobs décoratifs ── */}
+      <ellipse cx="115" cy="105" rx="72" ry="80" fill="#FFF0B5"/>
+      <ellipse cx="62"  cy="172" rx="30"  ry="22" fill="#FAE0C8"/>
+
+      {/* ── Socle / présentoir ── */}
+      {/* Base plate */}
+      <ellipse cx="108" cy="194" rx="38" ry="7"   fill="white" stroke={S} strokeWidth={W}/>
+      {/* Tige */}
+      <rect   x="104"  y="170"  width="8" height="25" rx="4" fill="white" stroke={S} strokeWidth={W}/>
+      {/* Plateau */}
+      <ellipse cx="108" cy="170" rx="28" ry="5"   fill="white" stroke={S} strokeWidth={W}/>
+
+      {/* ── Étage 1 (bas, le plus large) ── */}
+      <ellipse cx="108" cy="170" rx="28" ry="5"   fill="white" stroke={S} strokeWidth={W}/>
+      <path d="M80 145 L80 170" stroke={S} strokeWidth={W}/>
+      <path d="M136 145 L136 170" stroke={S} strokeWidth={W}/>
+      <path d="M80 170 Q108 177 136 170" stroke={S} strokeWidth={W} fill="none"/>
+      <ellipse cx="108" cy="145" rx="28" ry="5"   fill="white" stroke={S} strokeWidth={W}/>
+      {/* Glaçage ondulé étage 1 */}
+      <path d="M80 155 C84 149 88 161 92 155 C96 149 100 161 104 155 C108 149 112 161 116 155 C120 149 124 161 128 155 C132 149 136 155 136 155"
+            stroke={S} strokeWidth={WS} strokeLinecap="round" fill="none"/>
+
+      {/* ── Étage 2 (milieu) ── */}
+      <path d="M88 122 L88 145" stroke={S} strokeWidth={W}/>
+      <path d="M128 122 L128 145" stroke={S} strokeWidth={W}/>
+      <path d="M88 145 Q108 151 128 145" stroke={S} strokeWidth={W} fill="none"/>
+      <ellipse cx="108" cy="122" rx="20" ry="4"   fill="white" stroke={S} strokeWidth={W}/>
+      {/* Petits points décoratifs */}
+      <circle cx="96"  cy="133" r="2" fill={S}/>
+      <circle cx="108" cy="130" r="2" fill={S}/>
+      <circle cx="120" cy="133" r="2" fill={S}/>
+
+      {/* ── Étage 3 (haut, le plus petit) ── */}
+      <path d="M95 103 L95 122" stroke={S} strokeWidth={W}/>
+      <path d="M121 103 L121 122" stroke={S} strokeWidth={W}/>
+      <path d="M95 122 Q108 127 121 122" stroke={S} strokeWidth={W} fill="none"/>
+      <ellipse cx="108" cy="103" rx="13" ry="3"   fill="white" stroke={S} strokeWidth={W}/>
+      {/* Petites rosettes */}
+      <circle cx="102" cy="112" r="1.5" fill="none" stroke={S} strokeWidth="1.2"/>
+      <circle cx="108" cy="110" r="1.5" fill="none" stroke={S} strokeWidth="1.2"/>
+      <circle cx="114" cy="112" r="1.5" fill="none" stroke={S} strokeWidth="1.2"/>
+
+      {/* ── Bougie ── */}
+      <rect x="105" y="90" width="6" height="13" rx="3" fill="white" stroke={S} strokeWidth={WS}/>
+      {/* Flamme */}
+      <path d="M108 90 C106 85 105 81 108 78 C111 81 110 85 108 90Z" fill="white" stroke={S} strokeWidth="1.4" strokeLinecap="round"/>
+
+      {/* ── Petit pain rond (bas gauche) ── */}
+      <ellipse cx="68" cy="182" rx="18" ry="12" fill="white" stroke={S} strokeWidth={W}/>
+      <path d="M56 180 C61 173 75 173 80 180" stroke={S} strokeWidth={WS} strokeLinecap="round" fill="none"/>
+
+      {/* ── Pain / baguette (droite) ── */}
+      <path d="M144 158 C146 140 166 130 180 138 C192 144 192 162 182 172 C170 182 144 178 142 164 Z"
+            fill="white" stroke={S} strokeWidth={W} strokeLinejoin="round"/>
+      <path d="M152 141 C150 153 151 163 152 172" stroke={S} strokeWidth={WS} strokeLinecap="round"/>
+      <path d="M164 134 C162 147 163 158 164 170" stroke={S} strokeWidth={WS} strokeLinecap="round"/>
     </svg>
   )
 }
