@@ -450,7 +450,7 @@ function PlanningWidget({ orders, onViewAll, navigate }) {
       </div>
 
       {/* Contenu */}
-      <div className={planTab === '3jours' ? 'pb-4' : 'px-4 pb-4'}>
+      <div className={planTab === '3jours' ? 'pb-4 pl-4' : 'px-4 pb-4'}>
         {planTab === '3jours' && <Vue3Jours orders={orders} navigate={navigate} />}
         {planTab === 'Semaine' && <VueSemaine orders={orders} navigate={navigate} />}
         {planTab === 'Mois' && <VueMois orders={orders} viewMonth={viewMonth} setViewMonth={setViewMonth} navigate={navigate} />}
@@ -482,7 +482,7 @@ function Vue3Jours({ orders, navigate }) {
   const today = new Date()
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(180px, 1fr))', gap: 8, overflowX: 'auto', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', paddingBottom: 4 }}>
+    <div style={{ display: 'flex', gap: 10, overflowX: 'auto', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', paddingBottom: 4, paddingRight: 16 }}>
       {COLS_CONFIG.map(({ badge, colBg, badgeBg, badgeColor, urgentBorder, offset }) => {
         const day       = addDays(today, offset)
         const dateStr   = format(day, 'yyyy-MM-dd')
@@ -499,7 +499,7 @@ function Vue3Jours({ orders, navigate }) {
         ).length
 
         return (
-          <div key={offset} style={{ backgroundColor: colBg, borderRadius: 16, padding: 12, display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0, scrollSnapAlign: 'start' }}>
+          <div key={offset} style={{ backgroundColor: colBg, borderRadius: 16, padding: 14, display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0, width: 'calc(100% - 28px)', scrollSnapAlign: 'start' }}>
 
             {/* Header */}
             <div>
