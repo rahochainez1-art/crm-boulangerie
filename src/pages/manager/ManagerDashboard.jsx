@@ -1,9 +1,9 @@
 import { useEffect, useState, useMemo } from 'react'
 import {
   format, parseISO, isSameDay, isSameMonth,
-  startOfWeek, endOfWeek, addDays,
-  startOfMonth, endOfMonth, eachDayOfInterval,
-  addMonths, subMonths, differenceInHours,
+  startOfWeek, endOfWeek, eachDayOfInterval,
+  startOfMonth, endOfMonth, addMonths, subMonths,
+  addDays, differenceInHours,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useNavigate } from 'react-router-dom'
@@ -16,11 +16,64 @@ const ASSIGNED = {
   boulangerie: 'Boulangerie',
   vendeur:     'Vendeur·se',
 }
-
 const STATUS_PRIORITY = { todo: 0, inprogress: 1, ready: 2, done: 3 }
 const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
-// ── Icônes ────────────────────────────────────────────────────────────────
+// ── Illustration ──────────────────────────────────────────────────────────
+function IllustrationBoulangerie() {
+  return (
+    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+      <path d="M108 22 C140 14 182 28 192 72 C202 116 180 155 148 165 C116 175 76 160 64 128 C52 96 60 50 86 34 C94 28 100 24 108 22Z" fill="#FFF0B5"/>
+      <path d="M52 150 C63 133 96 130 106 154 C116 178 92 196 68 189 C44 182 41 167 52 150Z" fill="#FAE0C8"/>
+      <ellipse cx="108" cy="176" rx="30" ry="5.5" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
+      <rect x="104" y="150" width="8" height="27" rx="4" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
+      <ellipse cx="108" cy="150" rx="24" ry="4.5" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
+      <ellipse cx="108" cy="106" rx="27" ry="5" fill="#FEFEFE" stroke="#432F2E" strokeWidth="1.9"/>
+      <path d="M81 106 L81 150" stroke="#432F2E" strokeWidth="1.9"/>
+      <path d="M135 106 L135 150" stroke="#432F2E" strokeWidth="1.9"/>
+      <path d="M81 150 Q108 156 135 150" stroke="#432F2E" strokeWidth="1.9" fill="none"/>
+      <path d="M81 127 C85 121 89 133 93 127 C97 121 101 133 105 127 C109 121 113 133 117 127 C121 121 125 133 129 127 L135 127" stroke="#432F2E" strokeWidth="1.6" strokeLinecap="round" fill="none"/>
+      <path d="M108 99 C106 94 106 89 109 86 C112 83 116 85 115 89 C114 93 110 92 111 88" stroke="#432F2E" strokeWidth="1.9" strokeLinecap="round" fill="none"/>
+      <circle cx="108" cy="101" r="2.5" fill="white" stroke="#432F2E" strokeWidth="1.6"/>
+      <path d="M136 154 C138 138 158 129 173 136 C184 141 186 158 176 168 C166 178 140 174 136 160 Z" fill="white" stroke="#432F2E" strokeWidth="1.9" strokeLinejoin="round"/>
+      <path d="M147 136 C145 148 146 159 147 168" stroke="#432F2E" strokeWidth="1.4" strokeLinecap="round"/>
+      <path d="M159 131 C157 144 158 156 159 166" stroke="#432F2E" strokeWidth="1.4" strokeLinecap="round"/>
+      <ellipse cx="120" cy="180" rx="14" ry="9.5" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
+      <path d="M109 179 C113 173 128 173 131 179" stroke="#432F2E" strokeWidth="1.4" strokeLinecap="round" fill="none"/>
+    </svg>
+  )
+}
+
+// ── Icônes KPI ────────────────────────────────────────────────────────────
+const IconClipboard = () => (
+  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+    <rect x="8" y="2" width="8" height="4" rx="1"/>
+    <path d="M9 12h6M9 16h4"/>
+  </svg>
+)
+const IconHourglass = () => (
+  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 22h14M5 2h14"/>
+    <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
+    <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+  </svg>
+)
+const IconCheckCircle = () => (
+  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+    <polyline points="22 4 12 14.01 9 11.01"/>
+  </svg>
+)
+const IconAlertCircle = () => (
+  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+)
+
+// ── Icônes nav ────────────────────────────────────────────────────────────
 const IconHome = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
@@ -52,56 +105,57 @@ const IconSettings = () => (
   </svg>
 )
 
-// ── Cartes statistiques (4 tuiles) ───────────────────────────────────────
-function StatCards({ orders }) {
-  const today       = new Date()
-  const todayCount  = orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), today) && o.status !== 'cancelled').length
-  const inProgress  = orders.filter(o => o.status === 'inprogress').length
-  const ready       = orders.filter(o => o.status === 'ready').length
-  const urgent      = orders.filter(o => {
+// ── KPI strip (4 colonnes) ─────────────────────────────────────────────────
+function StatWidgets({ orders }) {
+  const today      = new Date()
+  const todayCount = orders.filter(o =>
+    o.pickupDate && isSameDay(parseISO(o.pickupDate), today) && o.status !== 'cancelled'
+  ).length
+  const inProgress = orders.filter(o => o.status === 'inprogress').length
+  const ready      = orders.filter(o => o.status === 'ready').length
+  const urgent     = orders.filter(o => {
     if (!o.pickupDate || o.status === 'done' || o.status === 'cancelled') return false
     const h = differenceInHours(parseISO(o.pickupDate), today)
     return h >= 0 && h <= 24 && o.status !== 'ready'
   }).length
 
-  const tiles = [
-    { label: "Aujourd'hui", value: todayCount, bg: '#FFFFFF',  accent: false },
-    { label: 'En cours',    value: inProgress, bg: '#FEF3C7',  accent: false },
-    { label: 'Prêtes',      value: ready,      bg: '#FFF0B5',  accent: true  },
-    { label: 'Urgentes',    value: urgent,     bg: urgent > 0 ? '#FEE2E2' : '#F4F4F5', urgent: urgent > 0 },
+  const kpis = [
+    { label: "Aujourd'hui", value: todayCount, iconBg: '#FFF8D6', iconColor: '#432F2E', Icon: IconClipboard },
+    { label: 'En cours',    value: inProgress, iconBg: '#FFF8D6', iconColor: '#92400E', Icon: IconHourglass },
+    { label: 'Prêtes',      value: ready,      iconBg: '#DCFCE7', iconColor: '#166534', Icon: IconCheckCircle },
+    { label: 'Urgentes',    value: urgent,     iconBg: '#FEE2E2', iconColor: '#DC2626', Icon: IconAlertCircle, urgent: urgent > 0 },
   ]
 
   return (
-    <div className="grid grid-cols-2 gap-3 mb-6">
-      {tiles.map((t, i) => (
+    <div className="grid grid-cols-4 gap-2 mb-5">
+      {kpis.map((k, i) => (
         <div
-          key={t.label}
-          className="rounded-3xl p-5 flex flex-col justify-between animate-fade-up"
+          key={k.label}
+          className="rounded-[16px] p-3 flex flex-col items-center animate-fade-up"
           style={{
-            backgroundColor: t.bg,
-            border: '1px solid #E8DFC0',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
-            minHeight: 112,
-            animationDelay: `${i * 0.05}s`,
+            backgroundColor: '#FFFFFF',
+            border: k.urgent ? '1px solid rgba(220,38,38,0.18)' : '1px solid rgba(67,47,46,0.07)',
+            boxShadow: k.urgent
+              ? '0 2px 12px rgba(220,38,38,0.08)'
+              : '0 2px 12px rgba(67,47,46,0.05)',
+            animationDelay: `${i * 0.06}s`,
           }}
         >
-          <p
-            className="label-xs"
-            style={{ color: t.urgent ? '#b91c1c' : '#8A7060' }}
+          <div
+            className="flex items-center justify-center mb-2"
+            style={{ width: 40, height: 40, borderRadius: 9999, backgroundColor: k.iconBg, color: k.iconColor }}
           >
-            {t.label}
-          </p>
-          <div>
-            <p
-              className="font-serif leading-none"
-              style={{
-                fontSize: '2.75rem',
-                color: t.urgent ? '#b91c1c' : '#432F2E',
-              }}
-            >
-              {t.value}
-            </p>
+            <k.Icon />
           </div>
+          <p style={{ fontSize: '0.5625rem', fontWeight: 600, color: k.urgent ? '#DC2626' : '#8A7060', fontFamily: 'Satoshi', textAlign: 'center', lineHeight: 1.3, marginBottom: 3 }}>
+            {k.label}
+          </p>
+          <p className="font-display" style={{ fontSize: '1.5rem', color: k.urgent ? '#DC2626' : '#111111', letterSpacing: '-0.03em', lineHeight: 1 }}>
+            {k.value}
+          </p>
+          <p style={{ fontSize: '0.5rem', color: k.urgent ? '#DC2626' : '#B0A090', fontFamily: 'Satoshi', marginTop: 2 }}>
+            commandes
+          </p>
         </div>
       ))}
     </div>
@@ -115,51 +169,49 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
   const calStart = startOfWeek(mStart, { weekStartsOn: 1 })
   const calEnd   = endOfWeek(mEnd,     { weekStartsOn: 1 })
   const days     = eachDayOfInterval({ start: calStart, end: calEnd })
-
-  const monthOrders = orders.filter(o =>
-    o.pickupDate && isSameMonth(parseISO(o.pickupDate), viewMonth)
-  )
+  const monthOrders = orders.filter(o => o.pickupDate && isSameMonth(parseISO(o.pickupDate), viewMonth))
 
   return (
     <div
-      className="rounded-3xl p-5 mb-5 animate-fade-up delay-100"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+      className="rounded-[20px] p-5 mb-5 animate-fade-up delay-100"
+      style={{
+        backgroundColor: '#FFFFFF',
+        border: '1px solid rgba(67,47,46,0.07)',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(67,47,46,0.06)',
+      }}
     >
-      {/* Navigation mois */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => { setViewMonth(m => subMonths(m, 1)); onSelectDay(null) }}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-          style={{ color: '#8A7060' }}
+          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5"
+          style={{ color: '#8A7060', fontSize: '1.25rem' }}
         >‹</button>
-        <p className="font-semibold capitalize text-ink" style={{ fontSize: '0.95rem' }}>
+        <p className="capitalize font-satoshi" style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111' }}>
           {format(viewMonth, 'MMMM yyyy', { locale: fr })}
         </p>
         <button
           onClick={() => { setViewMonth(m => addMonths(m, 1)); onSelectDay(null) }}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-          style={{ color: '#8A7060' }}
+          className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5"
+          style={{ color: '#8A7060', fontSize: '1.25rem' }}
         >›</button>
       </div>
 
-      {/* Légende */}
       <div className="flex items-center gap-1.5 mb-4">
-        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#EDD83D' }} />
-        <span className="text-xs" style={{ color: '#8A7060' }}>
-          <span className="font-semibold text-ink">{monthOrders.length}</span> commande{monthOrders.length > 1 ? 's' : ''} ce mois
+        <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#EDD83D', display: 'block' }} />
+        <span style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
+          <span style={{ fontWeight: 700, color: '#111111' }}>{monthOrders.length}</span>
+          {' '}commande{monthOrders.length > 1 ? 's' : ''} ce mois
         </span>
       </div>
 
-      {/* Labels colonnes */}
       <div className="grid grid-cols-7 mb-1">
         {DAY_LABELS.map((d, i) => (
-          <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <p key={i} className="text-center py-1" style={{ fontSize: '9px', fontWeight: 700, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'Satoshi' }}>
             {d}
           </p>
         ))}
       </div>
 
-      {/* Grille */}
       <div className="grid grid-cols-7 gap-y-1">
         {days.map(day => {
           const inMonth    = isSameMonth(day, viewMonth)
@@ -172,31 +224,31 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
               key={day.toISOString()}
               disabled={!inMonth}
               onClick={() => onSelectDay(isSelected ? null : day)}
-              className="flex flex-col items-center py-1.5 rounded-2xl transition-all active:scale-95"
+              className="flex flex-col items-center py-1.5 rounded-xl transition-all active:scale-95"
               style={{
                 backgroundColor: isSelected ? '#432F2E' : isToday ? '#FFF0B5' : 'transparent',
-                opacity: inMonth ? 1 : 0.15,
+                opacity: inMonth ? 1 : 0.12,
               }}
             >
-              <span
-                className="text-sm font-medium leading-tight"
-                style={{ color: isSelected ? '#FFFFFF' : '#432F2E' }}
-              >
+              <span style={{
+                fontSize: '0.8125rem',
+                fontWeight: isSelected || isToday ? 700 : 500,
+                color: isSelected ? '#FFFFFF' : '#111111',
+                fontFamily: 'Satoshi',
+                lineHeight: 1.3,
+              }}>
                 {format(day, 'd')}
               </span>
-              <div className="h-3.5 flex items-center justify-center mt-0.5">
+              <div className="h-3 flex items-center justify-center mt-0.5">
                 {count > 0 && (
-                  <span
-                    className="text-[8px] font-bold flex items-center justify-center"
-                    style={{
-                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#EDD83D',
-                      color: isSelected ? '#fff' : '#4A4E10',
-                      minWidth: 14,
-                      height: 14,
-                      padding: '0 3px',
-                      borderRadius: 9999,
-                    }}
-                  >
+                  <span style={{
+                    fontSize: 8, fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backgroundColor: isSelected ? 'rgba(255,255,255,0.22)' : '#EDD83D',
+                    color: isSelected ? '#fff' : '#4A4E10',
+                    minWidth: 14, height: 14, padding: '0 3px',
+                    borderRadius: 9999, fontFamily: 'Satoshi',
+                  }}>
                     {count}
                   </span>
                 )}
@@ -209,61 +261,65 @@ function MonthCalendar({ orders, viewMonth, setViewMonth, selectedDay, onSelectD
   )
 }
 
-// ── Carte commande ────────────────────────────────────────────────────────
+// ── Carte commande (liste compacte) ───────────────────────────────────────
 function OrderCard({ order, expanded, onToggle }) {
-  const reste = (order.totalAmount || 0) - (order.deposit || 0)
+  const reste  = (order.totalAmount || 0) - (order.deposit || 0)
   const isDone = order.status === 'done'
 
   return (
     <div
-      className="rounded-3xl overflow-hidden mb-3 transition-opacity"
+      className="rounded-[18px] overflow-hidden mb-2.5 animate-fade-up"
       style={{
         backgroundColor: '#FFFFFF',
-        border: '1px solid #E8DFC0',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
-        opacity: isDone ? 0.5 : 1,
+        border: '1px solid rgba(67,47,46,0.07)',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(67,47,46,0.04)',
+        opacity: isDone ? 0.55 : 1,
       }}
     >
       <button
-        className="w-full px-5 py-4 flex items-center gap-3 text-left active:bg-black/[0.02] transition-colors"
+        className="w-full px-4 py-3.5 flex items-center gap-3 text-left active:bg-black/[0.015]"
         onClick={onToggle}
       >
-        {/* Heure */}
-        <div className="flex-shrink-0 text-right" style={{ minWidth: 42 }}>
-          <p className="font-semibold text-ink tabular-nums" style={{ fontSize: '0.9rem' }}>
+        {/* Heure badge */}
+        <div
+          className="flex-shrink-0"
+          style={{ backgroundColor: '#FFF0B5', padding: '0.3rem 0.55rem', borderRadius: 10 }}
+        >
+          <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#432F2E', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums' }}>
             {format(parseISO(order.pickupDate), 'HH:mm')}
+          </span>
+        </div>
+
+        {/* Nom + article */}
+        <div className="flex-1 min-w-0">
+          <p style={{ fontWeight: 700, color: '#111111', fontSize: '0.9375rem', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {order.articles}
+          </p>
+          <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {order.clientName}
           </p>
         </div>
 
-        <div className="w-px self-stretch" style={{ backgroundColor: '#E8DFC0' }} />
-
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-ink text-sm truncate">{order.clientName}</p>
-          <p className="text-xs truncate mt-0.5" style={{ color: '#8A7060' }}>{order.articles}</p>
-        </div>
-
-        <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
-          <StatusBadge status={order.status} />
-        </div>
+        <StatusBadge status={order.status} />
 
         <svg
-          width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="#B0A090" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="#C0B8A8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
           className="flex-shrink-0 transition-transform duration-200"
-          style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          style={{ transform: expanded ? 'rotate(90deg)' : 'none' }}
         >
           <path d="M9 18l6-6-6-6"/>
         </svg>
       </button>
 
       {expanded && (
-        <div
-          className="px-5 pb-5 pt-4 space-y-4"
-          style={{ borderTop: '1px solid #F0EBD0' }}
-        >
+        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid rgba(67,47,46,0.06)' }}>
+
           <div>
             <p className="label-xs mb-1.5">Articles</p>
-            <p className="text-sm text-ink leading-relaxed">{order.articles}</p>
+            <p style={{ fontSize: '0.875rem', color: '#111111', lineHeight: 1.5, fontFamily: 'Satoshi' }}>
+              {order.articles}
+            </p>
           </div>
 
           {order.totalAmount > 0 && (
@@ -271,19 +327,19 @@ function OrderCard({ order, expanded, onToggle }) {
               <p className="label-xs mb-2">Paiement</p>
               <div className="flex gap-6">
                 <div>
-                  <p className="text-xs" style={{ color: '#8A7060' }}>Total</p>
-                  <p className="text-sm font-semibold text-ink mt-0.5">{order.totalAmount} €</p>
+                  <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Total</p>
+                  <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi', marginTop: 2 }}>{order.totalAmount} €</p>
                 </div>
                 {order.deposit > 0 && (
                   <div>
-                    <p className="text-xs" style={{ color: '#8A7060' }}>Acompte</p>
-                    <p className="text-sm font-semibold text-ink mt-0.5">{order.deposit} €</p>
+                    <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Acompte</p>
+                    <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi', marginTop: 2 }}>{order.deposit} €</p>
                   </div>
                 )}
                 {reste > 0 && (
                   <div>
-                    <p className="text-xs" style={{ color: '#8A7060' }}>Reste dû</p>
-                    <p className="text-sm font-semibold mt-0.5" style={{ color: '#E8A600' }}>{reste} €</p>
+                    <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Reste dû</p>
+                    <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi', marginTop: 2 }}>{reste} €</p>
                   </div>
                 )}
               </div>
@@ -293,8 +349,8 @@ function OrderCard({ order, expanded, onToggle }) {
           <div className="flex gap-6">
             {order.assignedTo && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: '#8A7060' }}>Assigné à</p>
-                <p className="text-sm font-medium text-ink">
+                <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Assigné à</p>
+                <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#111111', fontFamily: 'Satoshi' }}>
                   {Array.isArray(order.assignedTo)
                     ? order.assignedTo.map(p => ASSIGNED[p] ?? p).join(' + ')
                     : (ASSIGNED[order.assignedTo] ?? order.assignedTo)}
@@ -303,12 +359,8 @@ function OrderCard({ order, expanded, onToggle }) {
             )}
             {order.clientPhone && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: '#8A7060' }}>Téléphone</p>
-                <a
-                  href={`tel:${order.clientPhone}`}
-                  className="text-sm font-medium underline"
-                  style={{ color: '#432F2E' }}
-                >
+                <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Téléphone</p>
+                <a href={`tel:${order.clientPhone}`} style={{ fontSize: '0.875rem', fontWeight: 500, color: '#432F2E', textDecoration: 'underline', fontFamily: 'Satoshi' }}>
                   {order.clientPhone}
                 </a>
               </div>
@@ -316,11 +368,8 @@ function OrderCard({ order, expanded, onToggle }) {
           </div>
 
           {order.notes && (
-            <div
-              className="rounded-2xl px-4 py-3"
-              style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}
-            >
-              <p className="text-xs font-medium" style={{ color: '#92400e' }}>⚠ {order.notes}</p>
+            <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
+              <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi' }}>⚠ {order.notes}</p>
             </div>
           )}
 
@@ -331,13 +380,10 @@ function OrderCard({ order, expanded, onToggle }) {
                 {[...order.statusHistory].reverse().map((h, i) => (
                   <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div
-                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: i === 0 ? '#EDD83D' : '#E8DFC0' }}
-                      />
-                      <span className="text-xs font-medium text-ink">{STATUS_LABELS[h.status]}</span>
+                      <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: i === 0 ? '#EDD83D' : 'rgba(67,47,46,0.15)' }} />
+                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>{STATUS_LABELS[h.status]}</span>
                     </div>
-                    <span className="text-xs" style={{ color: '#8A7060' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
                       {format(parseISO(h.at), 'dd MMM à HH:mm', { locale: fr })}
                     </span>
                   </div>
@@ -359,69 +405,59 @@ function AnalysesView({ orders }) {
   return (
     <>
       <div className="grid grid-cols-2 gap-3 mb-6">
-        <div
-          className="rounded-3xl p-5 animate-fade-up"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)', minHeight: 112 }}
-        >
-          <p className="label-xs mb-3">Récupérées</p>
-          <p className="font-serif leading-none" style={{ fontSize: '2.75rem', color: '#432F2E' }}>{done.length}</p>
-          <p className="text-xs mt-1.5" style={{ color: '#8A7060' }}>commandes</p>
-        </div>
-        <div
-          className="rounded-3xl p-5 animate-fade-up delay-50"
-          style={{ backgroundColor: '#FFF0B5', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.03)', minHeight: 112 }}
-        >
-          <p className="label-xs mb-3">CA encaissé</p>
-          <p className="font-serif leading-none" style={{ fontSize: '2.75rem', color: '#432F2E' }}>{revenue}€</p>
-          <p className="text-xs mt-1.5" style={{ color: '#8A7060' }}>toutes périodes</p>
-        </div>
+        {[
+          { label: 'Récupérées', value: done.length, sub: 'commandes', dot: '#10B981' },
+          { label: 'CA encaissé', value: `${revenue}€`, sub: 'toutes périodes', dot: '#EDD83D' },
+        ].map((w, i) => (
+          <div key={i} className="rounded-[20px] p-5 flex flex-col animate-fade-up"
+            style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(67,47,46,0.06)', minHeight: 108 }}>
+            <div className="flex items-center gap-1.5 mb-auto">
+              <span style={{ width: 6, height: 6, borderRadius: 9999, backgroundColor: w.dot, display: 'block' }} />
+              <p className="label-xs">{w.label}</p>
+            </div>
+            <p className="font-display" style={{ fontSize: '2.25rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1, marginTop: '0.625rem' }}>{w.value}</p>
+            <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 4 }}>{w.sub}</p>
+          </div>
+        ))}
       </div>
 
       <div className="flex items-center justify-between mb-4">
-        <p className="font-semibold text-ink">Historique</p>
+        <p className="font-display" style={{ fontSize: '1rem', color: '#111111' }}>Historique</p>
         <span className="label-xs">{done.length}</span>
       </div>
 
       {done.length === 0 ? (
-        <div
-          className="rounded-3xl text-center py-16 animate-fade-up"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0' }}
-        >
-          <p className="text-2xl mb-2">—</p>
-          <p className="text-sm" style={{ color: '#8A7060' }}>Aucune commande récupérée</p>
+        <div className="rounded-[20px] text-center py-16 animate-fade-up"
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)' }}>
+          <p style={{ fontSize: '1.5rem', marginBottom: 8, color: '#B0A090' }}>—</p>
+          <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Aucune commande récupérée</p>
         </div>
       ) : (
-        [...done]
-          .sort((a, b) => new Date(b.pickupDate) - new Date(a.pickupDate))
-          .map(o => (
-            <div
-              key={o.id}
-              className="rounded-3xl px-5 py-4 mb-2.5 flex items-center gap-3 animate-fade-up"
-              style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
-            >
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-ink truncate">{o.clientName}</p>
-                <p className="text-xs truncate mt-0.5" style={{ color: '#8A7060' }}>{o.articles}</p>
-              </div>
-              <div className="text-right flex-shrink-0">
-                <p className="text-xs tabular-nums" style={{ color: '#8A7060' }}>
-                  {format(parseISO(o.pickupDate), 'dd MMM', { locale: fr })}
-                </p>
-                {o.totalAmount > 0 && (
-                  <p className="text-sm font-semibold text-ink mt-0.5">{o.totalAmount}€</p>
-                )}
-              </div>
+        [...done].sort((a, b) => new Date(b.pickupDate) - new Date(a.pickupDate)).map(o => (
+          <div key={o.id} className="rounded-[18px] px-4 py-3.5 mb-2.5 flex items-center gap-3 animate-fade-up"
+            style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+            <div className="flex-1 min-w-0">
+              <p style={{ fontWeight: 600, fontSize: '0.875rem', color: '#111111', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.articles}</p>
+              <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>{o.clientName}</p>
             </div>
-          ))
+            <div className="text-right flex-shrink-0">
+              <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums' }}>
+                {format(parseISO(o.pickupDate), 'dd MMM', { locale: fr })}
+              </p>
+              {o.totalAmount > 0 && (
+                <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', marginTop: 2 }}>{o.totalAmount}€</p>
+              )}
+            </div>
+          </div>
+        ))
       )}
     </>
   )
 }
 
-// ── Manager Dashboard ─────────────────────────────────────────────────────
+// ── Nav ───────────────────────────────────────────────────────────────────
+const ACTIVE   = '#111111'
 const INACTIVE = '#B0A090'
-const ACTIVE   = '#432F2E'
-
 const NAV_ITEMS = [
   { id: 'home',     label: 'Accueil',  Icon: IconHome },
   { id: 'toutes',   label: 'Toutes',   Icon: IconList },
@@ -429,6 +465,7 @@ const NAV_ITEMS = [
   { id: 'reglages', label: 'Réglages', Icon: IconSettings },
 ]
 
+// ── Manager Dashboard ─────────────────────────────────────────────────────
 export default function ManagerDashboard() {
   const [orders, setOrders]           = useState([])
   const [tab, setTab]                 = useState('home')
@@ -476,36 +513,40 @@ export default function ManagerDashboard() {
   }, [orders])
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFF0B5' }}>
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFFFFF' }}>
 
-      {/* ── Header ── */}
+      {/* ── Header avec illustration ── */}
       <header
-        className="px-5 pb-5"
-        style={{
-          paddingTop: 'max(52px, env(safe-area-inset-top))',
-          borderBottom: '1px solid #E8DFC0',
-          backgroundColor: '#FFF0B5',
-        }}
+        className="px-5 pb-3"
+        style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}
       >
-        <div className="animate-fade-up">
-          <p className="label-xs mb-3">Au Grand Jour · Manager</p>
-          <h1 className="font-serif text-ink" style={{ fontSize: '2rem', lineHeight: 1.15 }}>
-            {prenom ? `Bonjour ${prenom} 👋` : 'Bonjour 👋'}
-          </h1>
-          <p className="text-sm mt-1" style={{ color: '#8A7060' }}>
-            {weekCount > 0
-              ? `${weekCount} commande${weekCount > 1 ? 's' : ''} cette semaine`
-              : 'Aucune commande cette semaine'}
-          </p>
+        <div className="flex items-start justify-between animate-fade-up">
+          <div className="flex-1 pr-2 pt-1">
+            <p className="label-xs mb-3">Au Grand Jour · Manager</p>
+            <h1
+              className="font-display"
+              style={{ fontSize: '2rem', color: '#111111', letterSpacing: '-0.025em', lineHeight: 1.1 }}
+            >
+              {prenom ? `Bonjour ${prenom} 👋` : 'Bonjour 👋'}
+            </h1>
+            <p style={{ fontSize: '0.8125rem', color: '#8A7060', marginTop: 6, fontFamily: 'Satoshi', fontWeight: 500 }}>
+              {weekCount > 0
+                ? `${weekCount} commande${weekCount > 1 ? 's' : ''} cette semaine`
+                : 'Aucune commande cette semaine'}
+            </p>
+          </div>
+          <div style={{ width: 128, height: 118, flexShrink: 0 }}>
+            <IllustrationBoulangerie />
+          </div>
         </div>
       </header>
 
-      {/* ── Contenu scrollable ── */}
-      <main className="flex-1 px-4 pt-5 pb-36 overflow-y-auto">
+      {/* ── Contenu ── */}
+      <main className="flex-1 px-4 pt-2 pb-36 overflow-y-auto">
 
         {tab === 'home' && (
           <>
-            <StatCards orders={orders} />
+            <StatWidgets orders={orders} />
 
             <MonthCalendar
               orders={orders}
@@ -516,19 +557,17 @@ export default function ManagerDashboard() {
             />
 
             <div className="flex items-center justify-between mb-3 animate-fade-up delay-150">
-              <p className="font-semibold text-ink capitalize" style={{ fontSize: '0.95rem' }}>
+              <p className="font-display capitalize" style={{ fontSize: '1rem', color: '#111111' }}>
                 {sectionTitle}
               </p>
-              <span className="label-xs">{dayOrders.length} cmd</span>
+              <span className="label-xs">{dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}</span>
             </div>
 
             {dayOrders.length === 0 ? (
-              <div
-                className="rounded-3xl text-center py-14 animate-fade-up delay-200"
-                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0' }}
-              >
-                <p className="text-2xl mb-2">—</p>
-                <p className="text-sm" style={{ color: '#8A7060' }}>Aucune commande ce jour</p>
+              <div className="rounded-[20px] text-center py-14 animate-fade-up delay-200"
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)' }}>
+                <p style={{ fontSize: '1.5rem', color: '#B0A090', marginBottom: 8 }}>—</p>
+                <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Aucune commande ce jour</p>
               </div>
             ) : (
               dayOrders.map(o => (
@@ -544,69 +583,69 @@ export default function ManagerDashboard() {
         )}
 
         {tab === 'analyses' && <AnalysesView orders={orders} />}
-
       </main>
 
-      {/* ── Bottom nav manager ── */}
+      {/* ── Bottom nav ── */}
       <nav
-        className="fixed bottom-0 left-0 right-0 bg-white max-w-lg mx-auto z-50"
+        className="fixed bottom-0 left-0 right-0 z-50"
         style={{
-          borderTop: '1px solid #E8DFC0',
-          paddingBottom: 'env(safe-area-inset-bottom)',
-          boxShadow: '0 -4px 24px rgba(0,0,0,0.04)',
+          backgroundColor: 'rgba(255,255,255,0.92)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
         }}
       >
-        <div className="flex items-end pt-2 pb-2">
+        <div
+          className="max-w-lg mx-auto"
+          style={{
+            borderTop: '1px solid rgba(67,47,46,0.08)',
+            paddingBottom: 'max(env(safe-area-inset-bottom), 6px)',
+          }}
+        >
+          <div className="flex items-end pt-3 pb-1">
 
-          {NAV_ITEMS.slice(0, 2).map(item => {
-            const active = tab === item.id
-            return (
-              <button
-                key={item.id}
-                onClick={() => changeTab(item.id)}
-                className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
-                style={{ color: active ? ACTIVE : INACTIVE }}
-              >
-                <item.Icon />
-                <span className="text-[10px] font-semibold mt-0.5">{item.label}</span>
-                {active && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#EDD83D' }} />}
-              </button>
-            )
-          })}
+            {NAV_ITEMS.slice(0, 2).map(item => {
+              const active = tab === item.id
+              return (
+                <button key={item.id} onClick={() => changeTab(item.id)}
+                  className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
+                  style={{ color: active ? ACTIVE : INACTIVE }}>
+                  <item.Icon />
+                  <span style={{ fontSize: 10, fontWeight: active ? 700 : 500, color: active ? ACTIVE : INACTIVE, fontFamily: 'Satoshi', letterSpacing: '0.01em' }}>
+                    {item.label}
+                  </span>
+                  <span style={{ width: active ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#432F2E', marginTop: 2, transition: 'width 0.2s cubic-bezier(0.16,1,0.3,1)', display: 'block' }} />
+                </button>
+              )
+            })}
 
-          {/* Bouton + surélevé */}
-          <button
-            onClick={() => navigate('/vendeur/nouvelle-commande')}
-            className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform"
-            style={{
-              backgroundColor: '#432F2E',
-              boxShadow: '0 8px 32px rgba(24,24,27,0.25)',
-              transform: 'translateY(-14px)',
-              marginBottom: -14,
-            }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5"  y1="12" x2="19" y2="12"/>
-            </svg>
-          </button>
+            {/* FAB */}
+            <button
+              onClick={() => navigate('/vendeur/nouvelle-commande')}
+              className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform"
+              style={{ backgroundColor: '#432F2E', boxShadow: '0 8px 24px rgba(67,47,46,0.35)', transform: 'translateY(-14px)', marginBottom: -14 }}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5"  y1="12" x2="19" y2="12"/>
+              </svg>
+            </button>
 
-          {NAV_ITEMS.slice(2).map(item => {
-            const active = tab === item.id
-            return (
-              <button
-                key={item.id}
-                onClick={() => changeTab(item.id)}
-                className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
-                style={{ color: active ? ACTIVE : INACTIVE }}
-              >
-                <item.Icon />
-                <span className="text-[10px] font-semibold mt-0.5">{item.label}</span>
-                {active && <span className="w-4 h-0.5 rounded-full mt-0.5" style={{ backgroundColor: '#EDD83D' }} />}
-              </button>
-            )
-          })}
+            {NAV_ITEMS.slice(2).map(item => {
+              const active = tab === item.id
+              return (
+                <button key={item.id} onClick={() => changeTab(item.id)}
+                  className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors"
+                  style={{ color: active ? ACTIVE : INACTIVE }}>
+                  <item.Icon />
+                  <span style={{ fontSize: 10, fontWeight: active ? 700 : 500, color: active ? ACTIVE : INACTIVE, fontFamily: 'Satoshi', letterSpacing: '0.01em' }}>
+                    {item.label}
+                  </span>
+                  <span style={{ width: active ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#432F2E', marginTop: 2, transition: 'width 0.2s cubic-bezier(0.16,1,0.3,1)', display: 'block' }} />
+                </button>
+              )
+            })}
 
+          </div>
         </div>
       </nav>
 
