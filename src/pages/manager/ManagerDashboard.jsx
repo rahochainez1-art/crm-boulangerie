@@ -450,7 +450,7 @@ function PlanningWidget({ orders, onViewAll, navigate }) {
       </div>
 
       {/* Contenu */}
-      <div className="px-4 pb-4">
+      <div className={planTab === '3jours' ? 'pb-4' : 'px-4 pb-4'}>
         {planTab === '3jours' && <Vue3Jours orders={orders} navigate={navigate} />}
         {planTab === 'Semaine' && <VueSemaine orders={orders} navigate={navigate} />}
         {planTab === 'Mois' && <VueMois orders={orders} viewMonth={viewMonth} setViewMonth={setViewMonth} navigate={navigate} />}
@@ -472,73 +472,103 @@ function PlanningWidget({ orders, onViewAll, navigate }) {
 }
 
 // ── Vue 3 jours ────────────────────────────────────────────────────────────
+const COLS_CONFIG = [
+  { badge: 'Aujourd\'hui', colBg: '#EDE8E0', badgeBg: '#D9CFC4', badgeColor: '#5C3D2B', urgentBorder: null },
+  { badge: 'Demain',       colBg: '#FFFBEA', badgeBg: '#FEF3C7', badgeColor: '#92400E', urgentBorder: '#E8D88C' },
+  { badge: 'Après-demain', colBg: '#F4F3F1', badgeBg: '#E5E5E0', badgeColor: '#6B6B60', urgentBorder: '#D0CDC8' },
+]
+
 function Vue3Jours({ orders, navigate }) {
   const today = new Date()
-  const cols  = [
-    { label: 'Aujourd\'hui', badge: 'Aujourd\'hui', badgeBg: '#FFF0B5', badgeColor: '#92400E', day: today },
-    { label: 'Demain',       badge: 'Demain',       badgeBg: '#DCFCE7', badgeColor: '#166534', day: addDays(today, 1) },
-    { label: 'Après-demain', badge: 'Après-demain', badgeBg: '#E5F0F5', badgeColor: '#1D4E6B', day: addDays(today, 2) },
-  ]
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-      {cols.map(({ label, badge, badgeBg, badgeColor, day }) => {
-        const dayOrders  = orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day) && o.status !== 'cancelled')
-        const patisCnt   = dayOrders.filter(o => isAssignedTo(o, 'patissiere')).length
-        const boulaCnt   = dayOrders.filter(o => isAssignedTo(o, 'boulangerie')).length
-        const otherCnt   = dayOrders.length - patisCnt - boulaCnt
-        const maxV       = Math.max(patisCnt, boulaCnt, otherCnt, 1)
+    <div style={{ display: 'flex', gap: 10, overflowX: 'auto', marginLeft: -16, marginRight: -16, paddingLeft: 16, paddingRight: 16, paddingBottom: 4, scrollSnapType: 'x mandatory' }}>
+      {COLS_CONFIG.map(({ badge, colBg, badgeBg, badgeColor, urgentBorder }, colIdx) => {
+        const day       = addDays(today, colIdx)
+        const dateStr   = format(day, 'yyyy-MM-dd')
+        const dayLabel  = format(day, 'EEEE d MMMM', { locale: fr })
+        const dayLabelC = dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)
 
-        const urgent     = dayOrders.filter(o => o.status !== 'done' && differenceInHours(parseISO(o.pickupDate), new Date()) <= 2).length
-        const toWatch    = dayOrders.filter(o => o.status !== 'done' && differenceInHours(parseISO(o.pickupDate), new Date()) <= 5 && differenceInHours(parseISO(o.pickupDate), new Date()) > 2).length
+        const dayOrders = orders
+          .filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day) && o.status !== 'cancelled')
+          .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
 
-        const dateStr = format(day, 'yyyy-MM-dd')
+        const urgent = dayOrders.filter(o =>
+          o.status !== 'done' && differenceInHours(parseISO(o.pickupDate), new Date()) <= 2
+        ).length
+
         return (
-          <button key={label} onClick={() => navigate('/manager/toutes', { state: { date: dateStr } })}
-            className="text-left w-full active:opacity-70 transition-opacity" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
-            {/* Header colonne */}
-            <div style={{ marginBottom: 4 }}>
-              <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', marginBottom: 3 }}>
-                {format(day, 'EEEE d MMMM', { locale: fr }).replace(/^\w/, c => c.toUpperCase())}
-              </p>
-              <span style={{ fontSize: '0.5625rem', fontWeight: 700, padding: '1px 6px', borderRadius: 9999, backgroundColor: badgeBg, color: badgeColor, fontFamily: 'Satoshi' }}>
-                {badge}
-              </span>
-              <p style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 3 }}>
-                {dayOrders.length} commandes
+          <div key={colIdx} style={{ flexShrink: 0, width: 'min(252px, 78vw)', backgroundColor: colBg, borderRadius: 20, padding: 16, display: 'flex', flexDirection: 'column', gap: 10, scrollSnapAlign: 'start' }}>
+
+            {/* Header */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
+                <h3 className="font-display" style={{ fontSize: '1.1875rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1.2 }}>
+                  {dayLabelC}
+                </h3>
+                <span style={{ flexShrink: 0, fontSize: '0.625rem', fontWeight: 700, padding: '3px 8px', borderRadius: 9999, backgroundColor: badgeBg, color: badgeColor, fontFamily: 'Satoshi', marginTop: 3 }}>
+                  {badge}
+                </span>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
+                {dayOrders.length} commande{dayOrders.length !== 1 ? 's' : ''}
               </p>
             </div>
 
-            {/* Depts */}
-            <div style={{ marginBottom: 8 }}>
-              {[
-                { Icon: IconCakePole,  label: 'Pâtisserie',  count: patisCnt, color: '#F472B6' },
-                { Icon: IconBreadPole, label: 'Boulangerie', count: boulaCnt, color: '#EDD83D' },
-              ].map(dept => (
-                <div key={dept.label} style={{ marginBottom: 10 }}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1" style={{ color: '#432F2E' }}>
-                      <dept.Icon />
-                      <span style={{ fontSize: '0.625rem', fontWeight: 600, color: '#432F2E', fontFamily: 'Satoshi' }}>{dept.label}</span>
-                    </div>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>{dept.count}</span>
-                  </div>
-                  <ProgressBlocks value={dept.count} max={maxV} color={dept.color} />
+            {/* Cartes commandes */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {dayOrders.length === 0 ? (
+                <div style={{ backgroundColor: 'rgba(255,255,255,0.65)', borderRadius: 14, padding: '18px 12px', textAlign: 'center' }}>
+                  <p style={{ fontSize: '0.75rem', color: '#B0A090', fontFamily: 'Satoshi' }}>Aucune commande</p>
                 </div>
+              ) : dayOrders.map(order => (
+                <button key={order.id}
+                  onClick={() => navigate('/manager/toutes', { state: { orderId: order.id } })}
+                  className="active:scale-[0.97] transition-transform"
+                  style={{ backgroundColor: '#FFFFFF', borderRadius: 14, padding: 12, textAlign: 'left', border: 'none', cursor: 'pointer', width: '100%' }}>
+                  {/* Ligne heure */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                    <div style={{ width: 38, height: 38, borderRadius: 9999, backgroundColor: 'rgba(67,47,46,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.8" strokeLinecap="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                      </svg>
+                    </div>
+                    <p style={{ fontSize: '1.1875rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.02em', flex: 1, fontVariantNumeric: 'tabular-nums' }}>
+                      {format(parseISO(order.pickupDate), 'HH:mm')}
+                    </p>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C0B8A8" strokeWidth="2" strokeLinecap="round">
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  </div>
+                  {/* Articles */}
+                  <p style={{ fontSize: '0.8125rem', color: '#5C4A38', fontFamily: 'Satoshi', lineHeight: 1.45, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {order.articles}
+                  </p>
+                </button>
               ))}
             </div>
 
-            {/* Alert badge */}
-            <div style={{ borderRadius: 10, padding: '5px 8px', textAlign: 'center', backgroundColor: urgent > 0 ? '#FEE2E2' : toWatch > 0 ? '#FFFBEB' : '#DCFCE7', border: `1px solid ${urgent > 0 ? 'rgba(220,38,38,0.15)' : toWatch > 0 ? 'rgba(237,216,61,0.3)' : 'rgba(16,185,129,0.2)'}` }}>
-              {urgent > 0 ? (
-                <p style={{ fontSize: '0.5625rem', fontWeight: 700, color: '#DC2626', fontFamily: 'Satoshi' }}>⚠️ {urgent} urgente{urgent > 1 ? 's' : ''}</p>
-              ) : toWatch > 0 ? (
-                <p style={{ fontSize: '0.5625rem', fontWeight: 700, color: '#92400E', fontFamily: 'Satoshi' }}>⏱ {toWatch} à surveiller</p>
-              ) : (
-                <p style={{ fontSize: '0.5625rem', fontWeight: 700, color: '#166534', fontFamily: 'Satoshi' }}>✓ Aucune urgence</p>
-              )}
-            </div>
-          </button>
+            {/* Bouton urgences */}
+            <button
+              onClick={() => navigate('/manager/toutes', { state: { date: dateStr, ...(urgent > 0 ? { status: 'urgent' } : {}) } })}
+              style={{
+                marginTop: 'auto',
+                padding: '14px 12px',
+                borderRadius: 14,
+                border: urgent > 0 ? 'none' : `1.5px solid ${urgentBorder ?? '#D0CDC8'}`,
+                backgroundColor: urgent > 0 ? '#432F2E' : 'transparent',
+                color: urgent > 0 ? '#FFFFFF' : '#8A7060',
+                fontSize: '0.9375rem',
+                fontWeight: 700,
+                fontFamily: 'Satoshi',
+                cursor: 'pointer',
+                width: '100%',
+                textAlign: 'center',
+              }}>
+              {urgent > 0 ? `${urgent} urgente${urgent > 1 ? 's' : ''}` : 'Aucune urgence'}
+            </button>
+          </div>
         )
       })}
     </div>
