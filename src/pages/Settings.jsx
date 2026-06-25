@@ -25,95 +25,48 @@ function Toggle({ enabled, onToggle }) {
     <button
       onClick={onToggle}
       className="flex-shrink-0 relative"
-      style={{ width: 48, height: 28 }}
+      style={{ width: 50, height: 30 }}
     >
-      <span
-        className="absolute inset-0 rounded-full transition-colors duration-200"
-        style={{ backgroundColor: enabled ? '#432F2E' : 'rgba(67,47,46,0.15)' }}
-      />
-      <span
-        className="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow-sm transition-transform duration-200"
-        style={{ left: 1, transform: enabled ? 'translateX(20px)' : 'translateX(0)' }}
-      />
+      <span className="absolute inset-0 rounded-full transition-colors duration-200" style={{ backgroundColor: enabled ? '#432F2E' : 'rgba(67,47,46,0.15)' }} />
+      <span className="absolute top-[3px] w-6 h-6 rounded-full bg-white shadow-sm transition-transform duration-200" style={{ left: 2, transform: enabled ? 'translateX(20px)' : 'translateX(0)' }} />
     </button>
   )
 }
 
-function Row({ label, hint, children, noBorder = false }) {
+function IconBadge({ children, bg = '#FFF0B5' }) {
   return (
     <div
-      className="flex items-center gap-3 py-3.5 px-4"
-      style={{ borderBottom: noBorder ? 'none' : '1px solid rgba(237,216,61,0.35)' }}
-    >
-      <div className="flex-1 min-w-0">
-        <p style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#111111', fontFamily: 'Satoshi' }}>
-          {label}
-        </p>
-        {hint && (
-          <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1 }}>
-            {hint}
-          </p>
-        )}
-      </div>
-      <div className="flex-shrink-0 flex items-center">{children}</div>
-    </div>
-  )
-}
-
-function Group({ title, children }) {
-  return (
-    <div>
-      {title && (
-        <p
-          className="px-1 mb-2"
-          style={{
-            fontSize: '0.6875rem',
-            fontWeight: 700,
-            color: '#8A7060',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            fontFamily: 'Satoshi',
-          }}
-        >
-          {title}
-        </p>
-      )}
-      <div
-        className="overflow-hidden"
-        style={{
-          backgroundColor: '#FFF0B5',
-          borderRadius: 18,
-          border: '1px solid rgba(237,216,61,0.4)',
-          boxShadow: '0 2px 12px rgba(237,216,61,0.18)',
-        }}
-      >
-        {children}
-      </div>
-    </div>
-  )
-}
-
-function SmallButton({ onClick, disabled, danger, children }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      style={{
-        fontSize: '0.8125rem',
-        fontWeight: 600,
-        color: danger ? '#b91c1c' : '#432F2E',
-        padding: '0.3rem 0.875rem',
-        borderRadius: 9999,
-        backgroundColor: danger ? '#FEE2E2' : '#FFF0B5',
-        border: 'none',
-        cursor: disabled ? 'default' : 'pointer',
-        fontFamily: 'Satoshi',
-        opacity: disabled ? 0.45 : 1,
-        transition: 'opacity 0.15s',
-      }}
+      className="flex-shrink-0 flex items-center justify-center"
+      style={{ width: 42, height: 42, borderRadius: 12, backgroundColor: bg }}
     >
       {children}
-    </button>
+    </div>
+  )
+}
+
+const Chevron = ({ color = '#C0B8A8' }) => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+    <path d="M9 18l6-6-6-6"/>
+  </svg>
+)
+
+function Divider() {
+  return <div style={{ height: 1, backgroundColor: 'rgba(67,47,46,0.06)', margin: '0 16px' }} />
+}
+
+function SectionLabel({ children }) {
+  return (
+    <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#8A7060', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'Satoshi', paddingLeft: 4, marginBottom: 8 }}>
+      {children}
+    </p>
+  )
+}
+
+function SectionCard({ children, bg = '#FFFFFF', border = 'rgba(67,47,46,0.07)' }) {
+  return (
+    <div style={{ backgroundColor: bg, borderRadius: 22, border: `1px solid ${border}`, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+      {children}
+    </div>
   )
 }
 
@@ -143,10 +96,7 @@ export default function Settings() {
     setTimeout(() => setPrenomSaved(false), 2000)
   }
 
-  const handleUrgencyChange = (h) => {
-    setUrgencyHours(h)
-    saveUrgencyHours(h)
-  }
+  const handleUrgencyChange = (h) => { setUrgencyHours(h); saveUrgencyHours(h) }
 
   const handleSoundToggle = () => {
     const next = !soundEnabled
@@ -170,33 +120,22 @@ export default function Settings() {
       const monthOrders = orders
         .filter(o => o.pickupDate && isSameMonth(parseISO(o.pickupDate), now))
         .sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate))
-
       const rows = [
         ['Client', 'Téléphone', 'Articles', 'Date', 'Heure', 'Statut', 'Total (€)', 'Acompte (€)', 'Solde dû (€)', 'Notes'],
         ...monthOrders.map(o => {
-          const d     = parseISO(o.pickupDate)
+          const d = parseISO(o.pickupDate)
           const reste = (o.totalAmount || 0) - (o.deposit || 0)
-          return [
-            o.clientName  ?? '', o.clientPhone ?? '', o.articles ?? '',
-            format(d, 'dd/MM/yyyy'), format(d, 'HH:mm'), o.status ?? '',
-            o.totalAmount ?? '', o.deposit ?? '', reste > 0 ? reste : '', o.notes ?? '',
-          ]
+          return [o.clientName ?? '', o.clientPhone ?? '', o.articles ?? '', format(d, 'dd/MM/yyyy'), format(d, 'HH:mm'), o.status ?? '', o.totalAmount ?? '', o.deposit ?? '', reste > 0 ? reste : '', o.notes ?? '']
         }),
       ]
-
       const csv  = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n')
       const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' })
       const url  = URL.createObjectURL(blob)
       const a    = document.createElement('a')
-      a.href     = url
-      a.download = `commandes-${format(now, 'yyyy-MM')}.csv`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
+      a.href = url; a.download = `commandes-${format(now, 'yyyy-MM')}.csv`
+      document.body.appendChild(a); a.click(); document.body.removeChild(a)
       URL.revokeObjectURL(url)
-    } finally {
-      setCsvLoading(false)
-    }
+    } finally { setCsvLoading(false) }
   }
 
   const handleSeed = async () => {
@@ -221,231 +160,293 @@ export default function Settings() {
   const monthCount = orders.filter(o => o.pickupDate && isSameMonth(parseISO(o.pickupDate), new Date())).length
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FFFFFF' }}>
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5F2EB' }}>
 
       {/* ── Header ─────────────────────────────────────────────── */}
-      <header
-        className="px-5 pb-5"
-        style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}
-      >
-        <h1
-          className="font-display animate-fade-up"
-          style={{ fontSize: '1.625rem', color: '#111111', letterSpacing: '-0.025em', lineHeight: 1.15 }}
-        >
+      <header className="px-5 pb-5" style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}>
+        <h1 className="font-display animate-fade-up" style={{ fontSize: '2rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
           Réglages
         </h1>
       </header>
 
-      <main className="flex-1 px-4 pb-28 overflow-y-auto space-y-5">
+      <main className="flex-1 px-4 pb-28 overflow-y-auto space-y-4">
 
-        {/* ── Profil hero ─────────────────────────────────────── */}
+        {/* ── Profil card ─────────────────────────────────────── */}
         <div
-          className="flex items-center gap-4 px-4 py-4 rounded-2xl animate-fade-up"
-          style={{
-            backgroundColor: '#FFF0B5',
-            border: '1px solid rgba(237,216,61,0.4)',
-            boxShadow: '0 2px 12px rgba(237,216,61,0.18)',
-          }}
+          className="flex items-center gap-3 px-4 py-4 animate-fade-up"
+          style={{ backgroundColor: '#FFF0B5', borderRadius: 22, border: '1px solid rgba(237,216,61,0.4)', boxShadow: '0 2px 12px rgba(237,216,61,0.15)' }}
         >
           <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
-            style={{ backgroundColor: meta.bg }}
+            className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: 'rgba(255,255,255,0.55)' }}
           >
-            <span style={{ fontSize: '1.5rem', fontWeight: 800, color: meta.color, fontFamily: 'Satoshi' }}>
+            <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#432F2E', fontFamily: 'Satoshi' }}>
               {initiale}
             </span>
           </div>
-          <div>
-            <p style={{ fontSize: '1.0625rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', lineHeight: 1.2 }}>
+          <div className="flex-1">
+            <p style={{ fontSize: '1rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>
               {prenom.trim() || 'Mon profil'}
             </p>
-            <span
-              style={{
-                display: 'inline-block',
-                marginTop: 5,
-                padding: '0.15rem 0.6rem',
-                borderRadius: 9999,
-                backgroundColor: meta.bg,
-                color: meta.color,
-                fontSize: '0.6875rem',
-                fontWeight: 700,
-                fontFamily: 'Satoshi',
-                letterSpacing: '0.01em',
-              }}
-            >
+            <span style={{ display: 'inline-block', marginTop: 3, padding: '0.15rem 0.6rem', borderRadius: 9999, backgroundColor: 'rgba(255,255,255,0.5)', color: '#432F2E', fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Satoshi' }}>
               {meta.label}
             </span>
           </div>
+          <Chevron color="#8A7060" />
         </div>
 
-        {/* ── Préférences ────────────────────────────────────── */}
-        <Group title="Préférences">
-          {/* Prénom */}
-          <div className="px-4 py-3.5" style={{ borderBottom: '1px solid rgba(237,216,61,0.35)' }}>
-            <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 8 }}>
-              Prénom affiché
-            </p>
-            <div className="flex gap-2">
-              <input
-                value={prenom}
-                onChange={e => { setPrenom(e.target.value); setPrenomSaved(false) }}
-                onKeyDown={e => e.key === 'Enter' && handleSavePrenom()}
-                placeholder="Ex. Sarah…"
-                className="field flex-1"
-                style={{ padding: '0.625rem 0.875rem', fontSize: '0.9375rem' }}
-                maxLength={30}
-              />
-              <button
-                onClick={handleSavePrenom}
-                className="flex-shrink-0 px-4 rounded-xl text-sm font-semibold transition-all active:scale-95"
-                style={{
-                  backgroundColor: prenomSaved ? '#D1FAE5' : '#432F2E',
-                  color: prenomSaved ? '#166534' : '#FFFFFF',
-                  minWidth: 48,
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontFamily: 'Satoshi',
-                  fontWeight: 600,
-                }}
-              >
-                {prenomSaved ? '✓' : 'OK'}
-              </button>
-            </div>
-          </div>
+        {/* ── PRÉFÉRENCES ─────────────────────────────────────── */}
+        <div>
+          <SectionLabel>Préférences</SectionLabel>
+          <SectionCard>
 
-          {/* Sonnerie */}
-          <Row label="Sonnerie" hint="Son lors d'une nouvelle commande" noBorder>
-            <Toggle enabled={soundEnabled} onToggle={handleSoundToggle} />
-          </Row>
-        </Group>
-
-        {/* ── Mode ───────────────────────────────────────────── */}
-        <Group title="Mode">
-          <Row label="Vue actuelle" noBorder>
-            <div className="flex items-center gap-2">
-              <span
-                style={{
-                  padding: '0.2rem 0.625rem',
-                  borderRadius: 9999,
-                  backgroundColor: meta.bg,
-                  color: meta.color,
-                  fontSize: '0.6875rem',
-                  fontWeight: 700,
-                  fontFamily: 'Satoshi',
-                }}
-              >
-                {meta.label}
-              </span>
-              <SmallButton onClick={clearRole}>Changer</SmallButton>
-            </div>
-          </Row>
-        </Group>
-
-        {/* ── Notifications ──────────────────────────────────── */}
-        <Group title="Notifications">
-          <Row
-            label="Notifications push"
-            hint={
-              notifStatus === 'granted' ? 'Activées sur cet appareil' :
-              notifStatus === 'denied'  ? 'Bloquées — autorise dans les réglages du navigateur' :
-              'Alerte quand une commande est prête'
-            }
-            noBorder
-          >
-            {notifStatus === 'granted' ? (
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#22C55E', display: 'block' }} />
-            ) : notifStatus === 'denied' ? (
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#EF4444', display: 'block' }} />
-            ) : (
-              <SmallButton onClick={handleEnableNotifs} disabled={notifLoading}>
-                {notifLoading ? '...' : 'Activer'}
-              </SmallButton>
-            )}
-          </Row>
-        </Group>
-
-        {/* ── Production ─────────────────────────────────────── */}
-        {(role === 'patissiere' || role === 'boulangerie') && (
-          <Group title="Production">
-            <div className="px-4 py-3.5">
-              <p style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#111111', fontFamily: 'Satoshi', marginBottom: 4 }}>
-                Délai alerte urgence
-              </p>
-              <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 12 }}>
-                Une commande passe en rouge à moins de…
-              </p>
-              <div className="flex gap-2">
-                {[24, 48, 72].map(h => (
-                  <button
-                    key={h}
-                    onClick={() => handleUrgencyChange(h)}
-                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-95"
-                    style={{
-                      backgroundColor: urgencyHours === h ? '#432F2E' : 'rgba(237,216,61,0.3)',
-                      color:           urgencyHours === h ? '#FFFFFF'  : '#8A7060',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontFamily: 'Satoshi',
-                    }}
-                  >
-                    {h}h
-                  </button>
-                ))}
+            {/* Prénom */}
+            <div className="px-4 pt-4 pb-3.5">
+              <div className="flex items-start gap-3">
+                <IconBadge bg="#FFF0B5">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </IconBadge>
+                <div className="flex-1 min-w-0">
+                  <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi', marginBottom: 8 }}>
+                    Prénom affiché
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      value={prenom}
+                      onChange={e => { setPrenom(e.target.value); setPrenomSaved(false) }}
+                      onKeyDown={e => e.key === 'Enter' && handleSavePrenom()}
+                      placeholder="Ex. Sarah..."
+                      className="field flex-1"
+                      style={{ padding: '0.6rem 0.875rem', fontSize: '0.9375rem' }}
+                      maxLength={30}
+                    />
+                    <button
+                      onClick={handleSavePrenom}
+                      style={{
+                        backgroundColor: prenomSaved ? '#D1FAE5' : '#432F2E',
+                        color: prenomSaved ? '#166534' : '#FFFFFF',
+                        borderRadius: 12, padding: '0.6rem 1rem',
+                        fontWeight: 700, fontSize: '0.875rem',
+                        fontFamily: 'Satoshi', border: 'none', cursor: 'pointer',
+                        flexShrink: 0, minWidth: 52,
+                        transition: 'background-color 0.2s',
+                      }}
+                    >
+                      {prenomSaved ? '✓' : 'OK'}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </Group>
-        )}
 
-        {/* ── Données (manager) ──────────────────────────────── */}
-        {role === 'manager' && (
-          <Group title="Données">
-            <Row
-              label="Export CSV"
-              hint={monthCount > 0 ? `${monthCount} commande${monthCount > 1 ? 's' : ''} ce mois` : 'Aucune commande ce mois'}
+            <Divider />
+
+            {/* Sonnerie */}
+            <div className="flex items-center gap-3 px-4 py-3.5">
+              <IconBadge bg="#FFF0B5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+              </IconBadge>
+              <div className="flex-1">
+                <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>Sonnerie</p>
+                <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1 }}>Son lors d'une nouvelle commande</p>
+              </div>
+              <Toggle enabled={soundEnabled} onToggle={handleSoundToggle} />
+            </div>
+
+          </SectionCard>
+        </div>
+
+        {/* ── MODE ────────────────────────────────────────────── */}
+        <div>
+          <SectionLabel>Mode</SectionLabel>
+          <SectionCard bg="#E5F0F5" border="rgba(184,213,229,0.6)">
+            <button
+              onClick={clearRole}
+              className="w-full flex items-center gap-3 px-4 py-3.5 active:opacity-70 transition-opacity"
             >
-              <SmallButton onClick={handleExportCSV} disabled={csvLoading || monthCount === 0}>
-                {csvLoading ? '...' : '↓ Exporter'}
-              </SmallButton>
-            </Row>
-            <Row label="Réinitialiser" hint="Supprime toutes les commandes" noBorder>
-              <SmallButton onClick={handleClearAll} disabled={clearing} danger>
-                {clearing ? '...' : 'Supprimer'}
-              </SmallButton>
-            </Row>
-          </Group>
+              <IconBadge bg="rgba(255,255,255,0.55)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4E6B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </IconBadge>
+              <p style={{ flex: 1, textAlign: 'left', fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>
+                Vue actuelle
+              </p>
+              <span style={{ padding: '0.2rem 0.625rem', borderRadius: 9999, backgroundColor: 'rgba(255,255,255,0.6)', color: '#1D4E6B', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', marginRight: 4 }}>
+                {meta.label}
+              </span>
+              <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1D4E6B', fontFamily: 'Satoshi', marginRight: 4 }}>Changer</span>
+              <Chevron color="#1D4E6B" />
+            </button>
+          </SectionCard>
+        </div>
+
+        {/* ── NOTIFICATIONS ────────────────────────────────────── */}
+        <div>
+          <SectionLabel>Notifications</SectionLabel>
+          <SectionCard bg={notifStatus === 'granted' ? '#F0FDF4' : '#FFFFFF'} border={notifStatus === 'granted' ? 'rgba(34,197,94,0.2)' : 'rgba(67,47,46,0.07)'}>
+            <button
+              onClick={notifStatus === 'default' ? handleEnableNotifs : undefined}
+              disabled={notifLoading}
+              className="w-full flex items-center gap-3 px-4 py-3.5 active:opacity-70 transition-opacity disabled:opacity-60"
+              style={{ cursor: notifStatus === 'granted' || notifStatus === 'denied' ? 'default' : 'pointer' }}
+            >
+              <IconBadge bg={notifStatus === 'granted' ? 'rgba(34,197,94,0.15)' : notifStatus === 'denied' ? 'rgba(239,68,68,0.1)' : '#FFF0B5'}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={notifStatus === 'granted' ? '#15803D' : notifStatus === 'denied' ? '#DC2626' : '#432F2E'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+              </IconBadge>
+              <div className="flex-1 text-left">
+                <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>Notifications push</p>
+                <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1 }}>
+                  {notifStatus === 'granted' ? 'Activées sur cet appareil' : notifStatus === 'denied' ? 'Bloquées — autorise dans les réglages' : 'Alerte quand une commande est prête'}
+                </p>
+              </div>
+              {notifStatus === 'granted' && <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#15803D', fontFamily: 'Satoshi' }}>Activées</span>}
+              {notifStatus === 'denied'  && <span style={{ width: 8, height: 8, borderRadius: 9999, backgroundColor: '#EF4444', display: 'block', flexShrink: 0 }} />}
+              {notifStatus === 'default' && <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#432F2E', fontFamily: 'Satoshi', marginRight: 4 }}>{notifLoading ? '...' : 'Activer'}</span>}
+              {notifStatus !== 'denied' && <Chevron color={notifStatus === 'granted' ? '#15803D' : '#8A7060'} />}
+            </button>
+          </SectionCard>
+        </div>
+
+        {/* ── PRODUCTION ──────────────────────────────────────── */}
+        {(role === 'patissiere' || role === 'boulangerie') && (
+          <div>
+            <SectionLabel>Production</SectionLabel>
+            <SectionCard>
+              <div className="px-4 py-4">
+                <div className="flex items-start gap-3 mb-3">
+                  <IconBadge bg="#FFF0B5">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+                    </svg>
+                  </IconBadge>
+                  <div>
+                    <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>Délai alerte urgence</p>
+                    <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1 }}>Une commande passe en rouge à moins de…</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 pl-[54px]">
+                  {[24, 48, 72].map(h => (
+                    <button
+                      key={h}
+                      onClick={() => handleUrgencyChange(h)}
+                      className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-95"
+                      style={{ backgroundColor: urgencyHours === h ? '#432F2E' : 'rgba(67,47,46,0.07)', color: urgencyHours === h ? '#FFFFFF' : '#8A7060', border: 'none', fontFamily: 'Satoshi' }}
+                    >
+                      {h}h
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </SectionCard>
+          </div>
         )}
 
-        {/* ── Application ────────────────────────────────────── */}
-        <Group title="Application">
-          <Row label="Boulangerie">
-            <span style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Au Grand Jour</span>
-          </Row>
-          <Row label="Version" noBorder>
-            <span style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>1.0.0</span>
-          </Row>
-        </Group>
+        {/* ── DONNÉES (manager) ───────────────────────────────── */}
+        {role === 'manager' && (
+          <div>
+            <SectionLabel>Données</SectionLabel>
+            <SectionCard>
+              <button
+                onClick={handleExportCSV}
+                disabled={csvLoading || monthCount === 0}
+                className="w-full flex items-center gap-3 px-4 py-3.5 active:opacity-70 transition-opacity disabled:opacity-40"
+              >
+                <IconBadge bg="#E5F0F5">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4E6B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                </IconBadge>
+                <div className="flex-1 text-left">
+                  <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>Export CSV</p>
+                  <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1 }}>
+                    {monthCount > 0 ? `${monthCount} commande${monthCount > 1 ? 's' : ''} ce mois` : 'Aucune commande ce mois'}
+                  </p>
+                </div>
+                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1D4E6B', fontFamily: 'Satoshi', marginRight: 4 }}>
+                  {csvLoading ? '...' : '↓ Exporter'}
+                </span>
+                <Chevron color="#1D4E6B" />
+              </button>
+              <Divider />
+              <button
+                onClick={handleClearAll}
+                disabled={clearing}
+                className="w-full flex items-center gap-3 px-4 py-3.5 active:opacity-70 transition-opacity disabled:opacity-40"
+              >
+                <IconBadge bg="rgba(239,68,68,0.08)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                  </svg>
+                </IconBadge>
+                <div className="flex-1 text-left">
+                  <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#DC2626', fontFamily: 'Satoshi' }}>Réinitialiser</p>
+                  <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1 }}>Supprime toutes les commandes</p>
+                </div>
+                <Chevron color="#DC2626" />
+              </button>
+            </SectionCard>
+          </div>
+        )}
 
-        {/* ── Dev ────────────────────────────────────────────── */}
-        {import.meta.env.DEV && (
-          <div
-            className="rounded-2xl p-4"
-            style={{ backgroundColor: '#FFFBEB', border: '1px dashed #FDE68A' }}
+        {/* ── APPLICATION ──────────────────────────────────────── */}
+        <div>
+          <SectionLabel>Application</SectionLabel>
+          <SectionCard>
+            <div className="flex items-center gap-3 px-4 py-3.5">
+              <IconBadge bg="rgba(67,47,46,0.07)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </IconBadge>
+              <p style={{ flex: 1, fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>Boulangerie</p>
+              <span style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi', marginRight: 4 }}>Au Grand Jour</span>
+              <Chevron />
+            </div>
+            <Divider />
+            <div className="flex items-center gap-3 px-4 py-3.5">
+              <IconBadge bg="rgba(67,47,46,0.07)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </IconBadge>
+              <p style={{ flex: 1, fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>Version</p>
+              <span style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>1.0.0</span>
+            </div>
+          </SectionCard>
+        </div>
+
+        {/* ── SE DÉCONNECTER ───────────────────────────────────── */}
+        <SectionCard bg="#FEF0F0" border="rgba(239,68,68,0.15)">
+          <button
+            onClick={clearRole}
+            className="w-full flex items-center gap-3 px-4 py-3.5 active:opacity-70 transition-opacity"
           >
-            <p style={{
-              fontSize: '0.6875rem', fontWeight: 700, color: '#92400E',
-              letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'Satoshi', marginBottom: 6,
-            }}>
+            <IconBadge bg="rgba(239,68,68,0.1)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+            </IconBadge>
+            <p style={{ flex: 1, textAlign: 'left', fontSize: '0.9375rem', fontWeight: 600, color: '#DC2626', fontFamily: 'Satoshi' }}>
+              Se déconnecter
+            </p>
+            <Chevron color="#DC2626" />
+          </button>
+        </SectionCard>
+
+        {/* ── Dev ─────────────────────────────────────────────── */}
+        {import.meta.env.DEV && (
+          <div className="rounded-2xl p-4" style={{ backgroundColor: '#FFFBEB', border: '1px dashed #FDE68A' }}>
+            <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#92400E', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'Satoshi', marginBottom: 6 }}>
               Dev · données test
             </p>
-            <p style={{ fontSize: '0.75rem', color: '#92400E', opacity: 0.7, fontFamily: 'Satoshi', marginBottom: 12 }}>
-              Injecte 7 fausses commandes avec statuts variés.
-            </p>
-            <button
-              onClick={handleSeed}
-              disabled={seeding}
-              className="w-full py-2.5 rounded-xl text-sm font-semibold active:opacity-70 disabled:opacity-50"
-              style={{ backgroundColor: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontFamily: 'Satoshi' }}
-            >
+            <button onClick={handleSeed} disabled={seeding} className="w-full py-2.5 rounded-xl text-sm font-semibold active:opacity-70 disabled:opacity-50" style={{ backgroundColor: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontFamily: 'Satoshi' }}>
               {seeding ? 'Injection...' : 'Injecter des commandes test'}
             </button>
           </div>
