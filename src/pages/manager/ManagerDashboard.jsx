@@ -512,9 +512,8 @@ function Vue3Jours({ orders, navigate }) {
             {/* Depts */}
             <div style={{ marginBottom: 8 }}>
               {[
-                { Icon: IconCakePole,   label: 'Pâtisserie',  count: patisCnt, color: '#F472B6' },
-                { Icon: IconBreadPole,  label: 'Boulangerie', count: boulaCnt, color: '#EDD83D' },
-                { Icon: IconCupcakePole,label: 'Snacking',    count: otherCnt, color: '#A3D9A5' },
+                { Icon: IconCakePole,  label: 'Pâtisserie',  count: patisCnt, color: '#F472B6' },
+                { Icon: IconBreadPole, label: 'Boulangerie', count: boulaCnt, color: '#EDD83D' },
               ].map(dept => (
                 <div key={dept.label} style={{ marginBottom: 10 }}>
                   <div className="flex items-center justify-between">
