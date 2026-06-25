@@ -1,6 +1,52 @@
 import { useNavigate } from 'react-router-dom'
 import { useRole } from '../context/RoleContext'
 
+function IllustrationBoulangerie() {
+  return (
+    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+      {/* Blob jaune */}
+      <path d="M108 22 C140 14 182 28 192 72 C202 116 180 155 148 165 C116 175 76 160 64 128 C52 96 60 50 86 34 C94 28 100 24 108 22Z" fill="#FFF0B5"/>
+      {/* Blob pêche */}
+      <path d="M52 150 C63 133 96 130 106 154 C116 178 92 196 68 189 C44 182 41 167 52 150Z" fill="#FAE0C8"/>
+
+      {/* Support gâteau — base */}
+      <ellipse cx="108" cy="176" rx="30" ry="5.5" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
+      {/* Support — tige */}
+      <rect x="104" y="150" width="8" height="27" rx="4" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
+      {/* Support — plateau */}
+      <ellipse cx="108" cy="150" rx="24" ry="4.5" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
+
+      {/* Gâteau — ellipse du dessus */}
+      <ellipse cx="108" cy="106" rx="27" ry="5" fill="#FEFEFE" stroke="#432F2E" strokeWidth="1.9"/>
+      {/* Gâteau — parois */}
+      <path d="M81 106 L81 150" stroke="#432F2E" strokeWidth="1.9"/>
+      <path d="M135 106 L135 150" stroke="#432F2E" strokeWidth="1.9"/>
+      {/* Gâteau — bas */}
+      <path d="M81 150 Q108 156 135 150" stroke="#432F2E" strokeWidth="1.9" fill="none"/>
+
+      {/* Glaçage ondulé */}
+      <path d="M81 127 C85 121 89 133 93 127 C97 121 101 133 105 127 C109 121 113 133 117 127 C121 121 125 133 129 127 L135 127"
+            stroke="#432F2E" strokeWidth="1.6" strokeLinecap="round" fill="none"/>
+
+      {/* Rosette crème sur le dessus */}
+      <path d="M108 99 C106 94 106 89 109 86 C112 83 116 85 115 89 C114 93 110 92 111 88"
+            stroke="#432F2E" strokeWidth="1.9" strokeLinecap="round" fill="none"/>
+      <circle cx="108" cy="101" r="2.5" fill="white" stroke="#432F2E" strokeWidth="1.6"/>
+
+      {/* Pain — corps */}
+      <path d="M136 154 C138 138 158 129 173 136 C184 141 186 158 176 168 C166 178 140 174 136 160 Z"
+            fill="white" stroke="#432F2E" strokeWidth="1.9" strokeLinejoin="round"/>
+      {/* Pain — incisions */}
+      <path d="M147 136 C145 148 146 159 147 168" stroke="#432F2E" strokeWidth="1.4" strokeLinecap="round"/>
+      <path d="M159 131 C157 144 158 156 159 166" stroke="#432F2E" strokeWidth="1.4" strokeLinecap="round"/>
+
+      {/* Petit pain rond */}
+      <ellipse cx="120" cy="180" rx="14" ry="9.5" fill="white" stroke="#432F2E" strokeWidth="1.9"/>
+      <path d="M109 179 C113 173 128 173 131 179" stroke="#432F2E" strokeWidth="1.4" strokeLinecap="round" fill="none"/>
+    </svg>
+  )
+}
+
 const HOME = {
   vendeur:     '/vendeur',
   patissiere:  '/patissiere',
@@ -118,17 +164,8 @@ export default function RoleSelector() {
         </div>
 
         {/* Illustration */}
-        <div
-          className="flex-shrink-0 flex items-center justify-center"
-          style={{
-            width: 104,
-            height: 104,
-            borderRadius: 9999,
-            backgroundColor: '#FFF0B5',
-            boxShadow: '0 4px 24px rgba(237,216,61,0.25)',
-          }}
-        >
-          <span style={{ fontSize: '3rem', lineHeight: 1, userSelect: 'none' }}>🎂</span>
+        <div className="flex-shrink-0" style={{ width: 148, height: 148 }}>
+          <IllustrationBoulangerie />
         </div>
       </div>
 
