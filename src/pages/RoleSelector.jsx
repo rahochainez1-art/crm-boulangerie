@@ -327,7 +327,7 @@ export default function RoleSelector() {
 
           {/* Illustration */}
           <div
-            className="flex-shrink-0 flex items-center justify-center"
+            className="flex-shrink-0"
             style={{
               alignSelf: 'center',
               width: 'clamp(150px, 44vw, 196px)',
@@ -342,9 +342,12 @@ export default function RoleSelector() {
                 borderRadius: '62% 38% 55% 45% / 48% 52% 48% 52%',
                 background: 'radial-gradient(circle at 38% 32%, #FFF6DD 0%, #FFEEBE 55%, #FBE3B0 100%)',
                 boxShadow: 'inset 0 0 0 1px rgba(67,47,46,0.06)',
+                overflow: 'hidden',
               }}
             />
-            <IllustrationVitrine />
+            <div style={{ position: 'absolute', inset: '10%' }}>
+              <IllustrationVitrine />
+            </div>
           </div>
         </div>
 
