@@ -3,43 +3,47 @@ import { useLocation } from 'react-router-dom'
 import {
   format, parseISO, isSameDay, isSameMonth,
   startOfMonth, endOfMonth, startOfWeek, endOfWeek,
-  eachDayOfInterval, addMonths, subMonths, differenceInHours,
+  eachDayOfInterval, addMonths, subMonths,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
+import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
 import { subscribeOrders, setStatus, isAssignedTo } from '../lib/orders'
-import { getUrgencyHours } from '../lib/settings'
 import { useRole } from '../context/RoleContext'
-import AppLayout from '../components/layout/AppLayout'
 
 const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
-function dayBadge(orders) {
-  if (orders.length === 0) return null
-  if (orders.some(o => o.status === 'todo'))       return { bg: '#FEE2E2', color: '#b91c1c' }
-  if (orders.some(o => o.status === 'inprogress')) return { bg: '#FEF3C7', color: '#92400e' }
-  return                                                  { bg: '#DCFCE7', color: '#166534' }
-}
-
-function urgencyColor(pickupDate) {
-  const h = differenceInHours(parseISO(pickupDate), new Date())
-  const t = getUrgencyHours()
-  if (h < 0)      return '#EF4444'
-  if (h < t)      return '#EF4444'
-  if (h < t + 24) return '#F59E0B'
-  return '#22C55E'
-}
-
 const PRODUCTION_STATUSES = ['todo', 'inprogress', 'ready']
 const STATUS_PICKER = {
-  todo:       { label: 'Pas commencé', activeBg: '#432F2E', activeColor: '#FFFFFF', idleBg: '#F0EBD0', idleColor: '#8A7060' },
-  inprogress: { label: 'En cours',     activeBg: '#FEF3C7', activeColor: '#92400e', idleBg: '#FFF0B5', idleColor: '#8A7060' },
-  ready:      { label: 'Prêt ✓',       activeBg: '#EDD83D', activeColor: '#432F2E', idleBg: '#FFF0B5', idleColor: '#8A7060' },
+  todo:       { label: 'Pas commencé', activeBg: '#432F2E', activeColor: '#FFFFFF', idleBg: 'rgba(67,47,46,0.08)', idleColor: '#8A7060' },
+  inprogress: { label: 'En cours',     activeBg: 'rgba(255,240,181,0.9)', activeColor: '#432F2E', idleBg: 'rgba(67,47,46,0.08)', idleColor: '#8A7060' },
+  ready:      { label: 'Tout prêt',    activeBg: '#E5F0F5', activeColor: '#432F2E', idleBg: 'rgba(67,47,46,0.08)', idleColor: '#8A7060' },
+}
+const STATUS_PILL = {
+  todo:       { label: 'À faire',   bg: 'rgba(67,47,46,0.10)',   color: '#432F2E' },
+  inprogress: { label: 'En cours',  bg: 'rgba(255,240,181,0.6)', color: '#432F2E' },
+  ready:      { label: 'Tout prêt', bg: '#E5F0F5',               color: '#432F2E' },
+  done:       { label: 'Récupérée', bg: 'rgba(67,47,46,0.06)',   color: '#8A7060' },
+  cancelled:  { label: 'Annulée',   bg: 'rgba(67,47,46,0.14)',   color: '#432F2E' },
+}
+const LEGEND = [
+  { label: 'À faire',   dot: '#432F2E', bg: 'rgba(67,47,46,0.10)' },
+  { label: 'En cours',  dot: '#D9A900', bg: 'rgba(255,240,181,0.6)' },
+  { label: 'Tout prêt', dot: '#7A8C94', bg: '#E5F0F5' },
+]
+
+function StatusPill({ status }) {
+  const c = STATUS_PILL[status] ?? STATUS_PILL.todo
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', backgroundColor: c.bg, color: c.color, padding: '0.2rem 0.6rem', borderRadius: 9999, fontSize: '0.6875rem', fontWeight: 600, fontFamily: 'Satoshi', whiteSpace: 'nowrap' }}>
+      {c.label}
+    </span>
+  )
 }
 
 export default function Calendrier() {
-  const { role }   = useRole()
-  const pole       = role === 'boulangerie' ? 'boulangerie' : 'patissiere'
+  const { role } = useRole()
+  const pole     = role === 'boulangerie' ? 'boulangerie' : 'patissiere'
 
   const location    = useLocation()
   const initialDate = location.state?.date ? parseISO(location.state.date) : new Date()
@@ -87,145 +91,167 @@ export default function Calendrier() {
     return map
   }, [monthOrders])
 
-  const activeDays = useMemo(
-    () => new Set(monthOrders.map(o => format(parseISO(o.pickupDate), 'yyyy-MM-dd'))),
+  const activeDaysCount = useMemo(
+    () => new Set(monthOrders.map(o => format(parseISO(o.pickupDate), 'yyyy-MM-dd'))).size,
     [monthOrders]
   )
 
+  const selectedLabel = useMemo(() => {
+    const label = format(selectedDay, 'EEEE d MMMM', { locale: fr })
+    return label.charAt(0).toUpperCase() + label.slice(1)
+  }, [selectedDay])
+
   return (
-    <AppLayout title="Calendrier">
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5F2EB' }}>
+      <div className="px-6" style={{ paddingTop: 'max(28px, env(safe-area-inset-top))', paddingBottom: 112 }}>
 
-      {/* Calendrier mensuel */}
-      <div
-        className="rounded-3xl p-5 mb-5 animate-fade-up"
-        style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
-      >
-        {/* Navigation mois */}
-        <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={() => { setViewMonth(m => subMonths(m, 1)); setExpandedId(null) }}
-            className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-            style={{ color: '#8A7060' }}
-          >‹</button>
-          <p className="font-semibold capitalize text-ink" style={{ fontSize: '0.95rem' }}>
-            {format(viewMonth, 'MMMM yyyy', { locale: fr })}
+        {/* ── Header ── */}
+        <div className="mb-6 animate-fade-up">
+          <p style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 10 }}>
+            Au Grand Jour
           </p>
-          <button
-            onClick={() => { setViewMonth(m => addMonths(m, 1)); setExpandedId(null) }}
-            className="w-9 h-9 flex items-center justify-center rounded-xl active:bg-black/5 text-xl"
-            style={{ color: '#8A7060' }}
-          >›</button>
-        </div>
-
-        {/* Légende */}
-        <div className="flex items-center gap-4 mb-4 px-1 flex-wrap">
-          {[
-            { color: '#EF4444', label: 'À faire' },
-            { color: '#F59E0B', label: 'En cours' },
-            { color: '#22C55E', label: 'Tout prêt' },
-          ].map(item => (
-            <div key={item.label} className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-              <span style={{ fontSize: '10px', color: '#8A7060' }}>{item.label}</span>
+          <h1 style={{ fontSize: 'clamp(2.25rem, 9vw, 2.75rem)', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.02em', lineHeight: 1.05, marginBottom: 14 }}>
+            Calendrier
+          </h1>
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center" style={{ width: 34, height: 34, borderRadius: 9999, backgroundColor: '#F5F2EB', border: '1px solid rgba(67,47,46,0.1)', flexShrink: 0 }}>
+              <Calendar size={15} color="#432F2E" strokeWidth={1.9} />
             </div>
-          ))}
-          <span className="ml-auto" style={{ fontSize: '10px', color: '#8A7060' }}>
-            <span className="font-semibold text-ink">{monthOrders.length}</span> cmd ·{' '}
-            <span className="font-semibold text-ink">{activeDays.size}</span> jour{activeDays.size > 1 ? 's' : ''}
-          </span>
-        </div>
-
-        {/* Labels colonnes */}
-        <div className="grid grid-cols-7 mb-1">
-          {DAY_LABELS.map((d, i) => (
-            <p key={i} className="text-center py-1" style={{ fontSize: '10px', fontWeight: 600, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              {d}
+            <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
+              {monthOrders.length} commande{monthOrders.length > 1 ? 's' : ''} · {activeDaysCount} jour{activeDaysCount > 1 ? 's' : ''} planifié{activeDaysCount > 1 ? 's' : ''}
             </p>
-          ))}
+          </div>
         </div>
 
-        {/* Grille */}
-        <div className="grid grid-cols-7 gap-y-1">
-          {calDays.map(day => {
-            const inMonth    = isSameMonth(day, viewMonth)
-            const key        = format(day, 'yyyy-MM-dd')
-            const dayOrd     = inMonth ? (ordersByDay[key] ?? []) : []
-            const badge      = dayBadge(dayOrd)
-            const isSelected = isSameDay(day, selectedDay)
-            const isToday    = isSameDay(day, new Date())
-
-            return (
-              <button
-                key={day.toISOString()}
-                disabled={!inMonth}
-                onClick={() => { setSelectedDay(day); setExpandedId(null) }}
-                className="flex flex-col items-center py-1.5 rounded-2xl transition-all active:scale-95"
-                style={{
-                  backgroundColor: isSelected ? '#432F2E' : isToday ? '#FFF0B5' : 'transparent',
-                  opacity: inMonth ? 1 : 0.12,
-                }}
-              >
-                <span
-                  className="text-sm font-medium leading-tight"
-                  style={{ color: isSelected ? '#FFFFFF' : '#432F2E' }}
-                >
-                  {format(day, 'd')}
-                </span>
-                <div className="h-4 flex items-center justify-center mt-0.5">
-                  {badge ? (
-                    <span
-                      className="text-[9px] font-bold flex items-center justify-center"
-                      style={{
-                        backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : badge.bg,
-                        color: isSelected ? '#fff' : badge.color,
-                        minWidth: 16, height: 16, padding: '0 4px', borderRadius: 9999,
-                      }}
-                    >
-                      {dayOrd.length}
-                    </span>
-                  ) : null}
-                </div>
-              </button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Liste commandes du jour */}
-      <div className="flex items-center justify-between mb-3">
-        <p className="font-semibold text-ink capitalize" style={{ fontSize: '0.95rem' }}>
-          {isSameDay(selectedDay, new Date())
-            ? "Aujourd'hui"
-            : format(selectedDay, 'd MMMM', { locale: fr })}
-        </p>
-        {dayOrders.length > 0 && (
-          <span className="label-xs">{dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}</span>
-        )}
-      </div>
-
-      {dayOrders.length === 0 ? (
+        {/* ── Carte calendrier ── */}
         <div
-          className="rounded-3xl text-center py-14"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0' }}
+          className="rounded-[28px] p-5 mb-6 animate-fade-up delay-100"
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.08)', boxShadow: '0 2px 20px rgba(67,47,46,0.05)' }}
         >
-          <p className="text-2xl mb-2">—</p>
-          <p className="font-semibold text-ink mb-1">Rien ce jour-là</p>
-          <p className="text-sm" style={{ color: '#8A7060' }}>Sélectionne un jour coloré dans le calendrier</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {dayOrders.map(order => (
-            <OrderCard
-              key={order.id}
-              order={order}
-              expanded={expandedId === order.id}
-              onToggle={() => setExpandedId(prev => prev === order.id ? null : order.id)}
-            />
-          ))}
-        </div>
-      )}
+          {/* Navigation mois */}
+          <div className="flex items-center justify-between mb-5">
+            <button
+              onClick={() => { setViewMonth(m => subMonths(m, 1)); setExpandedId(null) }}
+              className="flex items-center justify-center active:scale-95 transition-transform"
+              style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: 'rgba(67,47,46,0.06)', border: 'none' }}
+            >
+              <ChevronLeft size={17} color="#432F2E" strokeWidth={2} />
+            </button>
+            <p className="capitalize" style={{ fontSize: '1.375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>
+              {format(viewMonth, 'MMMM yyyy', { locale: fr })}
+            </p>
+            <button
+              onClick={() => { setViewMonth(m => addMonths(m, 1)); setExpandedId(null) }}
+              className="flex items-center justify-center active:scale-95 transition-transform"
+              style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: 'rgba(67,47,46,0.06)', border: 'none' }}
+            >
+              <ChevronRight size={17} color="#432F2E" strokeWidth={2} />
+            </button>
+          </div>
 
-    </AppLayout>
+          {/* Légende statuts */}
+          <div className="flex items-center gap-2 mb-5 flex-wrap">
+            {LEGEND.map(l => (
+              <span key={l.label} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: l.bg, padding: '0.3rem 0.65rem', borderRadius: 9999 }}>
+                <span style={{ width: 6, height: 6, borderRadius: 9999, backgroundColor: l.dot, flexShrink: 0 }} />
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#432F2E', fontFamily: 'Satoshi' }}>{l.label}</span>
+              </span>
+            ))}
+          </div>
+
+          {/* Labels colonnes */}
+          <div className="grid grid-cols-7 mb-1">
+            {DAY_LABELS.map((d, i) => (
+              <p key={i} className="text-center py-1" style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#B0A090', fontFamily: 'Satoshi' }}>
+                {d}
+              </p>
+            ))}
+          </div>
+
+          {/* Grille */}
+          <div className="grid grid-cols-7 gap-y-1">
+            {calDays.map(day => {
+              const inMonth    = isSameMonth(day, viewMonth)
+              const key        = format(day, 'yyyy-MM-dd')
+              const dayOrd     = inMonth ? (ordersByDay[key] ?? []) : []
+              const isSelected = isSameDay(day, selectedDay)
+              const isToday    = isSameDay(day, new Date())
+
+              return (
+                <button
+                  key={day.toISOString()}
+                  disabled={!inMonth}
+                  onClick={() => { setSelectedDay(day); setExpandedId(null) }}
+                  className="flex flex-col items-center py-2 transition-all active:scale-95"
+                  style={{
+                    borderRadius: 14,
+                    backgroundColor: isSelected ? '#432F2E' : isToday ? '#FFF0B5' : 'transparent',
+                    opacity: inMonth ? 1 : 0.15,
+                  }}
+                >
+                  <span style={{ fontSize: '0.875rem', fontWeight: 500, fontFamily: 'Satoshi', color: isSelected ? '#FFFFFF' : '#111111', lineHeight: 1.2 }}>
+                    {format(day, 'd')}
+                  </span>
+                  <div className="h-4 flex items-center justify-center mt-0.5">
+                    {dayOrd.length > 0 && (
+                      <span
+                        style={{
+                          fontSize: '0.5625rem', fontWeight: 700, fontFamily: 'Satoshi',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          backgroundColor: isSelected ? 'rgba(245,242,235,0.3)' : '#FFF0B5',
+                          color: isSelected ? '#FFFFFF' : '#432F2E',
+                          minWidth: 15, height: 15, padding: '0 3px', borderRadius: 9999,
+                        }}
+                      >
+                        {dayOrd.length}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* ── Section jour sélectionné ── */}
+        <div className="flex items-center justify-between mb-3 animate-fade-up delay-150">
+          <div>
+            <p className="capitalize" style={{ fontSize: '1.0625rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>
+              {selectedLabel}
+            </p>
+            <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 2 }}>
+              {dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}
+            </p>
+          </div>
+          {dayOrders.length > 0 && (
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#432F2E', fontFamily: 'Satoshi', backgroundColor: '#FFF0B5', padding: '0.35rem 0.75rem', borderRadius: 9999, whiteSpace: 'nowrap' }}>
+              {dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+
+        {dayOrders.length === 0 ? (
+          <div
+            className="rounded-[24px] text-center py-14 animate-fade-up delay-200"
+            style={{ backgroundColor: 'rgba(229,240,245,0.5)', border: '1px solid rgba(67,47,46,0.06)' }}
+          >
+            <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Aucune commande prévue ce jour.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {dayOrders.map(order => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                expanded={expandedId === order.id}
+                onToggle={() => setExpandedId(prev => prev === order.id ? null : order.id)}
+              />
+            ))}
+          </div>
+        )}
+
+      </div>
+    </div>
   )
 }
 
@@ -244,60 +270,53 @@ function OrderCard({ order, expanded, onToggle }) {
 
   return (
     <div
-      className="rounded-3xl overflow-hidden"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DFC0', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}
+      className="rounded-[24px] overflow-hidden"
+      style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.08)', boxShadow: '0 2px 16px rgba(67,47,46,0.05)' }}
     >
-      <div className="h-1 rounded-t-3xl" style={{ backgroundColor: urgencyColor(order.pickupDate) }} />
-
       <button
-        className="w-full px-5 py-4 flex items-start gap-3 text-left active:bg-black/[0.01] transition-colors"
+        className="w-full px-5 py-4 flex items-start gap-4 text-left active:bg-black/[0.01] transition-colors"
         onClick={onToggle}
       >
-        <div className="flex-shrink-0 text-right" style={{ minWidth: 44 }}>
-          <p style={{ fontSize: '10px', fontWeight: 600, color: '#B0A090', textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1, marginBottom: 4 }}>
+        <div className="flex-shrink-0" style={{ minWidth: 46 }}>
+          <p style={{ fontSize: '0.625rem', fontWeight: 600, color: '#B0A090', fontFamily: 'Satoshi', textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1, marginBottom: 5 }}>
             Retrait
           </p>
-          <p className="font-semibold text-ink tabular-nums text-lg leading-none">
+          <p style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
             {format(parseISO(order.pickupDate), 'HH:mm')}
           </p>
         </div>
 
-        <div className="w-px self-stretch" style={{ backgroundColor: '#E8DFC0' }} />
+        <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(67,47,46,0.1)' }} />
 
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-ink text-sm truncate">{order.clientName}</p>
-          <p className="text-xs truncate mt-0.5" style={{ color: '#8A7060' }}>{order.articles}</p>
-          <div className="mt-2">
+          <p style={{ fontWeight: 700, color: '#111111', fontSize: '0.9375rem', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {order.clientName}
+          </p>
+          <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>
+            {order.articles}
+          </p>
+          <div className="mt-2.5">
             <StatusPill status={order.status} />
           </div>
         </div>
 
-        <svg
-          width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="#B0A090" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        <ChevronRight
+          size={15}
+          color="#B0A090"
+          strokeWidth={2.2}
           className="flex-shrink-0 self-center transition-transform duration-200"
-          style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
-        >
-          <path d="M9 18l6-6-6-6"/>
-        </svg>
+          style={{ transform: expanded ? 'rotate(90deg)' : 'none' }}
+        />
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5 pt-4 space-y-4" style={{ borderTop: '1px solid #F0EBD0' }}>
-
-          <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#F0EBD0' }}>
-            <p className="label-xs mb-1">Commande</p>
-            <p className="font-medium text-ink text-sm leading-relaxed">{order.articles}</p>
-          </div>
-
+        <div className="px-5 pb-5 pt-1 space-y-3" style={{ borderTop: '1px solid rgba(67,47,46,0.08)' }}>
           {order.notes && (
-            <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
-              <span className="text-base mr-2">⚠️</span>
-              <p className="text-xs font-medium inline" style={{ color: '#92400e' }}>{order.notes}</p>
+            <div className="rounded-2xl px-4 py-3 mt-4" style={{ backgroundColor: 'rgba(255,240,181,0.4)', border: '1px solid rgba(67,47,46,0.1)' }}>
+              <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#432F2E', fontFamily: 'Satoshi' }}>⚠ {order.notes}</p>
             </div>
           )}
-
-          <div className="grid grid-cols-3 gap-2 pt-1">
+          <div className="grid grid-cols-3 gap-2 pt-3">
             {PRODUCTION_STATUSES.map(s => {
               const cfg      = STATUS_PICKER[s]
               const isActive = order.status === s
@@ -306,11 +325,13 @@ function OrderCard({ order, expanded, onToggle }) {
                   key={s}
                   onClick={() => handleSetStatus(s)}
                   disabled={busy}
-                  className="rounded-2xl py-3 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50"
+                  className="transition-all active:scale-95 disabled:opacity-50"
                   style={{
+                    padding: '0.75rem 0.5rem', borderRadius: 12,
                     backgroundColor: isActive ? cfg.activeBg : cfg.idleBg,
-                    color:           isActive ? cfg.activeColor : cfg.idleColor,
-                    border:          isActive ? 'none' : '1px solid #E8DFC0',
+                    color: isActive ? cfg.activeColor : cfg.idleColor,
+                    fontWeight: 600, fontSize: '0.75rem', border: 'none', cursor: 'pointer',
+                    fontFamily: 'Satoshi', transition: 'background-color 0.15s, color 0.15s',
                   }}
                 >
                   {cfg.label}
@@ -318,28 +339,8 @@ function OrderCard({ order, expanded, onToggle }) {
               )
             })}
           </div>
-
         </div>
       )}
     </div>
-  )
-}
-
-function StatusPill({ status }) {
-  const map = {
-    todo:       { label: 'À faire',  bg: '#F0EBD0', color: 'rgba(24,24,27,0.55)' },
-    inprogress: { label: 'En cours', bg: '#FEF3C7', color: '#92400e' },
-    ready:      { label: 'Prêt ✓',   bg: '#DCFCE7', color: '#166534' },
-    done:       { label: 'Récupéré', bg: '#F4F4F5', color: 'rgba(24,24,27,0.4)' },
-    cancelled:  { label: 'Annulée',  bg: '#FEE2E2', color: '#b91c1c' },
-  }
-  const c = map[status] ?? map.todo
-  return (
-    <span
-      className="inline-flex text-[10px] font-semibold"
-      style={{ backgroundColor: c.bg, color: c.color, padding: '0.2rem 0.6rem', borderRadius: 9999 }}
-    >
-      {c.label}
-    </span>
   )
 }
