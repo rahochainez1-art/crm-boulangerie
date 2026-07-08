@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import {
   format, parseISO, isSameDay, isSameMonth,
   startOfMonth, endOfMonth, startOfWeek, endOfWeek,
@@ -40,9 +41,12 @@ export default function Calendrier() {
   const { role }   = useRole()
   const pole       = role === 'boulangerie' ? 'boulangerie' : 'patissiere'
 
+  const location    = useLocation()
+  const initialDate = location.state?.date ? parseISO(location.state.date) : new Date()
+
   const [allOrders, setAllOrders]     = useState([])
-  const [viewMonth, setViewMonth]     = useState(new Date())
-  const [selectedDay, setSelectedDay] = useState(new Date())
+  const [viewMonth, setViewMonth]     = useState(initialDate)
+  const [selectedDay, setSelectedDay] = useState(initialDate)
   const [expandedId, setExpandedId]   = useState(null)
 
   useEffect(() => subscribeOrders(setAllOrders), [])
