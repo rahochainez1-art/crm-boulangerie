@@ -15,10 +15,10 @@ const TABS = [
 ]
 
 const CARD_STYLE = {
-  todo:       { bg: '#FFFCEC', border: 'rgba(237,210,60,0.28)', shadow: '0 2px 16px rgba(237,210,60,0.1)' },
-  inprogress: { bg: '#FFF6CC', border: 'rgba(237,200,40,0.38)', shadow: '0 2px 16px rgba(237,200,40,0.14)' },
-  ready:      { bg: '#E5F0F5', border: 'rgba(184,213,229,0.65)', shadow: '0 2px 16px rgba(184,213,229,0.22)' },
-  done:       { bg: '#FAFAF8', border: 'rgba(180,175,165,0.22)', shadow: 'none' },
+  todo:       { bg: '#FFFFFF', border: 'rgba(67,47,46,0.08)', shadow: '0 2px 16px rgba(67,47,46,0.05)' },
+  inprogress: { bg: '#FFFFFF', border: 'rgba(67,47,46,0.08)', shadow: '0 2px 16px rgba(67,47,46,0.05)' },
+  ready:      { bg: '#FFFFFF', border: 'rgba(67,47,46,0.08)', shadow: '0 2px 16px rgba(67,47,46,0.05)' },
+  done:       { bg: '#FFFFFF', border: 'rgba(67,47,46,0.06)', shadow: 'none' },
 }
 
 function greeting(prenom) {
@@ -101,23 +101,22 @@ export default function VendeurDashboard() {
         <div className="flex items-center justify-between">
           <div className="animate-fade-up">
             <h1
-              className="font-display"
-              style={{ fontSize: '1.625rem', color: '#111111', letterSpacing: '-0.025em', lineHeight: 1.15 }}
+              style={{ fontSize: 'clamp(1.75rem, 7vw, 2.25rem)', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.02em', lineHeight: 1.15 }}
             >
               {greeting(prenom)}
             </h1>
             <p
               className="capitalize"
-              style={{ fontSize: '0.8125rem', color: '#8A7060', fontWeight: 500, fontFamily: 'Satoshi', marginTop: 2 }}
+              style={{ fontSize: '0.8125rem', color: '#8A7060', fontWeight: 500, fontFamily: 'Satoshi', marginTop: 4 }}
             >
               {format(new Date(), 'EEEE d MMMM', { locale: fr })}
             </p>
           </div>
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 animate-fade-up"
-            style={{ backgroundColor: '#432F2E' }}
+            className="rounded-full flex items-center justify-center flex-shrink-0 animate-fade-up"
+            style={{ width: 48, height: 48, backgroundColor: '#432F2E' }}
           >
-            <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#FFFFFF', fontFamily: 'Satoshi' }}>
+            <span style={{ fontSize: '1rem', fontWeight: 700, color: '#FFFFFF', fontFamily: 'Satoshi' }}>
               {initiale}
             </span>
           </div>
@@ -129,47 +128,30 @@ export default function VendeurDashboard() {
         {/* ── KPI Strip ───────────────────────────────────────────── */}
         <div className="px-5 mb-5">
           <div
-            className="flex rounded-2xl overflow-hidden"
+            className="flex rounded-[24px] overflow-hidden"
             style={{
-              backgroundColor: '#FFF0B5',
-              border: '1px solid rgba(237,216,61,0.4)',
-              boxShadow: '0 2px 12px rgba(237,216,61,0.2)',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid rgba(67,47,46,0.08)',
+              boxShadow: '0 2px 16px rgba(67,47,46,0.05)',
             }}
           >
             {[
-              {
-                count: kpiTodo,
-                label: 'À préparer',
-                textColor: kpiTodo > 0 ? '#111111' : '#B0A090',
-                bg: null,
-              },
-              {
-                count: kpiReady,
-                label: 'Prêtes',
-                textColor: kpiReady > 0 ? '#1D4E6B' : '#B0A090',
-                bg: kpiReady > 0 ? '#E5F0F5' : null,
-              },
-              {
-                count: kpiDone,
-                label: 'Récupérées',
-                textColor: '#8A7060',
-                bg: null,
-              },
+              { count: kpiTodo,  label: 'À préparer' },
+              { count: kpiReady, label: 'Prêtes' },
+              { count: kpiDone,  label: 'Récupérées' },
             ].map((kpi, i) => (
               <div
                 key={i}
-                className="flex-1 flex flex-col items-center py-3.5"
-                style={{
-                  backgroundColor: kpi.bg || 'transparent',
-                  borderRight: i < 2 ? '1px solid rgba(237,216,61,0.35)' : 'none',
-                }}
+                className="flex-1 flex flex-col items-center py-4"
+                style={{ borderRight: i < 2 ? '1px solid rgba(67,47,46,0.08)' : 'none' }}
               >
                 <span
                   style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 800,
-                    color: kpi.textColor,
+                    fontSize: '1.75rem',
+                    fontWeight: 700,
+                    color: kpi.count > 0 ? '#111111' : '#C0B8A8',
                     fontFamily: 'Satoshi',
+                    letterSpacing: '-0.02em',
                     lineHeight: 1,
                     fontVariantNumeric: 'tabular-nums',
                   }}
@@ -179,10 +161,10 @@ export default function VendeurDashboard() {
                 <span
                   style={{
                     fontSize: '0.6875rem',
-                    fontWeight: 600,
+                    fontWeight: 500,
                     color: '#8A7060',
                     fontFamily: 'Satoshi',
-                    marginTop: 4,
+                    marginTop: 5,
                     letterSpacing: '0.01em',
                   }}
                 >
@@ -240,16 +222,12 @@ export default function VendeurDashboard() {
                   className="flex-1 flex flex-col items-center py-3 transition-all active:scale-95"
                   style={{
                     borderRadius: 14,
-                    backgroundColor: isSelected
-                      ? '#432F2E'
-                      : isToday
-                      ? '#E5F0F5'
-                      : '#FFF0B5',
+                    backgroundColor: isSelected ? '#432F2E' : '#FFFFFF',
                     border: isSelected
                       ? 'none'
                       : isToday
-                      ? '1.5px solid #B8D5E5'
-                      : '1px solid rgba(237,216,61,0.4)',
+                      ? '1.5px solid rgba(67,47,46,0.35)'
+                      : '1px solid rgba(67,47,46,0.08)',
                   }}
                 >
                   <span
@@ -278,13 +256,14 @@ export default function VendeurDashboard() {
                   </span>
                   <span
                     style={{
-                      width: 4,
-                      height: 4,
+                      width: 5,
+                      height: 5,
                       borderRadius: 9999,
                       marginTop: 5,
                       backgroundColor: hasOrders
-                        ? isSelected ? 'rgba(255,255,255,0.45)' : '#EDD83D'
+                        ? isSelected ? 'rgba(255,255,255,0.5)' : '#FFF0B5'
                         : 'transparent',
+                      border: hasOrders && !isSelected ? '1px solid rgba(67,47,46,0.25)' : 'none',
                       display: 'block',
                     }}
                   />
@@ -305,13 +284,13 @@ export default function VendeurDashboard() {
                 onClick={() => setTab(t.id)}
                 className="flex-shrink-0 active:scale-95 transition-transform"
                 style={{
-                  padding: '0.375rem 0.875rem',
+                  padding: '0.5rem 1rem',
                   borderRadius: 9999,
-                  backgroundColor: isActive ? '#432F2E' : '#FFF0B5',
+                  backgroundColor: isActive ? '#432F2E' : '#FFFFFF',
                   color: isActive ? '#FFFFFF' : '#432F2E',
                   fontSize: '0.8125rem',
                   fontWeight: 600,
-                  border: isActive ? 'none' : '1px solid rgba(237,216,61,0.5)',
+                  border: isActive ? 'none' : '1.5px solid #FFF0B5',
                   cursor: 'pointer',
                   fontFamily: 'Satoshi',
                   letterSpacing: '-0.01em',
@@ -326,8 +305,7 @@ export default function VendeurDashboard() {
         {/* ── En-tête section ─────────────────────────────────────────── */}
         <div className="flex items-baseline justify-between px-5 mb-4">
           <p
-            className="font-display"
-            style={{ fontSize: '1rem', color: '#111111', letterSpacing: '-0.015em' }}
+            style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.01em' }}
           >
             {isSameDay(selectedDay, new Date())
               ? "Aujourd'hui"
@@ -344,8 +322,8 @@ export default function VendeurDashboard() {
             <div
               className="rounded-2xl text-center py-14 animate-fade-up"
               style={{
-                backgroundColor: '#FFF0B5',
-                border: '1px solid rgba(237,216,61,0.35)',
+                backgroundColor: '#F5F2EB',
+                border: '1px solid rgba(67,47,46,0.06)',
               }}
             >
               <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
@@ -398,10 +376,9 @@ function OrderCard({ order, index, onOpen }) {
       <div className="flex items-start justify-between px-4 pt-4 pb-4">
         <div
           style={{
-            backgroundColor: 'rgba(255,255,255,0.7)',
+            backgroundColor: isDone ? 'rgba(67,47,46,0.05)' : '#E5F0F5',
             borderRadius: 14,
             padding: '9px 13px',
-            backdropFilter: 'blur(4px)',
           }}
         >
           <div className="flex items-center gap-1.5">
@@ -438,7 +415,7 @@ function OrderCard({ order, index, onOpen }) {
               href={`tel:${order.clientPhone}`}
               onClick={e => e.stopPropagation()}
               className="flex-shrink-0 flex items-center justify-center active:opacity-70"
-              style={{ width: 38, height: 38, borderRadius: 9999, backgroundColor: 'rgba(255,255,255,0.65)', color: '#432F2E' }}
+              style={{ width: 38, height: 38, borderRadius: 9999, backgroundColor: '#F5F2EB', color: '#432F2E' }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -455,31 +432,31 @@ function OrderCard({ order, index, onOpen }) {
           <div className="flex">
             {/* Payé */}
             <div className="flex-1 px-4 py-3">
-              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(21,128,61,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803D" strokeWidth="2.2" strokeLinecap="round">
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: '#E5F0F5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round">
                   <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
                 </svg>
               </div>
               <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Payé</p>
-              <p style={{ fontSize: '1rem', fontWeight: 800, color: '#15803D', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+              <p style={{ fontSize: '1rem', fontWeight: 800, color: '#432F2E', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
                 {(order.deposit || 0).toFixed(2)} €
               </p>
             </div>
             {/* Reste */}
             <div className="flex-1 px-4 py-3" style={{ borderLeft: '1px solid rgba(67,47,46,0.07)', borderRight: '1px solid rgba(67,47,46,0.07)' }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: reste > 0 ? 'rgba(237,210,60,0.25)' : 'rgba(21,128,61,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={reste > 0 ? '#92400E' : '#15803D'} strokeWidth="2.2" strokeLinecap="round">
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: '#FFF0B5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round">
                   <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M12 9v6M9 12h6"/>
                 </svg>
               </div>
               <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Reste à payer</p>
-              <p style={{ fontSize: '1rem', fontWeight: 800, color: reste > 0 ? '#92400E' : '#15803D', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+              <p style={{ fontSize: '1rem', fontWeight: 800, color: '#432F2E', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
                 {reste.toFixed(2)} €
               </p>
             </div>
             {/* Total */}
             <div className="flex-1 px-4 py-3">
-              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(67,47,46,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: '#E5F0F5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
                 </svg>
@@ -496,7 +473,7 @@ function OrderCard({ order, index, onOpen }) {
       {/* ── Zone 4 : Footer ── */}
       <div className="flex items-center justify-between px-4 py-3" style={{ borderTop: '1px solid rgba(67,47,46,0.07)' }}>
         {hasPay ? (
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0.3rem 0.75rem', borderRadius: 9999, backgroundColor: reste === 0 ? 'rgba(21,128,61,0.1)' : 'rgba(237,210,60,0.3)', color: reste === 0 ? '#15803D' : '#92400E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0.3rem 0.75rem', borderRadius: 9999, backgroundColor: reste === 0 ? '#E5F0F5' : '#FFF0B5', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi' }}>
             {reste === 0 ? '✓ Soldé' : 'Solde partiel'}
           </span>
         ) : (
@@ -504,8 +481,8 @@ function OrderCard({ order, index, onOpen }) {
         )}
         <button
           onClick={onOpen}
-          className="flex items-center gap-1 active:opacity-70"
-          style={{ padding: '0.3rem 0.875rem', borderRadius: 9999, backgroundColor: 'rgba(255,255,255,0.65)', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', border: 'none', cursor: 'pointer' }}
+          className="flex items-center gap-1 active:opacity-80"
+          style={{ padding: '0.375rem 0.9rem', borderRadius: 9999, backgroundColor: '#FFF0B5', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', border: 'none', cursor: 'pointer' }}
         >
           Voir le détail
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -652,12 +629,12 @@ function OrderSheet({ order, onClose }) {
                 {reste > 0 ? (
                   <div>
                     <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Reste</p>
-                    <p style={{ fontWeight: 700, color: '#92400E', fontFamily: 'Satoshi' }}>{reste} €</p>
+                    <p style={{ fontWeight: 700, color: '#432F2E', fontFamily: 'Satoshi' }}>{reste} €</p>
                   </div>
                 ) : (
                   <div>
                     <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginBottom: 2 }}>Solde</p>
-                    <p style={{ fontWeight: 700, color: '#166534', fontFamily: 'Satoshi' }}>Soldé ✓</p>
+                    <p style={{ fontWeight: 700, color: '#432F2E', fontFamily: 'Satoshi' }}>Soldé ✓</p>
                   </div>
                 )}
               </div>
