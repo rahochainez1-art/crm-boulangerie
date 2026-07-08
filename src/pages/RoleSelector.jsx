@@ -1,7 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { useRole } from '../context/RoleContext'
 
-const INK = '#2A1810'
+const INK    = '#6B4A32'
+const CHERRY = '#7A3B32'
+const OLIVE  = '#8FA372'
+const OLIVE_FILL = '#D9E2C4'
 
 /* ────────────────────────────────────────────────────────────
    Logo (en-tête)
@@ -24,22 +27,27 @@ function IllustrationVitrine() {
   const fill = '#FFF9F0'
   return (
     <svg viewBox="0 0 300 270" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-      {/* Branches d'olivier décoratives */}
-      <path d="M245 235 C258 210 262 178 250 148" fill="none" stroke="#9CAF88" strokeWidth="2.4" strokeLinecap="round"/>
-      <ellipse cx="253" cy="222" rx="8" ry="4.5" fill="#E7EFDD" stroke="#9CAF88" strokeWidth="1.6" transform="rotate(-40 253 222)"/>
-      <ellipse cx="257" cy="200" rx="8" ry="4.5" fill="#E7EFDD" stroke="#9CAF88" strokeWidth="1.6" transform="rotate(-25 257 200)"/>
-      <ellipse cx="255" cy="177" rx="8" ry="4.5" fill="#E7EFDD" stroke="#9CAF88" strokeWidth="1.6" transform="rotate(-10 255 177)"/>
-      <ellipse cx="248" cy="156" rx="7.5" ry="4.2" fill="#E7EFDD" stroke="#9CAF88" strokeWidth="1.6" transform="rotate(15 248 156)"/>
+      {/* Branche d'olivier décorative — grande, en bas à droite */}
+      <path d="M292 268 C270 240 258 208 262 178 C265 156 272 138 268 116"
+            fill="none" stroke={OLIVE} strokeWidth="2.2" strokeLinecap="round"/>
+      <ellipse cx="278" cy="250" rx="10" ry="5" fill={OLIVE_FILL} stroke={OLIVE} strokeWidth="1.5" transform="rotate(-55 278 250)"/>
+      <ellipse cx="262" cy="228" rx="10" ry="5" fill={OLIVE_FILL} stroke={OLIVE} strokeWidth="1.5" transform="rotate(35 262 228)"/>
+      <ellipse cx="264" cy="204" rx="10" ry="5" fill={OLIVE_FILL} stroke={OLIVE} strokeWidth="1.5" transform="rotate(-40 264 204)"/>
+      <ellipse cx="256" cy="182" rx="9.5" ry="4.8" fill={OLIVE_FILL} stroke={OLIVE} strokeWidth="1.5" transform="rotate(30 256 182)"/>
+      <ellipse cx="266" cy="160" rx="9" ry="4.5" fill={OLIVE_FILL} stroke={OLIVE} strokeWidth="1.5" transform="rotate(-35 266 160)"/>
+      <ellipse cx="260" cy="138" rx="8.5" ry="4.3" fill={OLIVE_FILL} stroke={OLIVE} strokeWidth="1.5" transform="rotate(30 260 138)"/>
+      <ellipse cx="271" cy="118" rx="7.5" ry="4" fill={OLIVE_FILL} stroke={OLIVE} strokeWidth="1.5" transform="rotate(-30 271 118)"/>
 
       {/* Tasse de café + vapeur */}
-      <path d="M220 43 C222 38 222 33 219 28" fill="none" stroke={INK} strokeWidth="2" strokeLinecap="round"/>
-      <path d="M232 40 C234 35 234 30 231 25" fill="none" stroke={INK} strokeWidth="2" strokeLinecap="round"/>
+      <path d="M225 30 C221 24 224 18 231 15 C227 21 227 26 231 31" fill="none" stroke={INK} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
       <ellipse cx="225" cy="84" rx="34" ry="7.5" fill={fill} stroke={INK} strokeWidth="2.6"/>
       <path d="M203 53 L207 78 C207 78 214 84 225 84 C236 84 243 78 243 78 L247 53 Z" fill={fill} stroke={INK} strokeWidth="2.6" strokeLinejoin="round"/>
+      <path d="M206 55 C213 60 237 60 244 55" fill="none" stroke={INK} strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M247 58 C256 58 259 68 253 74 C250 77 246 77 244 75" fill="none" stroke={INK} strokeWidth="2.4" strokeLinecap="round"/>
 
       {/* Part de gâteau + cerise */}
-      <circle cx="129" cy="34" r="5.5" fill="#D65A5A" stroke={INK} strokeWidth="1.8"/>
+      <path d="M120 20 C116 15 117 10 122 6" fill="none" stroke={INK} strokeWidth="1.6" strokeLinecap="round"/>
+      <circle cx="129" cy="34" r="5.5" fill={CHERRY} stroke={INK} strokeWidth="1.8"/>
       <path d="M129 29 C129 24 132 21 135 20" fill="none" stroke={INK} strokeWidth="1.6" strokeLinecap="round"/>
       <path d="M100 46 C100 46 108 42 129 42 C150 42 158 46 158 46 L146 100 C146 100 138 108 129 108 C120 108 112 100 112 100 Z"
             fill={fill} stroke={INK} strokeWidth="2.6" strokeLinejoin="round"/>
@@ -54,13 +62,14 @@ function IllustrationVitrine() {
       <path d="M154 208 C157 213 158 217 156 222" fill="none" stroke={INK} strokeWidth="1.8" strokeLinecap="round"/>
 
       {/* Pain */}
-      <ellipse cx="221" cy="200" rx="42" ry="21" fill={fill} stroke={INK} strokeWidth="2.6"/>
-      <path d="M191 186 L201 210" stroke={INK} strokeWidth="2" strokeLinecap="round"/>
-      <path d="M210 182 L220 212" stroke={INK} strokeWidth="2" strokeLinecap="round"/>
-      <path d="M231 183 L241 210" stroke={INK} strokeWidth="2" strokeLinecap="round"/>
+      <ellipse cx="200" cy="182" rx="40" ry="20" fill={fill} stroke={INK} strokeWidth="2.6"/>
+      <path d="M171 168 L181 192" stroke={INK} strokeWidth="2" strokeLinecap="round"/>
+      <path d="M189 165 L199 194" stroke={INK} strokeWidth="2" strokeLinecap="round"/>
+      <path d="M209 166 L219 192" stroke={INK} strokeWidth="2" strokeLinecap="round"/>
 
       {/* Cupcake + cerise */}
-      <circle cx="60" cy="145" r="4.5" fill="#D65A5A" stroke={INK} strokeWidth="1.6"/>
+      <circle cx="60" cy="145" r="4.5" fill={CHERRY} stroke={INK} strokeWidth="1.6"/>
+      <path d="M60 140 C60 136 58 133 55 132" fill="none" stroke={INK} strokeWidth="1.4" strokeLinecap="round"/>
       <path d="M42 172 C46 158 52 150 60 150 C68 150 74 158 78 172"
             fill={fill} stroke={INK} strokeWidth="2.4" strokeLinejoin="round"/>
       <path d="M38 172 L46 200 L74 200 L82 172 Z" fill={fill} stroke={INK} strokeWidth="2.4" strokeLinejoin="round"/>
@@ -69,10 +78,10 @@ function IllustrationVitrine() {
       <path d="M74 178 L70 194" stroke={INK} strokeWidth="1.5" strokeLinecap="round"/>
 
       {/* Points décoratifs */}
-      <circle cx="185" cy="30" r="2.6" fill="#E3B37E"/>
-      <circle cx="270" cy="100" r="2.2" fill="#E3B37E"/>
-      <circle cx="40" cy="110" r="2.2" fill="#E3B37E"/>
-      <circle cx="205" cy="245" r="2.4" fill="#9CAF88"/>
+      <circle cx="185" cy="24" r="2.6" fill="#E3B37E"/>
+      <circle cx="278" cy="78" r="2.2" fill="#E3B37E"/>
+      <circle cx="34" cy="108" r="2.2" fill="#E3B37E"/>
+      <circle cx="284" cy="96" r="1.8" fill="#E3B37E"/>
     </svg>
   )
 }
@@ -339,8 +348,8 @@ export default function RoleSelector() {
               style={{
                 position: 'absolute',
                 inset: '4%',
-                borderRadius: '62% 38% 55% 45% / 48% 52% 48% 52%',
-                background: 'radial-gradient(circle at 38% 32%, #FFF6DD 0%, #FFEEBE 55%, #FBE3B0 100%)',
+                borderRadius: '58% 42% 52% 48% / 42% 46% 54% 58%',
+                background: 'radial-gradient(circle at 40% 30%, #FDEED2 0%, #FBE3B6 100%)',
                 boxShadow: 'inset 0 0 0 1px rgba(67,47,46,0.06)',
                 overflow: 'hidden',
               }}
