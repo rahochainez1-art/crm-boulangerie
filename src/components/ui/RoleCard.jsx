@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react'
 
-export default function RoleCard({ title, description, icon: Icon, iconBg, iconColor, onClick, isHighlighted = false }) {
+export default function RoleCard({ title, description, icon: Icon, iconBg, iconColor, onClick }) {
   return (
     <button
       onClick={onClick}
@@ -37,10 +37,11 @@ export default function RoleCard({ title, description, icon: Icon, iconBg, iconC
           height: 44,
           borderRadius: 9999,
           flexShrink: 0,
-          backgroundColor: isHighlighted ? '#FFF0B5' : '#432F2E',
+          backgroundColor: iconBg,
+          border: '1px solid rgba(67,47,46,0.12)',
         }}
       >
-        <ArrowRight size={18} strokeWidth={2.2} color={isHighlighted ? '#432F2E' : '#FFFFFF'} />
+        <ArrowRight size={18} strokeWidth={2.2} color={iconColor} />
       </div>
     </button>
   )

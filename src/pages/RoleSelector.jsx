@@ -20,7 +20,6 @@ const ROLES = [
     icon:        ShoppingBag,
     iconBg:      '#FFF0B5',
     iconColor:   '#432F2E',
-    isHighlighted: true,
   },
   {
     id:          'patissiere',
@@ -144,7 +143,6 @@ export default function RoleSelector() {
               icon={r.icon}
               iconBg={r.iconBg}
               iconColor={r.iconColor}
-              isHighlighted={r.isHighlighted}
               onClick={() => select(r.id)}
             />
           ))}
