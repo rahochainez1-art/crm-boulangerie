@@ -37,11 +37,10 @@ export default function RoleCard({ title, description, icon: Icon, iconBg, iconC
           height: 44,
           borderRadius: 9999,
           flexShrink: 0,
-          backgroundColor: iconBg,
-          border: '1px solid rgba(67,47,46,0.12)',
+          backgroundColor: '#432F2E',
         }}
       >
-        <ArrowRight size={18} strokeWidth={2.2} color={iconColor} />
+        <ArrowRight size={18} strokeWidth={2.2} color="#FFFCF7" />
       </div>
     </button>
   )
