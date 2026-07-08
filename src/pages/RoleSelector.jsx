@@ -121,7 +121,7 @@ export default function RoleSelector() {
             </p>
           </div>
 
-          <div className="flex-shrink-0" style={{ width: 'clamp(120px, 34vw, 168px)', height: 'clamp(120px, 34vw, 168px)' }}>
+          <div className="flex-shrink-0" style={{ width: 'clamp(112px, 30vw, 156px)', height: 'clamp(135px, 36vw, 188px)' }}>
             <HeroIllustration />
           </div>
         </div>
