@@ -48,91 +48,125 @@ export default function MesCommandes() {
     return myOrders
   }, [myOrders, tab])
 
-  // Pas encore de prénom sauvegardé
+  // Saisie du prénom
   if (!vendeurName) {
     return (
-      <div className="min-h-dvh bg-cream flex flex-col max-w-lg mx-auto px-5 justify-center"
-        style={{ paddingBottom: 'max(96px, env(safe-area-inset-bottom))' }}>
-        <h1 className="font-serif text-3xl font-bold text-ink mb-2">Votre prénom ?</h1>
-        <p className="text-dust mb-8">Pour retrouver vos commandes.</p>
-        <form onSubmit={(e) => { e.preventDefault(); const t = nameInput.trim(); if (t) setVendeurName(t) }}
-          className="space-y-4">
+      <div
+        className="min-h-dvh flex flex-col max-w-lg mx-auto px-5 justify-center"
+        style={{ backgroundColor: '#F5F2EB', paddingBottom: 'max(96px, env(safe-area-inset-bottom))' }}
+      >
+        <p className="label-xs mb-3">Au Grand Jour</p>
+        <h1 className="font-display mb-2" style={{ fontSize: '1.75rem', color: '#111111' }}>
+          Votre prénom ?
+        </h1>
+        <p style={{ fontSize: '0.875rem', color: '#8A7060', marginBottom: '2rem', fontFamily: 'Satoshi' }}>
+          Pour retrouver vos commandes.
+        </p>
+        <form
+          onSubmit={(e) => { e.preventDefault(); const t = nameInput.trim(); if (t) setVendeurName(t) }}
+          className="space-y-3"
+        >
           <input
-            autoFocus value={nameInput}
+            autoFocus
+            value={nameInput}
             onChange={e => setNameInput(e.target.value)}
-            placeholder="Ex : Sophie" className="field text-lg" required
+            placeholder="Ex : Sophie"
+            className="field"
+            style={{ fontSize: '1.0625rem' }}
+            required
           />
           <button type="submit" disabled={!nameInput.trim()} className="btn-primary disabled:opacity-40">
             Valider
           </button>
         </form>
-  
       </div>
     )
   }
 
   return (
-    <div className="min-h-dvh bg-cream flex flex-col max-w-lg mx-auto">
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5F2EB' }}>
+
+      {/* Header */}
       <header
-        className="bg-cream px-5 pb-4 border-b border-warm"
-        style={{ paddingTop: 'max(48px, env(safe-area-inset-top))' }}
+        className="px-5 pb-5"
+        style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}
       >
-        <p className="label-xs mb-1">Au Grand Jour</p>
+        <p className="label-xs mb-3">Au Grand Jour</p>
         <div className="flex items-end justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-ink">Mes commandes</h1>
-            <p className="text-sm text-dust">{vendeurName}</p>
+            <h1 className="font-display" style={{ fontSize: '1.75rem', color: '#111111', letterSpacing: '-0.025em' }}>
+              Mes commandes
+            </h1>
+            <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 4 }}>
+              {vendeurName}
+            </p>
           </div>
           {counts.all > 0 && (
-            <span className="text-xs font-bold text-dust">
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi' }}>
               {counts.all} commande{counts.all > 1 ? 's' : ''}
             </span>
           )}
         </div>
       </header>
 
-      {/* Filtres */}
-      <div className="flex gap-1.5 px-4 pt-4 overflow-x-auto scrollbar-none pb-1">
-        {TABS.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
-              tab === t.id ? 'bg-ink text-chalk' : 'bg-chalk text-dust border border-warm'
-            }`}
-          >
-            {t.label}
-            {counts[t.id] > 0 && (
-              <span className={`ml-1.5 text-xs ${tab === t.id ? 'opacity-50' : 'opacity-60'}`}>
-                {counts[t.id]}
-              </span>
-            )}
-          </button>
-        ))}
+      {/* Chips de filtre */}
+      <div className="flex gap-2 px-5 pb-4 overflow-x-auto scrollbar-none">
+        {TABS.map(t => {
+          const isTabActive = tab === t.id
+          return (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className="flex-shrink-0 active:scale-95 transition-transform"
+              style={{
+                padding: '0.375rem 0.875rem',
+                borderRadius: 9999,
+                backgroundColor: isTabActive ? '#432F2E' : 'rgba(67,47,46,0.07)',
+                color: isTabActive ? '#FFFFFF' : '#8A7060',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'Satoshi',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              {t.label}
+              {counts[t.id] > 0 && (
+                <span style={{ marginLeft: 4, opacity: isTabActive ? 0.6 : 0.7 }}>
+                  · {counts[t.id]}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
 
       {/* Liste */}
-      <main className="flex-1 px-4 pt-3 pb-28 overflow-y-auto space-y-2">
+      <main className="flex-1 px-5 pb-28 overflow-y-auto space-y-2.5">
         {filtered.length === 0 ? (
-          <div className="bg-chalk border border-warm rounded-2xl px-5 py-12 text-center mt-2">
-            <p className="text-dust text-sm">
-              {myOrders.length === 0 ? 'Aucune commande pour le moment' : 'Aucune commande dans cette catégorie'}
+          <div
+            className="rounded-[20px] px-5 py-12 text-center mt-2"
+            style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(67,47,46,0.07)' }}
+          >
+            <p style={{ fontSize: '0.875rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
+              {myOrders.length === 0 ? 'Aucune commande pour le moment' : 'Aucune commande ici'}
             </p>
           </div>
         ) : (
-          filtered.map(order => <OrderCard key={order.id} order={order} />)
+          filtered.map((order, i) => (
+            <OrderCard key={order.id} order={order} index={i} />
+          ))
         )}
       </main>
-
-
     </div>
   )
 }
 
-function OrderCard({ order }) {
-  const [editing,     setEditing]     = useState(false)
-  const [cancelling,  setCancelling]  = useState(false)
-  const [busy,        setBusy]        = useState(false)
+function OrderCard({ order, index }) {
+  const [editing,    setEditing]    = useState(false)
+  const [cancelling, setCancelling] = useState(false)
+  const [busy,       setBusy]       = useState(false)
 
   const pickupDate = parseISO(order.pickupDate)
   const [form, setForm] = useState({
@@ -164,8 +198,7 @@ function OrderCard({ order }) {
       setEditing(false)
     } catch {
       toast.error('Erreur lors de la mise à jour')
-    } finally {
-      setBusy(false) }
+    } finally { setBusy(false) }
   }
 
   const handleCancel = async () => {
@@ -175,39 +208,53 @@ function OrderCard({ order }) {
       toast.success('Commande annulée')
       setCancelling(false)
     } catch {
-      toast.error('Erreur lors de l\'annulation')
-    } finally {
-      setBusy(false)
-    }
+      toast.error("Erreur lors de l'annulation")
+    } finally { setBusy(false) }
   }
 
   const isCancelled = order.status === 'cancelled'
   const isDone      = order.status === 'done'
   const canEdit     = !isCancelled && !isDone
+  const reste       = (order.totalAmount || 0) - (order.deposit || 0)
 
   return (
-    <div className={`bg-chalk border rounded-2xl overflow-hidden transition-all ${
-      isCancelled ? 'border-red-100 opacity-70' : 'border-warm'
-    }`}>
-
+    <div
+      className="overflow-hidden animate-fade-up"
+      style={{
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
+        border: isCancelled ? '1px solid rgba(239,68,68,0.15)' : '1px solid rgba(67,47,46,0.08)',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(67,47,46,0.06)',
+        opacity: isCancelled ? 0.75 : 1,
+        animationDelay: `${index * 0.03}s`,
+      }}
+    >
       {/* Vue résumé */}
       <div className="p-4">
-        <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex items-start justify-between gap-3 mb-2">
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-ink truncate">{order.clientName}</p>
-            <p className="text-sm text-dust truncate mt-0.5">{order.articles}</p>
+            <p style={{ fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', fontSize: '0.9375rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {order.clientName}
+            </p>
+            <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>
+              {order.articles}
+            </p>
           </div>
           <StatusBadge status={order.status} />
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-dust mt-2 flex-wrap">
-          <span>📅 {format(pickupDate, 'dd MMM à HH:mm', { locale: fr })}</span>
+        <div className="flex items-center gap-3 flex-wrap" style={{ marginTop: 8 }}>
+          <span style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
+            {format(pickupDate, 'dd MMM à HH:mm', { locale: fr })}
+          </span>
           {order.totalAmount > 0 && (
-            <span className="font-semibold text-ink">{order.totalAmount} €</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>
+              {order.totalAmount} €
+            </span>
           )}
-          {(order.totalAmount - (order.deposit || 0)) > 0 && (
-            <span className="text-amber-700 font-semibold">
-              ({order.totalAmount - order.deposit} € à encaisser)
+          {reste > 0 && (
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi' }}>
+              ({reste} € à encaisser)
             </span>
           )}
         </div>
@@ -217,14 +264,35 @@ function OrderCard({ order }) {
           <div className="flex gap-2 mt-3">
             <button
               onClick={() => setEditing(true)}
-              className="flex-1 py-2 rounded-xl text-xs font-bold bg-parchment text-dust border border-warm active:opacity-70"
+              className="flex-1 active:opacity-70"
+              style={{
+                padding: '0.5rem',
+                borderRadius: 10,
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                backgroundColor: 'rgba(67,47,46,0.06)',
+                color: '#432F2E',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'Satoshi',
+              }}
             >
               Modifier
             </button>
             {!cancelling ? (
               <button
                 onClick={() => setCancelling(true)}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-red-500 border border-red-100 bg-red-50/50 active:opacity-70"
+                style={{
+                  padding: '0.5rem 1rem',
+                  borderRadius: 10,
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  color: '#EF4444',
+                  backgroundColor: 'rgba(239,68,68,0.06)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'Satoshi',
+                }}
               >
                 Annuler
               </button>
@@ -233,13 +301,34 @@ function OrderCard({ order }) {
                 <button
                   onClick={handleCancel}
                   disabled={busy}
-                  className="px-3 py-2 rounded-xl text-xs font-bold bg-red-500 text-white active:opacity-70 disabled:opacity-50"
+                  style={{
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: 10,
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    backgroundColor: '#EF4444',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontFamily: 'Satoshi',
+                    opacity: busy ? 0.5 : 1,
+                  }}
                 >
                   {busy ? '…' : 'Confirmer'}
                 </button>
                 <button
                   onClick={() => setCancelling(false)}
-                  className="px-3 py-2 rounded-xl text-xs font-bold bg-parchment text-dust border border-warm active:opacity-70"
+                  style={{
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: 10,
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    backgroundColor: 'rgba(67,47,46,0.06)',
+                    color: '#8A7060',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontFamily: 'Satoshi',
+                  }}
                 >
                   Non
                 </button>
@@ -251,8 +340,11 @@ function OrderCard({ order }) {
 
       {/* Formulaire d'édition inline */}
       {editing && (
-        <div className="border-t border-warm px-4 pb-4 pt-3 space-y-3">
-          <p className="text-[10px] font-bold text-dust uppercase tracking-widest">Modifier</p>
+        <div
+          className="px-4 pb-4 pt-3 space-y-3"
+          style={{ borderTop: '1px solid rgba(67,47,46,0.07)' }}
+        >
+          <p className="label-xs">Modifier</p>
 
           <div className="space-y-2">
             <input value={form.clientName}  onChange={set('clientName')}  className="field" placeholder="Nom client" />
@@ -268,11 +360,11 @@ function OrderCard({ order }) {
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-[10px] text-dust mb-1">Acompte (€)</p>
+              <p style={{ fontSize: '0.6875rem', color: '#8A7060', marginBottom: 4, fontFamily: 'Satoshi' }}>Acompte (€)</p>
               <input type="number" value={form.deposit}     onChange={set('deposit')}     className="field" min="0" step="0.5" />
             </div>
             <div>
-              <p className="text-[10px] text-dust mb-1">Total (€)</p>
+              <p style={{ fontSize: '0.6875rem', color: '#8A7060', marginBottom: 4, fontFamily: 'Satoshi' }}>Total (€)</p>
               <input type="number" value={form.totalAmount} onChange={set('totalAmount')} className="field" min="0" step="0.5" />
             </div>
           </div>
@@ -283,13 +375,34 @@ function OrderCard({ order }) {
             <button
               onClick={handleSave}
               disabled={busy}
-              className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-ink text-chalk active:opacity-70 disabled:opacity-50"
+              className="flex-1 active:opacity-70 disabled:opacity-40"
+              style={{
+                padding: '0.625rem',
+                borderRadius: 12,
+                fontSize: '0.875rem',
+                fontWeight: 700,
+                backgroundColor: '#432F2E',
+                color: '#FFFFFF',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'Satoshi',
+              }}
             >
               {busy ? 'Enregistrement...' : 'Sauvegarder'}
             </button>
             <button
               onClick={() => setEditing(false)}
-              className="px-4 py-2.5 rounded-xl text-sm font-bold bg-parchment text-dust border border-warm active:opacity-70"
+              style={{
+                padding: '0.625rem 1rem',
+                borderRadius: 12,
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                backgroundColor: 'rgba(67,47,46,0.06)',
+                color: '#8A7060',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'Satoshi',
+              }}
             >
               Annuler
             </button>

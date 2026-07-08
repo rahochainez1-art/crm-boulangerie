@@ -2,44 +2,37 @@ import { useNavigate } from 'react-router-dom'
 import { useRole } from '../context/RoleContext'
 
 function IllustrationBoulangerie() {
-  const S = '#432F2E'
-  const W = '1.9'
-  const WS = '1.5'
+  const S    = '#2A1810'
+  const sw   = '3.2'
+  const sw2  = '2.2'
+  const fill = '#FFF9F0'
   return (
-    <svg viewBox="0 0 200 210" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-      <ellipse cx="115" cy="105" rx="72" ry="80" fill="#FFF0B5"/>
-      <ellipse cx="62"  cy="172" rx="30"  ry="22" fill="#FAE0C8"/>
-      <ellipse cx="108" cy="194" rx="38" ry="7"   fill="white" stroke={S} strokeWidth={W}/>
-      <rect   x="104"  y="170"  width="8" height="25" rx="4" fill="white" stroke={S} strokeWidth={W}/>
-      <ellipse cx="108" cy="170" rx="28" ry="5"   fill="white" stroke={S} strokeWidth={W}/>
-      <path d="M80 145 L80 170" stroke={S} strokeWidth={W}/>
-      <path d="M136 145 L136 170" stroke={S} strokeWidth={W}/>
-      <path d="M80 170 Q108 177 136 170" stroke={S} strokeWidth={W} fill="none"/>
-      <ellipse cx="108" cy="145" rx="28" ry="5"   fill="white" stroke={S} strokeWidth={W}/>
-      <path d="M80 155 C84 149 88 161 92 155 C96 149 100 161 104 155 C108 149 112 161 116 155 C120 149 124 161 128 155 C132 149 136 155 136 155"
-            stroke={S} strokeWidth={WS} strokeLinecap="round" fill="none"/>
-      <path d="M88 122 L88 145" stroke={S} strokeWidth={W}/>
-      <path d="M128 122 L128 145" stroke={S} strokeWidth={W}/>
-      <path d="M88 145 Q108 151 128 145" stroke={S} strokeWidth={W} fill="none"/>
-      <ellipse cx="108" cy="122" rx="20" ry="4"   fill="white" stroke={S} strokeWidth={W}/>
-      <circle cx="96"  cy="133" r="2" fill={S}/>
-      <circle cx="108" cy="130" r="2" fill={S}/>
-      <circle cx="120" cy="133" r="2" fill={S}/>
-      <path d="M95 103 L95 122" stroke={S} strokeWidth={W}/>
-      <path d="M121 103 L121 122" stroke={S} strokeWidth={W}/>
-      <path d="M95 122 Q108 127 121 122" stroke={S} strokeWidth={W} fill="none"/>
-      <ellipse cx="108" cy="103" rx="13" ry="3"   fill="white" stroke={S} strokeWidth={W}/>
-      <circle cx="102" cy="112" r="1.5" fill="none" stroke={S} strokeWidth="1.2"/>
-      <circle cx="108" cy="110" r="1.5" fill="none" stroke={S} strokeWidth="1.2"/>
-      <circle cx="114" cy="112" r="1.5" fill="none" stroke={S} strokeWidth="1.2"/>
-      <rect x="105" y="90" width="6" height="13" rx="3" fill="white" stroke={S} strokeWidth={WS}/>
-      <path d="M108 90 C106 85 105 81 108 78 C111 81 110 85 108 90Z" fill="white" stroke={S} strokeWidth="1.4" strokeLinecap="round"/>
-      <ellipse cx="68" cy="182" rx="18" ry="12" fill="white" stroke={S} strokeWidth={W}/>
-      <path d="M56 180 C61 173 75 173 80 180" stroke={S} strokeWidth={WS} strokeLinecap="round" fill="none"/>
-      <path d="M144 158 C146 140 166 130 180 138 C192 144 192 162 182 172 C170 182 144 178 142 164 Z"
-            fill="white" stroke={S} strokeWidth={W} strokeLinejoin="round"/>
-      <path d="M152 141 C150 153 151 163 152 172" stroke={S} strokeWidth={WS} strokeLinecap="round"/>
-      <path d="M164 134 C162 147 163 158 164 170" stroke={S} strokeWidth={WS} strokeLinecap="round"/>
+    <svg viewBox="-16 -14 292 243" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+      <ellipse cx="152" cy="209" rx="112" ry="11" fill="#F5E0BE" opacity="0.75"/>
+      <ellipse cx="100" cy="201" rx="62" ry="9"   fill={fill} stroke={S} strokeWidth={sw}/>
+      <ellipse cx="100" cy="197" rx="54" ry="7"   fill="none"  stroke={S} strokeWidth="1.8"/>
+      <path d="M91 174 C95 181 95 188 91 194 L109 194 C105 188 105 181 109 174 Z"
+            fill={fill} stroke={S} strokeWidth={sw} strokeLinejoin="round"/>
+      <ellipse cx="100" cy="163" rx="70" ry="11"  fill={fill} stroke={S} strokeWidth={sw}/>
+      <ellipse cx="100" cy="158" rx="62" ry="8.5" fill="none"  stroke={S} strokeWidth="1.8"/>
+      <rect x="52" y="44" width="96" height="108" fill={fill}/>
+      <ellipse cx="100" cy="44" rx="48" ry="9" fill={fill}/>
+      <line x1="52"  y1="44" x2="52"  y2="152" stroke={S} strokeWidth={sw} strokeLinecap="round"/>
+      <line x1="148" y1="44" x2="148" y2="152" stroke={S} strokeWidth={sw} strokeLinecap="round"/>
+      <ellipse cx="100" cy="44" rx="48" ry="9" fill={fill} stroke={S} strokeWidth={sw}/>
+      <path d="M52 108 Q64 127 76 108 Q88 127 100 108 Q112 127 124 108 Q136 127 148 108"
+            fill="none" stroke={S} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M69 74 L80 81"  stroke={S} strokeWidth="2.8" strokeLinecap="round"/>
+      <path d="M103 70 L114 77" stroke={S} strokeWidth="2.8" strokeLinecap="round"/>
+      <path d="M84 43 C78 36 75 22 80 11 C83 4 91 1 100 3 C109 1 117 4 120 11 C125 22 122 36 116 43 Z"
+            fill={fill} stroke={S} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round"/>
+      <ellipse cx="207" cy="175" rx="52" ry="27" fill={fill} stroke={S} strokeWidth={sw}/>
+      <path d="M165 160 C172 167 176 173 180 179" stroke={S} strokeWidth={sw2} strokeLinecap="round"/>
+      <path d="M182 156 C189 163 193 169 197 175" stroke={S} strokeWidth={sw2} strokeLinecap="round"/>
+      <path d="M199 155 C206 162 210 168 214 174" stroke={S} strokeWidth={sw2} strokeLinecap="round"/>
+      <ellipse cx="178" cy="196" rx="28" ry="18" fill={fill} stroke={S} strokeWidth={sw}/>
+      <path d="M168 189 Q178 182 188 189" stroke={S} strokeWidth={sw2} strokeLinecap="round" fill="none"/>
+      <circle cx="168" cy="197" r="2.5" fill={S}/>
     </svg>
   )
 }
@@ -141,8 +134,8 @@ export default function RoleSelector() {
     >
 
       {/* ── En-tête ─────────────────────────────────────────── */}
-      <div className="flex items-start justify-between mb-8 animate-fade-up">
-        <div className="flex-1 pr-4 pt-1">
+      <div className="flex items-start justify-between gap-3 mb-8 animate-fade-up">
+        <div className="flex-1 pt-1" style={{ minWidth: 0 }}>
           <h1
             className="font-display"
             style={{ fontSize: '2.625rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: 10 }}
@@ -161,7 +154,25 @@ export default function RoleSelector() {
         </div>
 
         {/* Illustration */}
-        <div className="flex-shrink-0" style={{ width: 148, height: 148 }}>
+        <div
+          className="flex-shrink-0 flex items-center justify-center"
+          style={{
+            alignSelf: 'center',
+            width: 'clamp(148px, 42vw, 188px)',
+            height: 'clamp(148px, 42vw, 188px)',
+            position: 'relative',
+          }}
+        >
+          {/* Halo décoratif */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: '6%',
+              borderRadius: '9999px',
+              background: 'radial-gradient(circle at 38% 32%, #FFF6DD 0%, #FFEEBE 55%, #FBE3B0 100%)',
+              boxShadow: 'inset 0 0 0 1px rgba(67,47,46,0.06)',
+            }}
+          />
           <IllustrationBoulangerie />
         </div>
       </div>

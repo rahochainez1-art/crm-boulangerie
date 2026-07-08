@@ -168,8 +168,8 @@ function VendeurNav() {
   const navigate = useNavigate()
   return (
     <NavShell>
-      <NavItem to="/vendeur"            label="Accueil"    Icon={IconHome}    end />
-      <NavItem to="/vendeur/historique" label="Historique" Icon={IconClock} />
+      <NavItem to="/vendeur"                  label="Accueil"   Icon={IconHome} end />
+      <NavItem to="/vendeur/mes-commandes"    label="Mes cmdes" Icon={IconList} />
       <PlusButton onClick={() => navigate('/vendeur/nouvelle-commande')} />
       <NavLink to="/vendeur/profil" end className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors">
         {({ isActive }) => (
