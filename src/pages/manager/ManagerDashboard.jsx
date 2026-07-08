@@ -9,6 +9,7 @@ import { fr } from 'date-fns/locale'
 import { useNavigate } from 'react-router-dom'
 import { subscribeOrders, isAssignedTo } from '../../lib/orders'
 import { getPrenom } from '../../lib/settings'
+import HeroIllustration from '../../components/ui/HeroIllustration'
 
 // ── Anecdotes florales ────────────────────────────────────────────────────
 const ANECDOTES = [
@@ -71,70 +72,6 @@ function IllustrationLys() {
       <circle cx="63" cy="50" r="2" fill="#EDD83D"/>
       <path d="M55 61 L48 52" stroke="#C8960C" strokeWidth="1.5" strokeLinecap="round"/>
       <circle cx="47" cy="50" r="2" fill="#EDD83D"/>
-    </svg>
-  )
-}
-
-function IllustrationBoulangerie() {
-  const S    = '#2A1810'
-  const sw   = '3.2'
-  const sw2  = '2.2'
-  const fill = '#FFF9F0'
-  return (
-    <svg viewBox="0 0 260 215" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-
-      {/* ── Ombre au sol ── */}
-      <ellipse cx="152" cy="209" rx="112" ry="11" fill="#F5E0BE" opacity="0.75"/>
-
-      {/* ── SOCLE – plateau bas ── */}
-      <ellipse cx="100" cy="201" rx="62" ry="9"   fill={fill} stroke={S} strokeWidth={sw}/>
-      <ellipse cx="100" cy="197" rx="54" ry="7"   fill="none"  stroke={S} strokeWidth="1.8"/>
-
-      {/* ── SOCLE – tige sablier ── */}
-      <path d="M91 174 C95 181 95 188 91 194 L109 194 C105 188 105 181 109 174 Z"
-            fill={fill} stroke={S} strokeWidth={sw} strokeLinejoin="round"/>
-
-      {/* ── SOCLE – plateau haut ── */}
-      <ellipse cx="100" cy="163" rx="70" ry="11"  fill={fill} stroke={S} strokeWidth={sw}/>
-      <ellipse cx="100" cy="158" rx="62" ry="8.5" fill="none"  stroke={S} strokeWidth="1.8"/>
-
-      {/* ── GÂTEAU – corps (remplissage propre) ── */}
-      <rect x="52" y="44" width="96" height="108" fill={fill}/>
-      <ellipse cx="100" cy="44" rx="48" ry="9" fill={fill}/>
-
-      {/* ── GÂTEAU – parois ── */}
-      <line x1="52"  y1="44" x2="52"  y2="152" stroke={S} strokeWidth={sw} strokeLinecap="round"/>
-      <line x1="148" y1="44" x2="148" y2="152" stroke={S} strokeWidth={sw} strokeLinecap="round"/>
-
-      {/* ── GÂTEAU – dessus ── */}
-      <ellipse cx="100" cy="44" rx="48" ry="9" fill={fill} stroke={S} strokeWidth={sw}/>
-
-      {/* ── GLAÇAGE ONDULÉ – 4 demi-cercles vers le bas ── */}
-      <path d="M52 108 Q64 127 76 108 Q88 127 100 108 Q112 127 124 108 Q136 127 148 108"
-            fill="none" stroke={S} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round"/>
-
-      {/* ── INCISIONS (tirets) ── */}
-      <path d="M69 74 L80 81"  stroke={S} strokeWidth="2.8" strokeLinecap="round"/>
-      <path d="M103 70 L114 77" stroke={S} strokeWidth="2.8" strokeLinecap="round"/>
-
-      {/* ── CHANTILLY sur le dessus ── */}
-      <path d="M84 43 C78 36 75 22 80 11 C83 4 91 1 100 3 C109 1 117 4 120 11 C125 22 122 36 116 43 Z"
-            fill={fill} stroke={S} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round"/>
-
-      {/* ── PAIN – grande miche (droite) ── */}
-      <ellipse cx="207" cy="175" rx="52" ry="27" fill={fill} stroke={S} strokeWidth={sw}/>
-      {/* grignures */}
-      <path d="M165 160 C172 167 176 173 180 179" stroke={S} strokeWidth={sw2} strokeLinecap="round"/>
-      <path d="M182 156 C189 163 193 169 197 175" stroke={S} strokeWidth={sw2} strokeLinecap="round"/>
-      <path d="M199 155 C206 162 210 168 214 174" stroke={S} strokeWidth={sw2} strokeLinecap="round"/>
-
-      {/* ── PETIT PAIN – devant ── */}
-      <ellipse cx="178" cy="196" rx="28" ry="18" fill={fill} stroke={S} strokeWidth={sw}/>
-      {/* grignure */}
-      <path d="M168 189 Q178 182 188 189" stroke={S} strokeWidth={sw2} strokeLinecap="round" fill="none"/>
-      {/* point */}
-      <circle cx="168" cy="197" r="2.5" fill={S}/>
-
     </svg>
   )
 }
@@ -284,14 +221,14 @@ function AnecdoteCard() {
     <div
       className="rounded-[20px] px-4 py-3.5 mb-4 flex items-center gap-3 animate-fade-up overflow-hidden"
       style={{
-        backgroundColor: '#FFF8D6',
-        border: '1px solid rgba(200,150,12,0.2)',
-        boxShadow: '0 2px 12px rgba(200,150,12,0.08)',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid rgba(67,47,46,0.08)',
+        boxShadow: '0 2px 16px rgba(67,47,46,0.05)',
         position: 'relative',
       }}
     >
       {/* Icône fleur gauche */}
-      <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: 'rgba(200,150,12,0.15)' }}>
+      <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: '#FFF0B5' }}>
         <IconFleurBadge />
       </div>
 
@@ -301,11 +238,11 @@ function AnecdoteCard() {
           <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#432F2E', fontFamily: 'Satoshi' }}>
             Anecdote du jour
           </p>
-          <span style={{ fontSize: '0.5625rem', fontWeight: 700, padding: '1px 7px', borderRadius: 9999, backgroundColor: 'rgba(200,150,12,0.18)', color: '#92400E', fontFamily: 'Satoshi' }}>
+          <span style={{ fontSize: '0.5625rem', fontWeight: 700, padding: '1px 7px', borderRadius: 9999, backgroundColor: 'rgba(67,47,46,0.08)', color: '#432F2E', fontFamily: 'Satoshi' }}>
             🌸 {anecdote.fleur}
           </span>
         </div>
-        <p style={{ fontSize: '0.75rem', color: '#5C4A30', fontFamily: 'Satoshi', lineHeight: 1.45 }}>
+        <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', lineHeight: 1.45 }}>
           {anecdote.texte}
         </p>
       </div>
@@ -321,9 +258,9 @@ function AnecdoteCard() {
 // ── Chips ─────────────────────────────────────────────────────────────────
 function Chip({ icon, label, urgent }) {
   return (
-    <div className="inline-flex items-center gap-1.5" style={{ padding: '0.25rem 0.6rem', borderRadius: 9999, backgroundColor: urgent ? '#FEE2E2' : 'rgba(67,47,46,0.07)', border: `1px solid ${urgent ? 'rgba(220,38,38,0.2)' : 'rgba(67,47,46,0.08)'}` }}>
-      <span style={{ color: urgent ? '#DC2626' : '#8A7060', display: 'flex', alignItems: 'center' }}>{icon}</span>
-      <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: urgent ? '#DC2626' : '#432F2E', fontFamily: 'Satoshi', whiteSpace: 'nowrap' }}>{label}</span>
+    <div className="inline-flex items-center gap-1.5" style={{ padding: '0.25rem 0.6rem', borderRadius: 9999, backgroundColor: urgent ? '#FEE2E2' : 'rgba(67,47,46,0.07)', border: `1px solid ${urgent ? 'rgba(185,28,28,0.18)' : 'rgba(67,47,46,0.08)'}` }}>
+      <span style={{ color: urgent ? '#B91C1C' : '#8A7060', display: 'flex', alignItems: 'center' }}>{icon}</span>
+      <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: urgent ? '#B91C1C' : '#432F2E', fontFamily: 'Satoshi', whiteSpace: 'nowrap' }}>{label}</span>
     </div>
   )
 }
@@ -355,26 +292,26 @@ function KpiStrip({ orders, navigate }) {
       value: todayAll.length, label: "Aujourd'hui",
       onClick: () => navigate('/manager/toutes', { state: { date: todayStr } }),
       detail: todayDiff !== 0 ? (
-        <span style={{ color: todayDiff > 0 ? '#10B981' : '#EF4444', fontSize: '0.6rem', fontWeight: 600, fontFamily: 'Satoshi' }}>
+        <span style={{ color: '#8A7060', fontSize: '0.6rem', fontWeight: 600, fontFamily: 'Satoshi' }}>
           {todayDiff > 0 ? `+${todayDiff}` : todayDiff} vs hier {todayDiff > 0 ? '↗' : '↘'}
         </span>
       ) : null,
     },
     {
-      Icon: IconHourglass, iconBg: '#DCEEF8', iconColor: '#432F2E',
+      Icon: IconHourglass, iconBg: 'rgba(67,47,46,0.08)', iconColor: '#432F2E',
       value: inProg.length, label: 'En cours',
       onClick: () => navigate('/manager/toutes', { state: { status: 'inprogress' } }),
       detail: (
         <div>
           {patisInProg > 0 && (
             <div className="flex items-center gap-1 mb-0.5">
-              <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#F472B6', display: 'block', flexShrink: 0 }} />
+              <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#D9A900', display: 'block', flexShrink: 0 }} />
               <span style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi' }}>{patisInProg} pâtis.</span>
             </div>
           )}
           {boulaInProg > 0 && (
             <div className="flex items-center gap-1">
-              <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#EDD83D', display: 'block', flexShrink: 0 }} />
+              <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#7A8C94', display: 'block', flexShrink: 0 }} />
               <span style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi' }}>{boulaInProg} boula.</span>
             </div>
           )}
@@ -382,17 +319,17 @@ function KpiStrip({ orders, navigate }) {
       ),
     },
     {
-      Icon: IconCheckCircle, iconBg: '#EBEBEB', iconColor: '#432F2E',
+      Icon: IconCheckCircle, iconBg: '#E5F0F5', iconColor: '#432F2E',
       value: readyNow, label: 'Prêtes',
       onClick: () => navigate('/manager/toutes', { state: { status: 'ready' } }),
       detail: null,
     },
     {
-      Icon: IconAlertCircle, iconBg: urgentOrders.length > 0 ? '#FEE2E2' : '#FFF0B5', iconColor: urgentOrders.length > 0 ? '#DC2626' : '#432F2E',
+      Icon: IconAlertCircle, iconBg: urgentOrders.length > 0 ? '#FEE2E2' : '#FFF6DD', iconColor: urgentOrders.length > 0 ? '#B91C1C' : '#432F2E',
       value: urgentOrders.length, label: 'Urgentes', urgent: urgentOrders.length > 0,
       onClick: () => navigate('/manager/toutes', { state: { status: 'urgent' } }),
       detail: urgentOrders.length > 0 ? (
-        <span style={{ color: '#DC2626', fontSize: '0.6rem', fontWeight: 600, fontFamily: 'Satoshi' }}>Retrait &lt; 2h</span>
+        <span style={{ color: '#B91C1C', fontSize: '0.6rem', fontWeight: 600, fontFamily: 'Satoshi' }}>Retrait &lt; 2h</span>
       ) : null,
     },
   ]
@@ -404,7 +341,7 @@ function KpiStrip({ orders, navigate }) {
           className="rounded-[16px] animate-fade-up text-left active:scale-[0.95] transition-transform flex flex-col"
           style={{
             backgroundColor: '#FFFFFF',
-            border: k.urgent ? '1px solid rgba(220,38,38,0.18)' : '1px solid rgba(67,47,46,0.07)',
+            border: k.urgent ? '1px solid rgba(185,28,28,0.18)' : '1px solid rgba(67,47,46,0.08)',
             boxShadow: '0 2px 12px rgba(67,47,46,0.04)',
             animationDelay: `${i * 0.06}s`,
             padding: '11px 10px 11px 10px',
@@ -415,11 +352,11 @@ function KpiStrip({ orders, navigate }) {
             <k.Icon size={20} />
           </div>
           {/* Nombre */}
-          <p className="font-display" style={{ fontSize: '1.75rem', color: k.urgent ? '#DC2626' : '#111111', letterSpacing: '-0.04em', lineHeight: 1, marginTop: 6 }}>
+          <p style={{ fontSize: '1.75rem', fontWeight: 700, fontFamily: 'Satoshi', color: k.urgent ? '#B91C1C' : '#111111', letterSpacing: '-0.02em', lineHeight: 1, marginTop: 6 }}>
             {k.value}
           </p>
           {/* Label */}
-          <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: k.urgent ? '#DC2626' : '#432F2E', fontFamily: 'Satoshi', marginTop: 4 }}>
+          <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: k.urgent ? '#B91C1C' : '#432F2E', fontFamily: 'Satoshi', marginTop: 4 }}>
             {k.label}
           </p>
           {/* Détail — espace réservé même si vide */}
@@ -449,7 +386,7 @@ function SurveillanceCard({ orders, onViewAll, navigate }) {
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
         <div className="flex items-center gap-2">
           <p style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>À surveiller aujourd'hui</p>
-          <span style={{ minWidth: 20, height: 20, borderRadius: 9999, backgroundColor: '#FEE2E2', color: '#DC2626', fontSize: '0.6875rem', fontWeight: 700, fontFamily: 'Satoshi', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px' }}>
+          <span style={{ minWidth: 20, height: 20, borderRadius: 9999, backgroundColor: '#FEE2E2', color: '#B91C1C', fontSize: '0.6875rem', fontWeight: 700, fontFamily: 'Satoshi', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px' }}>
             {urgent.length}
           </span>
         </div>
@@ -463,14 +400,14 @@ function SurveillanceCard({ orders, onViewAll, navigate }) {
           ? o.assignedTo.map(p => ({ patissiere: 'Pâtisserie', boulangerie: 'Boulangerie', vendeur: 'Vendeur·se' }[p] ?? p)).join(' + ')
           : ({ patissiere: 'Pâtisserie', boulangerie: 'Boulangerie', vendeur: 'Vendeur·se' }[o.assignedTo] ?? '—')
         const isPatis   = o.assignedTo === 'patissiere' || (Array.isArray(o.assignedTo) && o.assignedTo.includes('patissiere'))
-        const poleBg    = isPatis ? '#DCFCE7' : '#FEF3C7'
-        const poleColor = isPatis ? '#166534'  : '#92400E'
+        const poleBg    = isPatis ? '#FFF0B5' : '#E5F0F5'
+        const poleColor = '#432F2E'
 
         return (
           <button key={o.id} onClick={() => navigate('/manager/toutes', { state: { orderId: o.id } })}
             className="flex items-center gap-3 px-4 py-3.5 w-full text-left active:bg-black/[0.02]"
             style={{ borderTop: i > 0 ? '1px solid rgba(67,47,46,0.06)' : undefined }}>
-            <p style={{ fontSize: '1rem', fontWeight: 700, color: '#DC2626', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums', minWidth: 42, flexShrink: 0 }}>
+            <p style={{ fontSize: '1rem', fontWeight: 700, color: '#B91C1C', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums', minWidth: 42, flexShrink: 0 }}>
               {format(parseISO(o.pickupDate), 'HH:mm')}
             </p>
             <div style={{ flexShrink: 0 }}><IconCakeSmall /></div>
@@ -484,13 +421,13 @@ function SurveillanceCard({ orders, onViewAll, navigate }) {
                 <span style={{ backgroundColor: poleBg, color: poleColor, padding: '1px 8px', borderRadius: 9999, fontSize: '0.625rem', fontWeight: 600, fontFamily: 'Satoshi' }}>{poleStr}</span>
               </div>
               <div className="flex items-center gap-1 mt-1">
-                <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#EF4444', display: 'block' }} />
-                <span style={{ fontSize: '0.625rem', fontWeight: 700, color: '#EF4444', fontFamily: 'Satoshi' }}>Urgent</span>
+                <span style={{ width: 5, height: 5, borderRadius: 9999, backgroundColor: '#B91C1C', display: 'block' }} />
+                <span style={{ fontSize: '0.625rem', fontWeight: 700, color: '#B91C1C', fontFamily: 'Satoshi' }}>Urgent</span>
               </div>
             </div>
             <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
               <p style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi' }}>Retrait</p>
-              <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#DC2626', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums' }}>
+              <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#B91C1C', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums' }}>
                 {format(parseISO(o.pickupDate), 'HH:mm')}
               </p>
             </div>
@@ -556,7 +493,7 @@ function PlanningWidget({ orders, onViewAll, navigate }) {
 
       {/* Voir tout */}
       <button onClick={onViewAll} className="w-full flex items-center justify-between active:bg-black/[0.02]"
-        style={{ padding: '12px 16px', borderTop: '1px solid rgba(67,47,46,0.07)', background: 'none', border: 'none', borderTop: '1px solid rgba(67,47,46,0.07)', cursor: 'pointer' }}>
+        style={{ padding: '12px 16px', borderTop: '1px solid rgba(67,47,46,0.07)', background: 'none', border: 'none', cursor: 'pointer' }}>
         <div className="flex items-center gap-2">
           <div style={{ color: '#432F2E' }}><IconCalendar size={16} /></div>
           <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>Voir tout le planning</span>
@@ -571,9 +508,9 @@ function PlanningWidget({ orders, onViewAll, navigate }) {
 
 // ── Vue 3 jours ────────────────────────────────────────────────────────────
 const COLS_CONFIG = [
-  { badge: 'Demain',       colBg: '#FFFBEA', badgeBg: '#FEF3C7', badgeColor: '#92400E', urgentBorder: '#E8D88C',  offset: 1 },
-  { badge: 'Après-demain', colBg: '#F4F3F1', badgeBg: '#E5E5E0', badgeColor: '#6B6B60', urgentBorder: '#D0CDC8',  offset: 2 },
-  { badge: 'Dans 3 jours', colBg: '#EDE8E0', badgeBg: '#D9CFC4', badgeColor: '#5C3D2B', urgentBorder: '#C8BEB4', offset: 3 },
+  { badge: 'Demain',       colBg: '#FFF6DD',           badgeBg: '#FFF0B5',            badgeColor: '#432F2E', urgentBorder: 'rgba(67,47,46,0.18)', offset: 1 },
+  { badge: 'Après-demain', colBg: '#F5F2EB',           badgeBg: 'rgba(67,47,46,0.08)', badgeColor: '#432F2E', urgentBorder: 'rgba(67,47,46,0.15)', offset: 2 },
+  { badge: 'Dans 3 jours', colBg: 'rgba(67,47,46,0.04)', badgeBg: 'rgba(67,47,46,0.08)', badgeColor: '#432F2E', urgentBorder: 'rgba(67,47,46,0.15)', offset: 3 },
 ]
 
 function Vue3Jours({ orders, navigate }) {
@@ -602,7 +539,7 @@ function Vue3Jours({ orders, navigate }) {
             {/* Header */}
             <div>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 4, marginBottom: 3 }}>
-                <div className="font-display" style={{ fontSize: '1rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1.2, minWidth: 0 }}>
+                <div style={{ fontSize: '1rem', fontWeight: 700, fontFamily: 'Satoshi', color: '#111111', letterSpacing: '-0.02em', lineHeight: 1.2, minWidth: 0 }}>
                   <div>{dayName1}</div>
                   <div>{dayDate}</div>
                 </div>
@@ -691,13 +628,13 @@ function VueSemaine({ orders, navigate }) {
         return (
           <button key={i} onClick={() => navigate('/manager/toutes', { state: { date: format(day, 'yyyy-MM-dd') } })}
             className="flex flex-col items-center rounded-xl py-2 active:opacity-60 transition-opacity"
-            style={{ backgroundColor: isToday ? '#FFF8D6' : 'transparent', border: 'none', cursor: 'pointer' }}>
-            <p style={{ fontSize: '0.5rem', fontWeight: 700, color: isToday ? '#92400E' : '#8A7060', fontFamily: 'Satoshi', textAlign: 'center', marginBottom: 2 }}>
+            style={{ backgroundColor: isToday ? '#FFF6DD' : 'transparent', border: 'none', cursor: 'pointer' }}>
+            <p style={{ fontSize: '0.5rem', fontWeight: 700, color: isToday ? '#432F2E' : '#8A7060', fontFamily: 'Satoshi', textAlign: 'center', marginBottom: 2 }}>
               {DAY_ABR[i]}<br/>{format(day, 'd')}
             </p>
             <p style={{ fontSize: '1rem', fontWeight: 700, color: isToday ? '#432F2E' : '#111111', fontFamily: 'Satoshi', lineHeight: 1.2 }}>{count}</p>
-            <p style={{ fontSize: '0.4375rem', color: isToday ? '#92400E' : '#B0A090', fontFamily: 'Satoshi', marginBottom: 5 }}>cmdes</p>
-            <div style={{ width: 24, height: barH, borderRadius: 4, backgroundColor: isToday ? '#EDD83D' : '#E8E0D5' }} />
+            <p style={{ fontSize: '0.4375rem', color: isToday ? '#8A7060' : '#B0A090', fontFamily: 'Satoshi', marginBottom: 5 }}>cmdes</p>
+            <div style={{ width: 24, height: barH, borderRadius: 4, backgroundColor: isToday ? '#FFF0B5' : 'rgba(67,47,46,0.08)' }} />
           </button>
         )
       })}
@@ -741,7 +678,7 @@ function VueMois({ orders, viewMonth, setViewMonth, navigate }) {
                 {format(day, 'd')}
               </span>
               {count > 0 && (
-                <span style={{ fontSize: 7, fontWeight: 700, backgroundColor: '#EDD83D', color: '#4A4E10', minWidth: 13, height: 13, padding: '0 2px', borderRadius: 9999, fontFamily: 'Satoshi', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+                <span style={{ fontSize: 7, fontWeight: 700, backgroundColor: '#FFF0B5', color: '#432F2E', minWidth: 13, height: 13, padding: '0 2px', borderRadius: 9999, fontFamily: 'Satoshi', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
                   {count}
                 </span>
               )}
@@ -792,7 +729,7 @@ export default function ManagerDashboard() {
   ]
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#FDFAF0' }}>
+    <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5F2EB' }}>
 
       {/* ── Header ── */}
       <header className="px-4 pb-3" style={{ paddingTop: 'max(52px, env(safe-area-inset-top))' }}>
@@ -806,7 +743,7 @@ export default function ManagerDashboard() {
             <p style={{ fontSize: '0.5625rem', fontWeight: 700, color: '#8A7060', fontFamily: 'Satoshi', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>
               Au Grand Jour · Manager
             </p>
-            <h1 className="font-display" style={{ fontSize: '2.25rem', color: '#111111', letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: 12 }}>
+            <h1 style={{ fontSize: 'clamp(1.75rem, 7vw, 2.25rem)', fontWeight: 700, fontFamily: 'Satoshi', color: '#111111', letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 12 }}>
               Bonjour{prenom ? ` ${prenom}` : ''} ! 👋
             </h1>
             {/* Chips */}
@@ -816,8 +753,8 @@ export default function ManagerDashboard() {
               {urgentCount > 0 && <Chip icon={<IconAlertSmall />} label={`${urgentCount} urgente${urgentCount > 1 ? 's' : ''}`} urgent />}
             </div>
           </div>
-          <div style={{ width: 110, height: 100, flexShrink: 0 }}>
-            <IllustrationBoulangerie />
+          <div style={{ width: 96, height: 114, flexShrink: 0 }}>
+            <HeroIllustration />
           </div>
         </div>
       </header>
@@ -831,7 +768,7 @@ export default function ManagerDashboard() {
 
       {/* ── Bottom nav ── */}
       <nav className="fixed bottom-0 left-0 right-0 z-50"
-        style={{ backgroundColor: 'rgba(253,250,240,0.94)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
+        style={{ backgroundColor: 'rgba(245,242,235,0.94)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
         <div className="max-w-lg mx-auto" style={{ borderTop: '1px solid rgba(67,47,46,0.08)', paddingBottom: 'max(env(safe-area-inset-bottom), 6px)' }}>
           <div className="flex items-end pt-3 pb-1">
             {NAV.slice(0, 2).map(item => (
@@ -840,7 +777,7 @@ export default function ManagerDashboard() {
                 style={{ color: item.id === 'home' ? ACTIVE : INACTIVE }}>
                 <item.Icon />
                 <span style={{ fontSize: 10, fontWeight: item.id === 'home' ? 700 : 500, color: item.id === 'home' ? ACTIVE : INACTIVE, fontFamily: 'Satoshi' }}>{item.label}</span>
-                <span style={{ width: item.id === 'home' ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#EDD83D', marginTop: 2, transition: 'width 0.2s', display: 'block' }} />
+                <span style={{ width: item.id === 'home' ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#432F2E', marginTop: 2, transition: 'width 0.2s', display: 'block' }} />
               </button>
             ))}
 
