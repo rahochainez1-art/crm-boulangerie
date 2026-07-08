@@ -1,4 +1,4 @@
-import heroPatissier from '../../assets/illustrations/hero-patissier.png'
+import heroPatissier from '../../assets/illustrations/hero-patissier.webp'
 
 export default function HeroIllustration() {
   return (
