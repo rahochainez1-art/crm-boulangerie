@@ -5,9 +5,11 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ['Satoshi', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        display: ['"Clash Display"', '-apple-system', 'sans-serif'],
-        serif:   ['"Clash Display"', '-apple-system', 'sans-serif'],
+        sans:      ['Satoshi', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display:   ['"Clash Display"', '-apple-system', 'sans-serif'],
+        serif:     ['"Clash Display"', '-apple-system', 'sans-serif'],
+        // ── Éditorial (page d'accueil / sélection de rôle) ─────
+        editorial: ['Canela', '"Cormorant Garamond"', '"Playfair Display"', 'serif'],
       },
       colors: {
         // ── Palette Au Grand Jour 2026 ────────────────────────
@@ -24,6 +26,10 @@ export default {
         surface:   '#FFFFFF',    // cartes
         chalk:     '#FFFFFF',    // cartes (rétrocompat)
         parchment: 'rgba(67,47,46,0.05)',
+        // ── Alias éditorial (brief page d'accueil) ─────────────
+        chocolate: '#432F2E',
+        ice:       '#E5F0F5',
+        warmWhite: '#FFFCF7',
         // ── Bordures ──────────────────────────────────────────
         border:    'rgba(67,47,46,0.08)',
         warm:      'rgba(67,47,46,0.08)',  // rétrocompat
@@ -53,10 +59,12 @@ export default {
         nav:       '0 -1px 0 rgba(67,47,46,0.06), 0 -8px 24px rgba(67,47,46,0.08)',
         fab:       '0 8px 24px rgba(67,47,46,0.30)',
         lemon:     '0 4px 20px rgba(237,216,61,0.35)',
+        soft:      '0 12px 30px rgba(67,47,46,0.08)',
       },
       borderRadius: {
         pill: '9999px',
         card: '20px',
+        soft: '18px',
       },
     },
   },
