@@ -6,7 +6,7 @@ import {
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
-import { Calendar, Clock, Package, Flame, Users, Bell, ChevronRight } from 'lucide-react'
+import { Calendar, Clock, Flame, Users, Bell, ChevronRight } from 'lucide-react'
 import { subscribeOrders, setStatus, isAssignedTo } from '../../lib/orders'
 import { getUrgencyHours } from '../../lib/settings'
 import { useNewOrderNotification } from '../../hooks/useNewOrderNotification'
@@ -137,23 +137,15 @@ function DashboardHeader({ isUnlocked, onUnlock }) {
 function ProductionSummary({ orders }) {
   const today = new Date()
   const tomorrow = addDays(today, 1)
-  const ws = startOfWeek(today, { weekStartsOn: 1 })
-  const we = addDays(ws, 6)
 
   const todayCount    = orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), today)).length
   const tomorrowCount = orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), tomorrow)).length
-  const weekCount     = orders.filter(o => {
-    if (!o.pickupDate) return false
-    const d = parseISO(o.pickupDate)
-    return d >= ws && d <= we
-  }).length
-  const urgentCount = orders.filter(o => o.status !== 'ready' && isUrgent(o)).length
+  const urgentCount   = orders.filter(o => o.status !== 'ready' && isUrgent(o)).length
 
   const stats = [
-    { label: "Aujourd'hui",   value: todayCount,    iconBg: '#FFF0B5', iconColor: '#432F2E', Icon: Calendar },
-    { label: 'Demain',        value: tomorrowCount, iconBg: '#FFF6DD', iconColor: '#432F2E', Icon: Clock },
-    { label: 'Cette semaine', value: weekCount,     iconBg: 'rgba(67,47,46,0.07)', iconColor: '#432F2E', Icon: Package },
-    { label: 'Urgente',       value: urgentCount,   iconBg: '#FEE2E2', iconColor: '#B91C1C', Icon: Flame },
+    { label: "Aujourd'hui", value: todayCount,    iconBg: '#FFF0B5', iconColor: '#432F2E', Icon: Calendar },
+    { label: 'Demain',      value: tomorrowCount, iconBg: '#FFF6DD', iconColor: '#432F2E', Icon: Clock },
+    { label: 'Urgente',     value: urgentCount,   iconBg: 'rgba(67,47,46,0.08)', iconColor: '#432F2E', Icon: Flame },
   ]
 
   return (
@@ -262,6 +254,12 @@ function WeekView({ orders, selectedDay, onSelectDay }) {
   const weekEnd   = addDays(weekStart, 6)
   const days      = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
 
+  const weekCount = orders.filter(o => {
+    if (!o.pickupDate) return false
+    const d = parseISO(o.pickupDate)
+    return d >= weekStart && d <= weekEnd
+  }).length
+
   const dayInfo = (day) => {
     const dayOrders = orders.filter(o => o.pickupDate && isSameDay(parseISO(o.pickupDate), day))
     if (dayOrders.length === 0) return { count: 0, dot: 'rgba(67,47,46,0.15)' }
@@ -272,9 +270,14 @@ function WeekView({ orders, selectedDay, onSelectDay }) {
 
   return (
     <div className="mb-7 animate-fade-up delay-100">
-      <div className="flex items-baseline justify-between mb-3">
-        <p style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>Vue de la semaine</p>
-        <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <p style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi' }}>Vue de la semaine</p>
+          <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 2 }}>
+            {weekCount} commande{weekCount > 1 ? 's' : ''} prévue{weekCount > 1 ? 's' : ''}
+          </p>
+        </div>
+        <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', whiteSpace: 'nowrap', flexShrink: 0, marginLeft: 12 }}>
           {format(weekStart, 'd')} – {format(weekEnd, 'd MMMM yyyy', { locale: fr })}
         </p>
       </div>
