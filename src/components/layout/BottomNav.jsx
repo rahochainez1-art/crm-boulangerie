@@ -22,12 +22,6 @@ const IconList = () => (
     <line x1="3" y1="18" x2="3.01" y2="18"/>
   </svg>
 )
-const IconClock = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="9"/>
-    <path d="M12 7v5l3 3"/>
-  </svg>
-)
 const IconSettings = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="3"/>
@@ -168,8 +162,8 @@ function VendeurNav() {
   const navigate = useNavigate()
   return (
     <NavShell>
-      <NavItem to="/vendeur"                  label="Accueil"   Icon={IconHome} end />
-      <NavItem to="/vendeur/mes-commandes"    label="Mes cmdes" Icon={IconList} />
+      <NavItem to="/vendeur"             label="Accueil"    Icon={IconHome} end />
+      <NavItem to="/vendeur/historique"  label="Historique" Icon={IconArchive} />
       <PlusButton onClick={() => navigate('/vendeur/nouvelle-commande')} />
       <NavLink to="/vendeur/profil" end className="flex-1 flex flex-col items-center gap-0.5 pb-1 transition-colors">
         {({ isActive }) => (
