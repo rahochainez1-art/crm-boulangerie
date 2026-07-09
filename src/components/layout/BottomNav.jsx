@@ -187,9 +187,10 @@ function VendeurNav() {
 function PatissiereNav() {
   return (
     <NavShell>
-      <NavItem to="/patissiere"            label="Accueil"    Icon={IconHome}    end />
-      <NavItem to="/patissiere/historique" label="Historique" Icon={IconArchive} />
-      <NavItem to="/settings"              label="Réglages"   Icon={IconSettings} />
+      <NavItem to="/patissiere"            label="Accueil"   Icon={IconHome}    end />
+      <NavItem to="/calendrier"            label="Planning"  Icon={IconList} />
+      <NavItem to="/patissiere/historique" label="Commandes" Icon={IconArchive} />
+      <NavItem to="/settings"              label="Réglages"  Icon={IconSettings} />
     </NavShell>
   )
 }
