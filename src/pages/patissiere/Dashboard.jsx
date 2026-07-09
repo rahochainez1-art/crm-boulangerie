@@ -164,20 +164,20 @@ function ProductionSummary({ orders }) {
       {stats.map((s, i) => (
         <div
           key={s.label}
-          className="flex-1 flex items-center gap-2.5 px-2.5 py-4"
-          style={{ borderRight: i < stats.length - 1 ? '1px solid rgba(67,47,46,0.08)' : 'none' }}
+          className="flex-1 flex items-center gap-2 px-1.5 sm:px-2.5 py-4"
+          style={{ minWidth: 0, borderRight: i < stats.length - 1 ? '1px solid rgba(67,47,46,0.08)' : 'none' }}
         >
           <div
             className="flex items-center justify-center flex-shrink-0"
-            style={{ width: 34, height: 34, borderRadius: 9999, backgroundColor: s.iconBg, color: s.iconColor }}
+            style={{ width: 30, height: 30, borderRadius: 9999, backgroundColor: s.iconBg, color: s.iconColor }}
           >
-            <s.Icon size={15} strokeWidth={1.9} />
+            <s.Icon size={14} strokeWidth={1.9} />
           </div>
           <div style={{ minWidth: 0 }}>
-            <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.02em', lineHeight: 1 }}>
+            <p style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.02em', lineHeight: 1 }}>
               {s.value}
             </p>
-            <p style={{ fontSize: '0.625rem', color: '#8A7060', fontFamily: 'Satoshi', lineHeight: 1.3, marginTop: 3 }}>
+            <p style={{ fontSize: '0.5625rem', color: '#8A7060', fontFamily: 'Satoshi', lineHeight: 1.25, marginTop: 3 }}>
               {s.label}
             </p>
           </div>
