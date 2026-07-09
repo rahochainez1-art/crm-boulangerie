@@ -30,6 +30,7 @@ function isUrgent(order) {
 }
 
 function StatusPill({ status }) {
+  if (status === 'inprogress') return null
   const c = STATUS_PILL[status] ?? STATUS_PILL.todo
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', backgroundColor: c.bg, color: c.color, padding: '0.2rem 0.6rem', borderRadius: 9999, fontSize: '0.6875rem', fontWeight: 700, fontFamily: 'Satoshi', whiteSpace: 'nowrap' }}>
