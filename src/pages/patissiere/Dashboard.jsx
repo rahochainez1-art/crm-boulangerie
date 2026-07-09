@@ -2,12 +2,11 @@ import { useEffect, useState, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   format, parseISO, isSameDay,
-  startOfWeek, addDays, differenceInHours, differenceInMinutes,
+  startOfWeek, addDays, differenceInMinutes,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { Calendar, Clock, Flame, Users, Bell, ChevronRight } from 'lucide-react'
 import { subscribeOrders, isAssignedTo } from '../../lib/orders'
-import { getUrgencyHours } from '../../lib/settings'
 import { useNewOrderNotification } from '../../hooks/useNewOrderNotification'
 import HeaderBrand from '../../components/ui/HeaderBrand'
 import HeroIllustration from '../../components/ui/HeroIllustration'
@@ -21,7 +20,9 @@ const STATUS_PILL = {
 }
 
 function isUrgent(order) {
-  return differenceInHours(parseISO(order.pickupDate), new Date()) < getUrgencyHours()
+  const pickup = parseISO(order.pickupDate)
+  const today = new Date()
+  return isSameDay(pickup, today) || isSameDay(pickup, addDays(today, 1))
 }
 
 function formatRetraitDans(pickupDate) {
