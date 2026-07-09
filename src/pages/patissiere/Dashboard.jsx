@@ -214,6 +214,19 @@ function TodayOrderRow({ order, isLast, isNew, expanded, onToggle }) {
 
       {expanded && (
         <div className="px-5 pb-5 pt-1 space-y-3">
+          {order.clientPhone && (
+            <a
+              href={`tel:${order.clientPhone}`}
+              onClick={e => e.stopPropagation()}
+              className="flex items-center gap-2 active:opacity-70"
+              style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#432F2E', fontFamily: 'Satoshi' }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              {order.clientPhone}
+            </a>
+          )}
           {order.notes && (
             <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
               <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi' }}>⚠ {order.notes}</p>
@@ -348,19 +361,25 @@ function UpcomingCarousel({ days, navigate }) {
               </div>
 
               {hasOrders ? (
-                <div className="space-y-2 mb-4" style={{ borderTop: '1px dashed rgba(67,47,46,0.15)', paddingTop: 12 }}>
+                <div className="space-y-1 mb-4" style={{ borderTop: '1px dashed rgba(67,47,46,0.15)', paddingTop: 8 }}>
                   {orders.slice(0, 3).map(o => (
-                    <div key={o.id} className="flex items-center gap-2">
+                    <button
+                      key={o.id}
+                      onClick={() => navigate('/calendrier', { state: { date: format(day, 'yyyy-MM-dd'), orderId: o.id } })}
+                      className="w-full flex items-center gap-2 active:opacity-60 transition-opacity"
+                      style={{ padding: '4px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                    >
                       <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
                         {format(parseISO(o.pickupDate), 'HH:mm')}
                       </span>
-                      <span style={{ fontSize: '0.8125rem', color: '#5C4A38', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '0.8125rem', color: '#5C4A38', fontFamily: 'Satoshi', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0 }}>
                         {o.articles}
                       </span>
-                    </div>
+                      <ChevronRight size={12} color="#C0B8A8" strokeWidth={2.3} style={{ flexShrink: 0 }} />
+                    </button>
                   ))}
                   {orders.length > 3 && (
-                    <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi' }}>+{orders.length - 3} autre{orders.length - 3 > 1 ? 's' : ''}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#8A7060', fontFamily: 'Satoshi', padding: '4px 0' }}>+{orders.length - 3} autre{orders.length - 3 > 1 ? 's' : ''}</p>
                   )}
                 </div>
               ) : (

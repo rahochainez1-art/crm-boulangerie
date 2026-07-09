@@ -55,6 +55,13 @@ export default function Calendrier() {
 
   useEffect(() => subscribeOrders(setAllOrders), [])
 
+  // Ouvre automatiquement le détail si une commande précise est passée
+  useEffect(() => {
+    if (!location.state?.orderId || allOrders.length === 0) return
+    const target = allOrders.find(o => o.id === location.state.orderId)
+    if (target) setExpandedId(target.id)
+  }, [location.state?.orderId, allOrders])
+
   const poleOrders = useMemo(
     () => allOrders.filter(o => o.status !== 'done' && isAssignedTo(o, pole)),
     [allOrders, pole]
@@ -311,6 +318,19 @@ function OrderCard({ order, expanded, onToggle }) {
 
       {expanded && (
         <div className="px-5 pb-5 pt-1 space-y-3" style={{ borderTop: '1px solid rgba(67,47,46,0.08)' }}>
+          {order.clientPhone && (
+            <a
+              href={`tel:${order.clientPhone}`}
+              onClick={e => e.stopPropagation()}
+              className="flex items-center gap-2 mt-4 active:opacity-70"
+              style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#432F2E', fontFamily: 'Satoshi' }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              {order.clientPhone}
+            </a>
+          )}
           {order.notes && (
             <div className="rounded-2xl px-4 py-3 mt-4" style={{ backgroundColor: 'rgba(255,240,181,0.4)', border: '1px solid rgba(67,47,46,0.1)' }}>
               <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#432F2E', fontFamily: 'Satoshi' }}>⚠ {order.notes}</p>
