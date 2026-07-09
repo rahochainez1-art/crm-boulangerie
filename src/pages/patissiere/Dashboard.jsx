@@ -5,9 +5,8 @@ import {
   startOfWeek, addDays, differenceInHours, differenceInMinutes,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import toast from 'react-hot-toast'
 import { Calendar, Clock, Flame, Users, Bell, ChevronRight } from 'lucide-react'
-import { subscribeOrders, setStatus, isAssignedTo } from '../../lib/orders'
+import { subscribeOrders, isAssignedTo } from '../../lib/orders'
 import { getUrgencyHours } from '../../lib/settings'
 import { useNewOrderNotification } from '../../hooks/useNewOrderNotification'
 import HeaderBrand from '../../components/ui/HeaderBrand'
@@ -15,12 +14,6 @@ import HeroIllustration from '../../components/ui/HeroIllustration'
 
 const DAY_ABR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
-const PRODUCTION_STATUSES = ['todo', 'inprogress', 'ready']
-const STATUS_PICKER = {
-  todo:       { label: 'Pas commencé', activeBg: '#111111', activeColor: '#FFFFFF', idleBg: 'rgba(67,47,46,0.06)', idleColor: '#8A7060' },
-  inprogress: { label: 'En cours',     activeBg: '#FEFCE8', activeColor: '#854D0E', idleBg: 'rgba(67,47,46,0.06)', idleColor: '#8A7060' },
-  ready:      { label: 'Prêt ✓',       activeBg: '#D1FAE5', activeColor: '#065F46', idleBg: 'rgba(67,47,46,0.06)', idleColor: '#8A7060' },
-}
 const STATUS_PILL = {
   todo:       { label: 'À faire',  bg: '#FEFCE8', color: '#854D0E' },
   inprogress: { label: 'En cours', bg: '#FEF3C7', color: '#92400E' },
@@ -331,21 +324,13 @@ function WeekView({ orders, selectedDay, onSelectDay }) {
 }
 
 // ── Ligne de commande — section du jour sélectionné ────────────────────────
-function TodayOrderRow({ order, isLast, isNew, expanded, onToggle }) {
-  const [busy, setBusy] = useState(false)
-
-  const handleSetStatus = async (newStatus) => {
-    if (newStatus === order.status || busy) return
-    setBusy(true)
-    try {
-      await setStatus(order.id, newStatus)
-      if (newStatus === 'ready') toast.success('✓ Prêt — vendeur notifié')
-    } finally { setBusy(false) }
-  }
-
+function TodayOrderRow({ order, isLast, isNew, navigate }) {
   return (
-    <div style={{ borderBottom: !isLast || expanded ? '1px solid rgba(67,47,46,0.08)' : 'none', backgroundColor: isNew ? 'rgba(237,216,61,0.10)' : 'transparent' }}>
-      <button onClick={onToggle} className="w-full flex items-center gap-3 px-5 py-4 text-left">
+    <div style={{ borderBottom: !isLast ? '1px solid rgba(67,47,46,0.08)' : 'none', backgroundColor: isNew ? 'rgba(237,216,61,0.10)' : 'transparent' }}>
+      <button
+        onClick={() => navigate('/calendrier', { state: { date: format(parseISO(order.pickupDate), 'yyyy-MM-dd'), orderId: order.id } })}
+        className="w-full flex items-center gap-3 px-5 py-4 text-left active:bg-black/[0.02]"
+      >
         {isNew && <span style={{ width: 6, height: 6, borderRadius: 9999, backgroundColor: '#EDD83D', flexShrink: 0 }} />}
         <span style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#111111', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
           {format(parseISO(order.pickupDate), 'HH:mm')}
@@ -365,66 +350,14 @@ function TodayOrderRow({ order, isLast, isNew, expanded, onToggle }) {
           <StatusPill status={order.status} />
         </div>
 
-        <ChevronRight
-          size={15}
-          color="#C0B8A8"
-          strokeWidth={2.3}
-          className="flex-shrink-0 transition-transform duration-200"
-          style={{ transform: expanded ? 'rotate(90deg)' : 'none' }}
-        />
+        <ChevronRight size={15} color="#C0B8A8" strokeWidth={2.3} className="flex-shrink-0" />
       </button>
-
-      {expanded && (
-        <div className="px-5 pb-5 pt-1 space-y-3">
-          {order.clientPhone && (
-            <a
-              href={`tel:${order.clientPhone}`}
-              onClick={e => e.stopPropagation()}
-              className="flex items-center gap-2 active:opacity-70"
-              style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#432F2E', fontFamily: 'Satoshi' }}
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-              </svg>
-              {order.clientPhone}
-            </a>
-          )}
-          {order.notes && (
-            <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
-              <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#92400E', fontFamily: 'Satoshi' }}>⚠ {order.notes}</p>
-            </div>
-          )}
-          <div className="grid grid-cols-3 gap-2">
-            {PRODUCTION_STATUSES.map(s => {
-              const cfg      = STATUS_PICKER[s]
-              const isActive = order.status === s
-              return (
-                <button
-                  key={s}
-                  onClick={() => handleSetStatus(s)}
-                  disabled={busy}
-                  className="transition-all active:scale-95 disabled:opacity-50"
-                  style={{
-                    padding: '0.75rem 0.5rem', borderRadius: 12,
-                    backgroundColor: isActive ? cfg.activeBg : cfg.idleBg,
-                    color: isActive ? cfg.activeColor : cfg.idleColor,
-                    fontWeight: 600, fontSize: '0.75rem', border: 'none', cursor: 'pointer',
-                    fontFamily: 'Satoshi', transition: 'background-color 0.15s, color 0.15s',
-                  }}
-                >
-                  {cfg.label}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
 
 // ── Section commandes du jour sélectionné ──────────────────────────────────
-function DaySection({ title, orders, newOrders, expandedId, onToggle, navigate }) {
+function DaySection({ title, orders, newOrders, navigate }) {
   return (
     <div className="mb-7 animate-fade-up delay-150">
       <div className="flex items-center justify-between mb-3">
@@ -448,8 +381,7 @@ function DaySection({ title, orders, newOrders, expandedId, onToggle, navigate }
               order={order}
               isLast={i === orders.length - 1}
               isNew={newOrders.some(n => n.id === order.id)}
-              expanded={expandedId === order.id}
-              onToggle={() => onToggle(order.id)}
+              navigate={navigate}
             />
           ))}
           <button
@@ -579,8 +511,7 @@ function UpcomingCarousel({ days, navigate }) {
 
 // ── Dashboard pâtissière ──────────────────────────────────────────────────
 export default function PatissiereDashboard() {
-  const [orders, setOrders]         = useState([])
-  const [expandedId, setExpandedId] = useState(null)
+  const [orders, setOrders]           = useState([])
   const [selectedDay, setSelectedDay] = useState(() => new Date())
   const navigate = useNavigate()
 
@@ -676,8 +607,6 @@ export default function PatissiereDashboard() {
           title={dayTitle}
           orders={selectedDayOrders}
           newOrders={newOrders}
-          expandedId={expandedId}
-          onToggle={(id) => setExpandedId(prev => prev === id ? null : id)}
           navigate={navigate}
         />
 
