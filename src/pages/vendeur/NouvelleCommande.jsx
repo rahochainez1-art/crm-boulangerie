@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
@@ -34,6 +34,12 @@ export default function NouvelleCommande() {
   const [form, setForm]       = useState(makeEmptyForm)
   const [loading, setLoading] = useState(false)
   const [confirmed, setConfirmed] = useState(null)
+  const mainRef = useRef(null)
+
+  // Remonte en haut à chaque bascule formulaire <-> confirmation
+  useEffect(() => {
+    mainRef.current?.scrollTo(0, 0)
+  }, [confirmed])
 
   const set = (f) => (e) => setForm((p) => ({ ...p, [f]: e.target.value }))
   const prefillArticle = (a) => setForm((p) => ({ ...p, articles: a }))
@@ -84,7 +90,7 @@ export default function NouvelleCommande() {
           </h1>
         </header>
 
-        <main className="flex-1 px-5 pb-28 overflow-y-auto space-y-3">
+        <main ref={mainRef} className="flex-1 px-5 pb-28 overflow-y-auto space-y-3">
 
           {/* Succès */}
           <div
@@ -209,7 +215,7 @@ export default function NouvelleCommande() {
         </p>
       </header>
 
-      <main className="flex-1 px-5 py-4 pb-28 overflow-y-auto">
+      <main ref={mainRef} className="flex-1 px-5 py-4 pb-28 overflow-y-auto">
         <form onSubmit={handleSubmit} className="space-y-3">
 
           <Section label="Client">
