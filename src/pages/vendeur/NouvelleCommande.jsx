@@ -41,6 +41,8 @@ export default function NouvelleCommande() {
     mainRef.current?.scrollTo(0, 0)
   }, [confirmed])
 
+  const reste = (Number(form.totalAmount) || 0) - (Number(form.deposit) || 0)
+
   const set = (f) => (e) => setForm((p) => ({ ...p, [f]: e.target.value }))
   const prefillArticle = (a) => setForm((p) => ({ ...p, articles: a }))
   const togglePole = (pole) => setForm(p => {
@@ -307,6 +309,35 @@ export default function NouvelleCommande() {
                 <input type="number" inputMode="decimal" min="0" step="0.50" placeholder="0" value={form.totalAmount} onChange={set('totalAmount')} className="field" />
               </div>
             </div>
+
+            {Number(form.totalAmount) > 0 && (
+              <div
+                className="flex items-center gap-3 rounded-2xl px-3.5 py-3"
+                style={{
+                  backgroundColor: reste > 0 ? 'rgba(255,240,181,0.35)' : 'rgba(16,185,129,0.08)',
+                  border: '1px solid rgba(67,47,46,0.06)',
+                }}
+              >
+                <div
+                  className="flex items-center justify-center flex-shrink-0"
+                  style={{ width: 32, height: 32, borderRadius: 9999, backgroundColor: reste > 0 ? '#FFF0B5' : '#D1FAE5' }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    {reste > 0
+                      ? <><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M12 9v6M9 12h6"/></>
+                      : <path d="M20 6L9 17l-5-5"/>}
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 600 }}>
+                    {reste > 0 ? 'Reste à payer' : 'Statut'}
+                  </p>
+                  <p style={{ fontSize: '1.125rem', fontWeight: 800, color: '#432F2E', fontFamily: 'Satoshi', fontVariantNumeric: 'tabular-nums' }}>
+                    {reste > 0 ? `${reste.toFixed(2)} €` : 'Soldé ✓'}
+                  </p>
+                </div>
+              </div>
+            )}
           </Section>
 
           <Section label="Détails">
