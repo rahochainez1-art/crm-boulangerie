@@ -16,6 +16,17 @@ const TABS = [
   { id: 'done',  label: 'Récupérées' },
 ]
 
+const STATUS_LABEL = { todo: 'à faire', inprogress: 'en cours', ready: 'prête' }
+
+// Retrouve le statut réellement fixé par la pâtissière avant la dernière récupération,
+// pour ne jamais afficher "Prête" si elle ne l'a pas actualisé elle-même.
+function getPreviousStatus(order) {
+  if (!Array.isArray(order.statusHistory) || order.statusHistory.length === 0) return 'todo'
+  const idx = order.statusHistory.map(h => h.status).lastIndexOf('done')
+  if (idx <= 0) return 'todo'
+  return order.statusHistory[idx - 1].status
+}
+
 function greeting(prenom) {
   const h = new Date().getHours()
   const name = prenom ? ` ${prenom}` : ''
@@ -384,8 +395,9 @@ function OrderCard({ order, index, onOpen }) {
     if (busy || !isDone) return
     setBusy(true)
     try {
-      await setStatus(order.id, 'ready')
-      toast('Statut annulé — commande remise en attente')
+      const prevStatus = getPreviousStatus(order)
+      await setStatus(order.id, prevStatus)
+      toast(`Statut annulé — commande remise « ${STATUS_LABEL[prevStatus]} »`)
     } finally { setBusy(false) }
   }
 
@@ -558,9 +570,14 @@ function OrderSheet({ order, onClose }) {
   const reste  = (order.totalAmount || 0) - (order.deposit || 0)
 
   const handleStatus = async (newStatus) => {
-    await setStatus(order.id, newStatus)
-    if (newStatus === 'done')  toast.success(`${order.clientName} — commande récupérée`)
-    if (newStatus === 'ready') toast('Statut annulé')
+    if (newStatus === 'done') {
+      await setStatus(order.id, 'done')
+      toast.success(`${order.clientName} — commande récupérée`)
+    } else {
+      const prevStatus = getPreviousStatus(order)
+      await setStatus(order.id, prevStatus)
+      toast(`Statut annulé — commande remise « ${STATUS_LABEL[prevStatus]} »`)
+    }
   }
 
   return (
@@ -718,7 +735,7 @@ function OrderSheet({ order, onClose }) {
           {(order.status === 'ready' || order.status === 'done') && (
             <div className="flex gap-2.5 pt-1 pb-2">
               <button
-                onClick={() => handleStatus('ready')}
+                onClick={() => handleStatus('undo')}
                 className="flex-1 transition-all active:scale-95"
                 style={{
                   padding: '0.875rem',
