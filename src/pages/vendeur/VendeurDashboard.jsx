@@ -5,7 +5,7 @@ import {
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, RotateCcw } from 'lucide-react'
 import { subscribeOrders, setStatus } from '../../lib/orders'
 import { getPrenom } from '../../lib/settings'
 import StatusBadge from '../../components/ui/StatusBadge'
@@ -379,6 +379,16 @@ function OrderCard({ order, index, onOpen }) {
     } finally { setBusy(false) }
   }
 
+  const handleUndo = async (e) => {
+    e.stopPropagation()
+    if (busy || !isDone) return
+    setBusy(true)
+    try {
+      await setStatus(order.id, 'ready')
+      toast('Statut annulé — commande remise en attente')
+    } finally { setBusy(false) }
+  }
+
   return (
     <div
       onClick={onOpen}
@@ -497,16 +507,26 @@ function OrderCard({ order, index, onOpen }) {
 
       {/* ── Zone 4 : Footer ── */}
       {isDone ? (
-        <div style={{ margin: '0 16px 16px', marginTop: 12 }}>
+        <div className="flex items-center gap-2" style={{ margin: '0 16px 16px', marginTop: 12 }}>
           <div
-            className="flex items-center justify-center gap-1.5"
+            className="flex items-center justify-center gap-1.5 flex-1 min-w-0"
             style={{ backgroundColor: '#EEF2E9', border: '1px solid rgba(82,118,75,0.18)', borderRadius: 14, padding: '10px 12px' }}
           >
             <CheckCircle2 size={13} strokeWidth={2.4} color="#52764B" />
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#52764B', fontFamily: 'Satoshi', textAlign: 'center' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#52764B', fontFamily: 'Satoshi', textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               Commande récupérée{recoveredAt ? ` le ${format(recoveredAt, 'dd/MM à HH:mm')}` : ''}
             </span>
           </div>
+          <button
+            onClick={handleUndo}
+            disabled={busy}
+            title="Annuler — remettre en attente"
+            aria-label="Annuler — remettre en attente"
+            className="flex-shrink-0 flex items-center justify-center active:opacity-70 disabled:opacity-50"
+            style={{ width: 38, height: 38, borderRadius: 9999, backgroundColor: '#F3F0EC', border: '1px solid #DED8D2', color: '#746B65', cursor: 'pointer' }}
+          >
+            <RotateCcw size={15} strokeWidth={2.2} />
+          </button>
         </div>
       ) : (
         <div className="flex items-center justify-between px-4 py-3 gap-2" style={{ borderTop: '1px solid rgba(67,47,46,0.07)' }}>
