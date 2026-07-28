@@ -353,11 +353,23 @@ export default function VendeurDashboard() {
 
 /* ── Carte commande ───────────────────────────────────────────────────── */
 function OrderCard({ order, index, onOpen }) {
+  const [busy, setBusy] = useState(false)
   const reste  = (order.totalAmount || 0) - (order.deposit || 0)
   const card   = CARD_STYLE[order.status] ?? CARD_STYLE.todo
   const isDone = order.status === 'done'
+  const isReady = order.status === 'ready'
   const hasPay = order.totalAmount > 0
   const isToday = (() => { try { return isSameDay(parseISO(order.pickupDate), new Date()) } catch { return false } })()
+
+  const handleMarkDone = async (e) => {
+    e.stopPropagation()
+    if (busy) return
+    setBusy(true)
+    try {
+      await setStatus(order.id, 'done')
+      toast.success(`${order.clientName} — commande récupérée`)
+    } finally { setBusy(false) }
+  }
 
   return (
     <div
@@ -471,22 +483,40 @@ function OrderCard({ order, index, onOpen }) {
       )}
 
       {/* ── Zone 4 : Footer ── */}
-      <div className="flex items-center justify-between px-4 py-3" style={{ borderTop: '1px solid rgba(67,47,46,0.07)' }}>
+      <div className="flex items-center justify-between px-4 py-3 gap-2" style={{ borderTop: '1px solid rgba(67,47,46,0.07)' }}>
         {hasPay ? (
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0.3rem 0.75rem', borderRadius: 9999, backgroundColor: reste === 0 ? '#E5F0F5' : '#FFF0B5', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0.3rem 0.75rem', borderRadius: 9999, backgroundColor: reste === 0 ? '#E5F0F5' : '#FFF0B5', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', flexShrink: 0 }}>
             {reste === 0 ? '✓ Soldé' : 'Solde partiel'}
           </span>
         ) : (
           <span />
         )}
-        <button
-          onClick={onOpen}
-          className="flex items-center gap-1 active:opacity-80"
-          style={{ padding: '0.375rem 0.9rem', borderRadius: 9999, backgroundColor: '#FFF0B5', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', border: 'none', cursor: 'pointer' }}
-        >
-          Voir le détail
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
+
+        <div className="flex items-center gap-2" style={{ flexShrink: 0 }}>
+          {isDone && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '0.375rem 0.75rem', borderRadius: 9999, backgroundColor: 'rgba(67,47,46,0.06)', color: '#8A7060', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi' }}>
+              ✓ Récupérée
+            </span>
+          )}
+          {isReady && (
+            <button
+              onClick={handleMarkDone}
+              disabled={busy}
+              className="active:opacity-80 disabled:opacity-50"
+              style={{ padding: '0.375rem 0.9rem', borderRadius: 9999, backgroundColor: '#432F2E', color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+            >
+              {busy ? '…' : '✓ Récupérée'}
+            </button>
+          )}
+          <button
+            onClick={onOpen}
+            className="flex items-center gap-1 active:opacity-80"
+            style={{ padding: '0.375rem 0.9rem', borderRadius: 9999, backgroundColor: '#FFF0B5', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >
+            Détail
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   )
