@@ -5,6 +5,7 @@ import {
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
+import { CheckCircle2 } from 'lucide-react'
 import { subscribeOrders, setStatus } from '../../lib/orders'
 import { getPrenom } from '../../lib/settings'
 import StatusBadge from '../../components/ui/StatusBadge'
@@ -12,14 +13,8 @@ import StatusBadge from '../../components/ui/StatusBadge'
 const TABS = [
   { id: 'all',   label: 'Toutes' },
   { id: 'ready', label: 'Prêtes' },
+  { id: 'done',  label: 'Récupérées' },
 ]
-
-const CARD_STYLE = {
-  todo:       { bg: '#FFFFFF', border: 'rgba(67,47,46,0.08)', shadow: '0 2px 16px rgba(67,47,46,0.05)' },
-  inprogress: { bg: '#FFFFFF', border: 'rgba(67,47,46,0.08)', shadow: '0 2px 16px rgba(67,47,46,0.05)' },
-  ready:      { bg: '#FFFFFF', border: 'rgba(67,47,46,0.08)', shadow: '0 2px 16px rgba(67,47,46,0.05)' },
-  done:       { bg: '#FFFFFF', border: 'rgba(67,47,46,0.06)', shadow: 'none' },
-}
 
 function greeting(prenom) {
   const h = new Date().getHours()
@@ -83,7 +78,9 @@ export default function VendeurDashboard() {
   const kpiDone  = dayOrders.filter(o => o.status === 'done').length
 
   const filtered = (
-    tab === 'ready' ? dayOrders.filter(o => o.status === 'ready') : dayOrders
+    tab === 'ready' ? dayOrders.filter(o => o.status === 'ready') :
+    tab === 'done'  ? dayOrders.filter(o => o.status === 'done') :
+    dayOrders
   ).slice().sort((a, b) => {
     if (a.status === 'done' && b.status !== 'done') return 1
     if (a.status !== 'done' && b.status === 'done') return -1
@@ -276,7 +273,7 @@ export default function VendeurDashboard() {
         {/* ── Chips de filtre ────────────────────────────────────────── */}
         <div className="flex gap-2 px-5 mb-4 overflow-x-auto scrollbar-none">
           {TABS.map(t => {
-            const count = t.id === 'all' ? dayOrders.length : kpiReady
+            const count = t.id === 'all' ? dayOrders.length : t.id === 'ready' ? kpiReady : kpiDone
             const isActive = tab === t.id
             return (
               <button
@@ -355,79 +352,95 @@ export default function VendeurDashboard() {
 function OrderCard({ order, index, onOpen }) {
   const [busy, setBusy] = useState(false)
   const reste  = (order.totalAmount || 0) - (order.deposit || 0)
-  const card   = CARD_STYLE[order.status] ?? CARD_STYLE.todo
   const isDone = order.status === 'done'
-  const isReady = order.status === 'ready'
   const hasPay = order.totalAmount > 0
   const isToday = (() => { try { return isSameDay(parseISO(order.pickupDate), new Date()) } catch { return false } })()
 
+  const recoveredAt = useMemo(() => {
+    if (!isDone || !Array.isArray(order.statusHistory)) return null
+    const doneEntries = order.statusHistory.filter(h => h.status === 'done')
+    const last = doneEntries[doneEntries.length - 1]
+    if (!last) return null
+    try { return parseISO(last.at) } catch { return null }
+  }, [isDone, order.statusHistory])
+
+  // Palette : blanc pour une commande active, gris-beige chaud une fois récupérée
+  const c = isDone
+    ? { cardBg: '#F3F0EC', cardBorder: '#DED8D2', chip: '#E8E3DE', textPrimary: '#746B65', textSecondary: '#968C85' }
+    : { cardBg: '#FFFFFF', cardBorder: 'rgba(67,47,46,0.08)', chip: '#E5F0F5', textPrimary: '#111111', textSecondary: '#8A7060' }
+
   const handleMarkDone = async (e) => {
     e.stopPropagation()
-    if (busy) return
+    if (busy || isDone) return
     setBusy(true)
     try {
       await setStatus(order.id, 'done')
-      toast.success(`${order.clientName} — commande récupérée`)
+      toast.success('Commande marquée comme récupérée')
     } finally { setBusy(false) }
   }
 
   return (
     <div
-      className="animate-fade-up"
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter') onOpen() }}
+      className="animate-fade-up active:scale-[0.99] transition-transform"
       style={{
-        backgroundColor: card.bg,
+        backgroundColor: c.cardBg,
         borderRadius: 22,
-        border: `1px solid ${card.border}`,
-        boxShadow: card.shadow,
-        opacity: isDone ? 0.55 : 1,
+        border: `1px solid ${c.cardBorder}`,
+        boxShadow: isDone ? 'none' : '0 2px 16px rgba(67,47,46,0.05)',
         overflow: 'hidden',
+        cursor: 'pointer',
         animationDelay: `${index * 0.045}s`,
       }}
     >
       {/* ── Zone 1 : Heure pill + Statut ── */}
       <div className="flex items-start justify-between px-4 pt-4 pb-4">
-        <div
-          style={{
-            backgroundColor: isDone ? 'rgba(67,47,46,0.05)' : '#E5F0F5',
-            borderRadius: 14,
-            padding: '9px 13px',
-          }}
-        >
+        <div style={{ backgroundColor: c.chip, borderRadius: 14, padding: '9px 13px' }}>
           <div className="flex items-center gap-1.5">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isDone ? '#C0B8A8' : '#432F2E'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.textPrimary} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
             </svg>
-            <span style={{ fontSize: '1.375rem', fontWeight: 800, color: isDone ? '#C0B8A8' : '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+            <span style={{ fontSize: '1.375rem', fontWeight: 800, color: c.textPrimary, fontFamily: 'Satoshi', letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
               {format(parseISO(order.pickupDate), 'HH:mm')}
             </span>
           </div>
-          <p style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#8A7060', fontFamily: 'Satoshi', marginTop: 3 }}>
+          <p style={{ fontSize: '0.6875rem', fontWeight: 600, color: c.textSecondary, fontFamily: 'Satoshi', marginTop: 3 }}>
             {isToday ? "Aujourd'hui" : format(parseISO(order.pickupDate), 'EEE d MMM', { locale: fr })}
           </p>
         </div>
-        <StatusBadge status={order.status} />
+        {isDone ? (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '0.3rem 0.7rem', borderRadius: 9999, backgroundColor: '#E8F0E4', color: '#52764B', fontSize: '0.6875rem', fontWeight: 700, fontFamily: 'Satoshi', flexShrink: 0 }}>
+            <CheckCircle2 size={12} strokeWidth={2.4} />
+            Récupérée
+          </span>
+        ) : (
+          <StatusBadge status={order.status} />
+        )}
       </div>
 
       {/* Séparateur */}
-      <div style={{ height: 1, backgroundColor: 'rgba(67,47,46,0.07)', margin: '0 16px' }} />
+      <div style={{ height: 1, backgroundColor: c.cardBorder, margin: '0 16px' }} />
 
       {/* ── Zone 2 : Client + Articles ── */}
       <div className="px-4 pt-4 pb-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <p style={{ fontSize: '1.625rem', fontWeight: 800, color: isDone ? '#B0A090' : '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 4 }}>
+            <p style={{ fontSize: '1.625rem', fontWeight: 800, color: c.textPrimary, fontFamily: 'Satoshi', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 4 }}>
               {order.clientName}
             </p>
-            <p style={{ fontSize: '0.875rem', color: isDone ? '#C0B0A0' : '#7A6A5A', fontFamily: 'Satoshi' }}>
+            <p style={{ fontSize: '0.875rem', color: c.textSecondary, fontFamily: 'Satoshi' }}>
               {order.articles}
             </p>
           </div>
-          {order.clientPhone && !isDone && (
+          {order.clientPhone && (
             <a
               href={`tel:${order.clientPhone}`}
               onClick={e => e.stopPropagation()}
               className="flex-shrink-0 flex items-center justify-center active:opacity-70"
-              style={{ width: 38, height: 38, borderRadius: 9999, backgroundColor: '#F5F2EB', color: '#432F2E' }}
+              style={{ width: 38, height: 38, borderRadius: 9999, backgroundColor: isDone ? c.chip : '#F5F2EB', color: c.textPrimary }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -440,41 +453,41 @@ function OrderCard({ order, index, onOpen }) {
       {/* ── Zone 3 : Paiement 3 colonnes ── */}
       {hasPay && (
         <>
-          <div style={{ height: 1, backgroundColor: 'rgba(67,47,46,0.07)', margin: '0 16px' }} />
+          <div style={{ height: 1, backgroundColor: c.cardBorder, margin: '0 16px' }} />
           <div className="flex">
             {/* Payé */}
             <div className="flex-1 px-4 py-3">
-              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: '#E5F0F5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round">
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: c.chip, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c.textPrimary} strokeWidth="2.2" strokeLinecap="round">
                   <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
                 </svg>
               </div>
-              <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Payé</p>
-              <p style={{ fontSize: '1rem', fontWeight: 800, color: '#432F2E', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+              <p style={{ fontSize: '0.6875rem', color: c.textSecondary, fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Payé</p>
+              <p style={{ fontSize: '1rem', fontWeight: 800, color: c.textPrimary, fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
                 {(order.deposit || 0).toFixed(2)} €
               </p>
             </div>
             {/* Reste */}
-            <div className="flex-1 px-4 py-3" style={{ borderLeft: '1px solid rgba(67,47,46,0.07)', borderRight: '1px solid rgba(67,47,46,0.07)' }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: '#FFF0B5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round">
+            <div className="flex-1 px-4 py-3" style={{ borderLeft: `1px solid ${c.cardBorder}`, borderRight: `1px solid ${c.cardBorder}` }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: isDone ? c.chip : '#FFF0B5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c.textPrimary} strokeWidth="2.2" strokeLinecap="round">
                   <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M12 9v6M9 12h6"/>
                 </svg>
               </div>
-              <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Reste à payer</p>
-              <p style={{ fontSize: '1rem', fontWeight: 800, color: '#432F2E', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+              <p style={{ fontSize: '0.6875rem', color: c.textSecondary, fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Reste à payer</p>
+              <p style={{ fontSize: '1rem', fontWeight: 800, color: c.textPrimary, fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
                 {reste.toFixed(2)} €
               </p>
             </div>
             {/* Total */}
             <div className="flex-1 px-4 py-3">
-              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: '#E5F0F5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#432F2E" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: c.chip, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c.textPrimary} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
                 </svg>
               </div>
-              <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Total</p>
-              <p style={{ fontSize: '1rem', fontWeight: 800, color: '#111111', fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+              <p style={{ fontSize: '0.6875rem', color: c.textSecondary, fontFamily: 'Satoshi', fontWeight: 500, marginBottom: 2 }}>Total</p>
+              <p style={{ fontSize: '1rem', fontWeight: 800, color: c.textPrimary, fontFamily: 'Satoshi', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
                 {order.totalAmount.toFixed(2)} €
               </p>
             </div>
@@ -483,41 +496,38 @@ function OrderCard({ order, index, onOpen }) {
       )}
 
       {/* ── Zone 4 : Footer ── */}
-      <div className="flex items-center justify-between px-4 py-3 gap-2" style={{ borderTop: '1px solid rgba(67,47,46,0.07)' }}>
-        {hasPay ? (
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0.3rem 0.75rem', borderRadius: 9999, backgroundColor: reste === 0 ? '#E5F0F5' : '#FFF0B5', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', flexShrink: 0 }}>
-            {reste === 0 ? '✓ Soldé' : 'Solde partiel'}
-          </span>
-        ) : (
-          <span />
-        )}
-
-        <div className="flex items-center gap-2" style={{ flexShrink: 0 }}>
-          {isDone && (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '0.375rem 0.75rem', borderRadius: 9999, backgroundColor: 'rgba(67,47,46,0.06)', color: '#8A7060', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi' }}>
-              ✓ Récupérée
+      {isDone ? (
+        <div style={{ margin: '0 16px 16px', marginTop: 12 }}>
+          <div
+            className="flex items-center justify-center gap-1.5"
+            style={{ backgroundColor: '#EEF2E9', border: '1px solid rgba(82,118,75,0.18)', borderRadius: 14, padding: '10px 12px' }}
+          >
+            <CheckCircle2 size={13} strokeWidth={2.4} color="#52764B" />
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#52764B', fontFamily: 'Satoshi', textAlign: 'center' }}>
+              Commande récupérée{recoveredAt ? ` le ${format(recoveredAt, 'dd/MM à HH:mm')}` : ''}
             </span>
-          )}
-          {isReady && (
-            <button
-              onClick={handleMarkDone}
-              disabled={busy}
-              className="active:opacity-80 disabled:opacity-50"
-              style={{ padding: '0.375rem 0.9rem', borderRadius: 9999, backgroundColor: '#432F2E', color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
-            >
-              {busy ? '…' : '✓ Récupérée'}
-            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between px-4 py-3 gap-2" style={{ borderTop: '1px solid rgba(67,47,46,0.07)' }}>
+          {hasPay ? (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0.3rem 0.75rem', borderRadius: 9999, backgroundColor: reste === 0 ? '#E5F0F5' : '#FFF0B5', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', flexShrink: 0 }}>
+              {reste === 0 ? '✓ Soldé' : 'Solde partiel'}
+            </span>
+          ) : (
+            <span />
           )}
           <button
-            onClick={onOpen}
-            className="flex items-center gap-1 active:opacity-80"
-            style={{ padding: '0.375rem 0.9rem', borderRadius: 9999, backgroundColor: '#FFF0B5', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+            onClick={handleMarkDone}
+            disabled={busy}
+            className="flex items-center gap-1.5 active:opacity-80 disabled:opacity-50"
+            style={{ padding: '0.375rem 1rem', borderRadius: 9999, backgroundColor: '#FFFFFF', color: '#432F2E', fontSize: '0.75rem', fontWeight: 700, fontFamily: 'Satoshi', border: '1.5px solid #FFF0B5', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}
           >
-            Détail
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            <CheckCircle2 size={14} strokeWidth={2.3} />
+            {busy ? 'Mise à jour…' : 'Marquer comme récupérée'}
           </button>
         </div>
-      </div>
+      )}
     </div>
   )
 }
