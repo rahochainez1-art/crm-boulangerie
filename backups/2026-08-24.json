@@ -1,0 +1,493 @@
+[
+  {
+    "id": "4tEkVW6zSRpJAob5coyH",
+    "clientName": "Hachemi fatima",
+    "clientPhone": "0618527222",
+    "pickupDate": "2026-08-16T11:00:00",
+    "pickupTime": "11:00",
+    "articles": "L’eclat pistaché 4 parts",
+    "deposit": 0,
+    "totalAmount": 22,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-15T15:02:52.500Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1786806173,
+      "_nanoseconds": 42000000
+    },
+    "updatedAt": {
+      "_seconds": 1786806173,
+      "_nanoseconds": 42000000
+    }
+  },
+  {
+    "id": "5vKhXk95OK8rYexv7FOu",
+    "clientName": "Monsieur norvegien",
+    "clientPhone": "",
+    "pickupDate": "2026-08-19T14:00:00",
+    "pickupTime": "14:00",
+    "articles": "1 pain norvégien tranché à mettre de côté . Déjà réglées ",
+    "deposit": 0,
+    "totalAmount": 0,
+    "notes": "",
+    "assignedTo": [
+      "boulangerie"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-18T21:05:06.176Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1787087106,
+      "_nanoseconds": 506000000
+    },
+    "updatedAt": {
+      "_seconds": 1787087106,
+      "_nanoseconds": 506000000
+    }
+  },
+  {
+    "id": "GZlLDfJE2YcKJyBWd2Wa",
+    "clientName": "Miguel ",
+    "clientPhone": "",
+    "pickupDate": "2026-08-13T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Fraisier 6 personnes ",
+    "deposit": 0,
+    "totalAmount": 26,
+    "notes": "Joyeux anniversaire gloria ",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "createdAt": {
+      "_seconds": 1786544559,
+      "_nanoseconds": 879000000
+    },
+    "statusChangedAt": {
+      "_seconds": 1786639729,
+      "_nanoseconds": 257000000
+    },
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-12T14:22:39.804Z"
+      },
+      {
+        "status": "done",
+        "at": "2026-08-13T16:48:49.138Z"
+      }
+    ],
+    "status": "done",
+    "updatedAt": {
+      "_seconds": 1786639729,
+      "_nanoseconds": 257000000
+    }
+  },
+  {
+    "id": "Gpj5jM10BkR1LCWj57b4",
+    "clientName": "Ouazana",
+    "clientPhone": "0681730708",
+    "pickupDate": "2026-08-18T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Flan praliné noisettes 6 prs ",
+    "deposit": 20,
+    "totalAmount": 20,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-16T10:45:02.596Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1786877103,
+      "_nanoseconds": 137000000
+    },
+    "updatedAt": {
+      "_seconds": 1786877103,
+      "_nanoseconds": 137000000
+    }
+  },
+  {
+    "id": "KpbRgVeBP4ignZ1WN7Dy",
+    "clientName": "Madame ",
+    "clientPhone": "0618341949",
+    "pickupDate": "2026-08-15T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Fraisier 10 personnes ",
+    "deposit": 25,
+    "totalAmount": 50,
+    "notes": "Joyeux anniversaire Zakaria ",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-13T15:50:02.671Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1786636202,
+      "_nanoseconds": 988000000
+    },
+    "updatedAt": {
+      "_seconds": 1786636202,
+      "_nanoseconds": 988000000
+    }
+  },
+  {
+    "id": "RVE5NMJoNrMk0adHSHb4",
+    "clientName": "Cisse",
+    "clientPhone": "0650042874",
+    "pickupDate": "2026-08-13T18:00:00",
+    "pickupTime": "18:00",
+    "articles": "Fraisier 4 pers",
+    "deposit": 18,
+    "totalAmount": 18,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "createdAt": {
+      "_seconds": 1786549256,
+      "_nanoseconds": 654000000
+    },
+    "statusChangedAt": {
+      "_seconds": 1786639731,
+      "_nanoseconds": 914000000
+    },
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-12T15:40:56.167Z"
+      },
+      {
+        "status": "done",
+        "at": "2026-08-13T16:48:51.866Z"
+      }
+    ],
+    "status": "done",
+    "updatedAt": {
+      "_seconds": 1786639731,
+      "_nanoseconds": 914000000
+    }
+  },
+  {
+    "id": "Tb811d3fnprYlJWVuTSL",
+    "clientName": "Madame ",
+    "clientPhone": "",
+    "pickupDate": "2026-08-05T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Tarte aux poires 8 personnes ",
+    "deposit": 28,
+    "totalAmount": 28,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "createdAt": {
+      "_seconds": 1785927827,
+      "_nanoseconds": 174000000
+    },
+    "statusChangedAt": {
+      "_seconds": 1786006700,
+      "_nanoseconds": 748000000
+    },
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-05T11:03:47.070Z"
+      },
+      {
+        "status": "ready",
+        "at": "2026-08-05T18:08:02.026Z"
+      },
+      {
+        "status": "todo",
+        "at": "2026-08-05T18:08:04.586Z"
+      },
+      {
+        "status": "inprogress",
+        "at": "2026-08-06T08:58:18.244Z"
+      },
+      {
+        "status": "ready",
+        "at": "2026-08-06T08:58:19.809Z"
+      },
+      {
+        "status": "done",
+        "at": "2026-08-06T08:58:20.660Z"
+      }
+    ],
+    "status": "done",
+    "updatedAt": {
+      "_seconds": 1786006700,
+      "_nanoseconds": 748000000
+    }
+  },
+  {
+    "id": "VzDleqMbR5wJini9ONHq",
+    "clientName": "Jarisseau",
+    "clientPhone": "",
+    "pickupDate": "2026-08-16T13:00:00",
+    "pickupTime": "13:00",
+    "articles": "Fraisier 10-12 pers ",
+    "deposit": 0,
+    "totalAmount": 55,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-15T11:25:19.728Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1786793119,
+      "_nanoseconds": 893000000
+    },
+    "updatedAt": {
+      "_seconds": 1786793119,
+      "_nanoseconds": 893000000
+    }
+  },
+  {
+    "id": "XR0F6ViGiOfVXcWoXNi6",
+    "clientName": "Miguel ",
+    "clientPhone": "",
+    "pickupDate": "2026-08-13T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Flan 6 pers ",
+    "deposit": 0,
+    "totalAmount": 16,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "createdAt": {
+      "_seconds": 1786545116,
+      "_nanoseconds": 108000000
+    },
+    "statusChangedAt": {
+      "_seconds": 1786639735,
+      "_nanoseconds": 499000000
+    },
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-12T14:31:56.041Z"
+      },
+      {
+        "status": "done",
+        "at": "2026-08-13T16:48:55.451Z"
+      }
+    ],
+    "status": "done",
+    "updatedAt": {
+      "_seconds": 1786639735,
+      "_nanoseconds": 499000000
+    }
+  },
+  {
+    "id": "XTkSnbZPziDwBecNjrll",
+    "clientName": "Madame ",
+    "clientPhone": "",
+    "pickupDate": "2026-08-08T19:00:00",
+    "pickupTime": "19:00",
+    "articles": "Flan vanille 4 part",
+    "deposit": 0,
+    "totalAmount": 16,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-08T09:55:36.114Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1786182936,
+      "_nanoseconds": 461000000
+    },
+    "updatedAt": {
+      "_seconds": 1786182936,
+      "_nanoseconds": 461000000
+    }
+  },
+  {
+    "id": "YE3AEWaL4Oghliqi1klQ",
+    "clientName": "Madame noisette ",
+    "clientPhone": "",
+    "pickupDate": "2026-08-09T08:00:00",
+    "pickupTime": "08:00",
+    "articles": "Brioche feuilletée ",
+    "deposit": 0,
+    "totalAmount": 4,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-07T06:17:36.708Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1786083456,
+      "_nanoseconds": 829000000
+    },
+    "updatedAt": {
+      "_seconds": 1786083456,
+      "_nanoseconds": 829000000
+    }
+  },
+  {
+    "id": "aWmfToeWR6xjdZqJWCPk",
+    "clientName": "Marie",
+    "clientPhone": "0625674417",
+    "pickupDate": "2026-08-09T11:45:00",
+    "pickupTime": "11:45",
+    "articles": "Gateaux aux cerises pour 8 prs ",
+    "deposit": 40,
+    "totalAmount": 40,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-08T14:45:59.777Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1786200360,
+      "_nanoseconds": 470000000
+    },
+    "updatedAt": {
+      "_seconds": 1786200360,
+      "_nanoseconds": 470000000
+    }
+  },
+  {
+    "id": "j2UzELVKe879WjUWjbRs",
+    "clientName": "Mr baguette norvégienne ",
+    "clientPhone": "078542351",
+    "pickupDate": "2026-08-08T14:00:00",
+    "pickupTime": "14:00",
+    "articles": "Baguettes norvégiennes",
+    "deposit": 0,
+    "totalAmount": 0,
+    "notes": "DEJA PAYE !!!!!",
+    "assignedTo": [
+      "boulangerie"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-07T15:28:05.064Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1786116485,
+      "_nanoseconds": 973000000
+    },
+    "updatedAt": {
+      "_seconds": 1786116485,
+      "_nanoseconds": 973000000
+    }
+  },
+  {
+    "id": "pbMfHSMyUGAf3fVJNkPT",
+    "clientName": "Client x",
+    "clientPhone": "",
+    "pickupDate": "2026-08-22T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Casse noisette demi cadre 30 personnes ",
+    "deposit": 60,
+    "totalAmount": 120,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-19T13:56:10.724Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1787147770,
+      "_nanoseconds": 860000000
+    },
+    "updatedAt": {
+      "_seconds": 1787147770,
+      "_nanoseconds": 860000000
+    }
+  },
+  {
+    "id": "qC82cKveYiahlpVZkuhQ",
+    "clientName": "Monsieur",
+    "clientPhone": "",
+    "pickupDate": "2026-08-05T11:00:00",
+    "pickupTime": "11:00",
+    "articles": " 1 Baguettes norvégiennes",
+    "deposit": 0,
+    "totalAmount": 0,
+    "notes": "",
+    "assignedTo": [
+      "boulangerie"
+    ],
+    "createdAt": {
+      "_seconds": 1785858492,
+      "_nanoseconds": 578000000
+    },
+    "statusChangedAt": {
+      "_seconds": 1786012996,
+      "_nanoseconds": 937000000
+    },
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-08-04T15:48:12.127Z"
+      },
+      {
+        "status": "done",
+        "at": "2026-08-06T10:43:16.818Z"
+      }
+    ],
+    "status": "done",
+    "updatedAt": {
+      "_seconds": 1786012996,
+      "_nanoseconds": 937000000
+    }
+  }
+]
