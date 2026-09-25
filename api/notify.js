@@ -25,7 +25,7 @@ function buildMessage(event, order) {
   if (event === 'new') {
     const poles = asArray(order.assignedTo).map((p) => POLE_LABELS[p] ?? p).join(' + ')
     return {
-      roles: [...asArray(order.assignedTo), 'manager'],
+      roles: [...asArray(order.assignedTo), 'manager', 'vendeur'],
       title: `🧁 Nouvelle commande${poles ? ` · ${poles}` : ''}`,
       body: `${order.clientName} — ${articles}\nRetrait le ${formatPickup(order.pickupDate)}`,
     }
