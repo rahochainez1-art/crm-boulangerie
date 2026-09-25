@@ -18,8 +18,23 @@ async function registerServiceWorker() {
   const params = new URLSearchParams(
     Object.entries(firebaseConfig).filter(([, v]) => v)
   )
-  return navigator.serviceWorker.register(`/firebase-messaging-sw.js?${params}`)
+  await navigator.serviceWorker.register(`/firebase-messaging-sw.js?${params}`)
+  // Firebase échoue si le worker n'est pas encore actif (fréquent sur iPhone au 1er lancement)
+  return navigator.serviceWorker.ready
 }
+
+const getPlatform = () =>
+  isIOS() ? 'ios' : /Android/.test(navigator.userAgent) ? 'android' : 'autre'
+
+// Garde une trace de l'échec dans Firestore (sans token : le serveur l'ignore) pour pouvoir diagnostiquer
+const saveRegistrationError = (deviceId, role, error) =>
+  setDoc(doc(db, 'fcm_tokens', deviceId), {
+    role,
+    platform: getPlatform(),
+    error: String(error?.message ?? error).slice(0, 500),
+    userAgent: navigator.userAgent.slice(0, 300),
+    updatedAt: serverTimestamp(),
+  }).catch(() => {})
 
 // Récupère le token FCM et l'enregistre dans Firestore, associé au rôle.
 // askPermission=false : rafraîchit seulement si la permission est déjà accordée (pas de popup).
@@ -34,23 +49,30 @@ export async function registerFCMToken(role, deviceId, { askPermission = true } 
     if (permission !== 'granted') return null
 
     const messaging = await getMessagingInstance()
-    if (!messaging) return null
+    if (!messaging) {
+      saveRegistrationError(deviceId, role, 'Firebase Messaging non supporté sur cet appareil')
+      return null
+    }
 
     const serviceWorkerRegistration = await registerServiceWorker()
     const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration })
-    if (!token) return null
+    if (!token) {
+      saveRegistrationError(deviceId, role, 'getToken a renvoyé un token vide')
+      return null
+    }
 
     // Sauvegarde dans Firestore : fcm_tokens/{deviceId}
     await setDoc(doc(db, 'fcm_tokens', deviceId), {
       token,
       role,
-      platform: isIOS() ? 'ios' : /Android/.test(navigator.userAgent) ? 'android' : 'autre',
+      platform: getPlatform(),
       updatedAt: serverTimestamp(),
     })
 
     return token
   } catch (err) {
     console.warn('FCM registration failed:', err)
+    saveRegistrationError(deviceId, role, err)
     return null
   }
 }
