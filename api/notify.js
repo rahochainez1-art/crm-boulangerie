@@ -40,7 +40,7 @@ function buildMessage(event, order) {
   if (event === 'ready') {
     return {
       roles: ['vendeur', 'manager'],
-      title: `🔥 ${gateau}`,
+      title: `✅ ${gateau}`,
       body: `Prête · retrait ${retrait}`,
     }
   }
