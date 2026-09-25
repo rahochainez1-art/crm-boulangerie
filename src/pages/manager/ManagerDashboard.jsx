@@ -141,49 +141,6 @@ const IconClipboard = ({ size = 20 }) => (
   </svg>
 )
 
-/* Engrenage — 8 dents */
-const IconSettings = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
-    <path d="M12 2.5 L13.8 5.3 L17 4.7 L17.8 8 L21 9.5 L19.8 12.5 L21.5 15.3 L18.8 17.2 L18.5 20.5 L15.2 20 L13 22.5 L10.5 20.5 L7.5 21.5 L6.8 18.2 L3.5 17.2 L4.2 14 L2 12 L3.5 9.5 L2.5 6.5 L5.8 5.8 L6.5 2.5 L9.8 3.8 Z"/>
-    <circle cx="12" cy="12" r="3.5"/>
-  </svg>
-)
-
-/* Document planning avec bullet + lignes */
-const IconPlanningDoc = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
-    <rect x="4" y="2" width="16" height="20" rx="2.5"/>
-    <circle cx="8"  cy="8.5"  r="1" fill="currentColor" stroke="none"/>
-    <line x1="11"  y1="8.5"  x2="18" y2="8.5"/>
-    <circle cx="8"  cy="13"  r="1" fill="currentColor" stroke="none"/>
-    <line x1="11"  y1="13"   x2="18" y2="13"/>
-    <circle cx="8"  cy="17.5" r="1" fill="currentColor" stroke="none"/>
-    <line x1="11"  y1="17.5" x2="16" y2="17.5"/>
-  </svg>
-)
-
-/* Maison */
-const IconHome = ({ size = 22 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
-    <path d="M3 10 L12 3 L21 10 V20 a1 1 0 0 1-1 1 H4 a1 1 0 0 1-1-1 Z"/>
-    <path d="M9 21 V13 h6 v8"/>
-  </svg>
-)
-
-/* Presse-papiers nav (Commandes) */
-const IconList = ({ size = 22 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" {...W}>
-    <rect x="5" y="3" width="14" height="18" rx="2.5"/>
-    <path d="M9 3 V2 a3 3 0 0 1 6 0 V3"/>
-    <circle cx="8.5" cy="10" r="1" fill="currentColor" stroke="none"/>
-    <line x1="11.5" y1="10" x2="17" y2="10"/>
-    <circle cx="8.5" cy="14.5" r="1" fill="currentColor" stroke="none"/>
-    <line x1="11.5" y1="14.5" x2="17" y2="14.5"/>
-    <circle cx="8.5" cy="19" r="1" fill="currentColor" stroke="none"/>
-    <line x1="11.5" y1="19" x2="15" y2="19"/>
-  </svg>
-)
-
 /* Icônes secondaires */
 const IconAlertSmall = () => (
   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -690,10 +647,6 @@ function VueMois({ orders, viewMonth, setViewMonth, navigate }) {
   )
 }
 
-// ── Nav constants ─────────────────────────────────────────────────────────
-const ACTIVE   = '#111111'
-const INACTIVE = '#B0A090'
-
 // ── Manager Dashboard ─────────────────────────────────────────────────────
 export default function ManagerDashboard() {
   const [orders, setOrders] = useState([])
@@ -720,13 +673,6 @@ export default function ManagerDashboard() {
     const s = format(today, 'EEEE d MMMM', { locale: fr })
     return s.charAt(0).toUpperCase() + s.slice(1)
   }, [])
-
-  const NAV = [
-    { id: 'home',      label: 'Accueil',   Icon: IconHome,        action: () => {} },
-    { id: 'commandes', label: 'Commandes', Icon: IconList,        action: () => navigate('/manager/toutes') },
-    { id: 'planning',  label: 'Planning',  Icon: IconPlanningDoc, action: () => navigate('/manager/toutes') },
-    { id: 'reglages',  label: 'Réglages',  Icon: IconSettings,    action: () => navigate('/settings') },
-  ]
 
   return (
     <div className="min-h-dvh flex flex-col max-w-lg mx-auto" style={{ backgroundColor: '#F5F2EB' }}>
@@ -766,41 +712,6 @@ export default function ManagerDashboard() {
         <PlanningWidget orders={orders} navigate={navigate} onViewAll={() => navigate('/manager/toutes')} />
       </main>
 
-      {/* ── Bottom nav ── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50"
-        style={{ backgroundColor: 'rgba(245,242,235,0.94)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
-        <div className="max-w-lg mx-auto" style={{ borderTop: '1px solid rgba(67,47,46,0.08)', paddingBottom: 'max(env(safe-area-inset-bottom), 6px)' }}>
-          <div className="flex items-end pt-3 pb-1">
-            {NAV.slice(0, 2).map(item => (
-              <button key={item.id} onClick={item.action}
-                className="flex-1 flex flex-col items-center gap-0.5 pb-1"
-                style={{ color: item.id === 'home' ? ACTIVE : INACTIVE }}>
-                <item.Icon />
-                <span style={{ fontSize: 10, fontWeight: item.id === 'home' ? 700 : 500, color: item.id === 'home' ? ACTIVE : INACTIVE, fontFamily: 'Satoshi' }}>{item.label}</span>
-                <span style={{ width: item.id === 'home' ? 16 : 0, height: 2, borderRadius: 9999, backgroundColor: '#432F2E', marginTop: 2, transition: 'width 0.2s', display: 'block' }} />
-              </button>
-            ))}
-
-            <button onClick={() => navigate('/vendeur/nouvelle-commande')}
-              className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform"
-              style={{ backgroundColor: '#432F2E', boxShadow: '0 8px 24px rgba(67,47,46,0.35)', transform: 'translateY(-14px)', marginBottom: -14 }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-            </button>
-
-            {NAV.slice(2).map(item => (
-              <button key={item.id} onClick={item.action}
-                className="flex-1 flex flex-col items-center gap-0.5 pb-1"
-                style={{ color: INACTIVE }}>
-                <item.Icon />
-                <span style={{ fontSize: 10, fontWeight: 500, color: INACTIVE, fontFamily: 'Satoshi' }}>{item.label}</span>
-                <span style={{ width: 0, height: 2, display: 'block' }} />
-              </button>
-            ))}
-          </div>
-        </div>
-      </nav>
     </div>
   )
 }

@@ -212,9 +212,24 @@ function BoulangerieNav() {
   )
 }
 
+// ── Nav manager ───────────────────────────────────────────────────────────
+function ManagerNav() {
+  const navigate = useNavigate()
+  return (
+    <NavShell>
+      <NavItem to="/manager"        label="Accueil"   Icon={IconHome} end />
+      <NavItem to="/manager/toutes" label="Commandes" Icon={IconArchive} />
+      <PlusButton onClick={() => navigate('/vendeur/nouvelle-commande')} />
+      <NavItem to="/calendrier"     label="Planning"  Icon={IconList} />
+      <NavItem to="/settings"       label="Réglages"  Icon={IconSettings} />
+    </NavShell>
+  )
+}
+
 // ── Export ────────────────────────────────────────────────────────────────
 export default function BottomNav() {
   const { role } = useRole()
+  if (role === 'manager')     return <ManagerNav />
   if (role === 'vendeur')     return <VendeurNav />
   if (role === 'patissiere')  return <PatissiereNav />
   if (role === 'boulangerie') return <BoulangerieNav />
