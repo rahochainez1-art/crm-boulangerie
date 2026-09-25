@@ -2,7 +2,9 @@ import { getToken, onMessage } from 'firebase/messaging'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { getMessagingInstance, db, firebaseConfig } from './firebase'
 
-const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY
+// Clé publique VAPID (Firebase > Paramètres du projet > Cloud Messaging > Certificats push Web).
+// Publique par nature : écrite ici car la variable Vercel VITE_FIREBASE_VAPID_KEY était invalide.
+const VAPID_KEY = 'BJ1kZLSPvNAIht-jehLgGd87MHX2gbDLr7Qz6YqruF2XiC9OkqaqEEVPiNPVkGXkyvg3PlQSm1SrXmO2r6yPhUO'
 
 // iPhone / iPad (y compris iPad qui se présente comme un Mac)
 export const isIOS = () =>
