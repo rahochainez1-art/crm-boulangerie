@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
-import { createOrder } from '../../lib/orders'
+import { createOrder, parsePrice } from '../../lib/orders'
 
 const RACCOURCIS = [
   'Fraisier 4 pers',
@@ -41,7 +41,7 @@ export default function NouvelleCommande() {
     mainRef.current?.scrollTo(0, 0)
   }, [confirmed])
 
-  const reste = (Number(form.totalAmount) || 0) - (Number(form.deposit) || 0)
+  const reste = parsePrice(form.totalAmount) - parsePrice(form.deposit)
 
   const set = (f) => (e) => setForm((p) => ({ ...p, [f]: e.target.value }))
   const prefillArticle = (a) => setForm((p) => ({ ...p, articles: a }))
@@ -62,8 +62,8 @@ export default function NouvelleCommande() {
       const orderData = {
         ...form,
         pickupDate:  `${form.pickupDate}T${form.pickupTime}:00`,
-        deposit:     Number(form.deposit) || 0,
-        totalAmount: Number(form.totalAmount) || 0,
+        deposit:     parsePrice(form.deposit),
+        totalAmount: parsePrice(form.totalAmount),
       }
       await createOrder(orderData)
       setConfirmed(orderData)
@@ -302,16 +302,16 @@ export default function NouvelleCommande() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 600, marginBottom: 6 }}>Acompte (€)</p>
-                <input type="number" inputMode="decimal" min="0" step="0.50" placeholder="0" value={form.deposit} onChange={set('deposit')} className="field" />
+                <input type="text" inputMode="decimal" placeholder="0" value={form.deposit} onChange={set('deposit')} className="field" />
               </div>
               <div>
                 <p style={{ fontSize: '0.6875rem', color: '#8A7060', fontFamily: 'Satoshi', fontWeight: 600, marginBottom: 6 }}>Total (€)</p>
-                <input type="number" inputMode="decimal" min="0" step="0.50" placeholder="0" value={form.totalAmount} onChange={set('totalAmount')} className="field" />
+                <input type="text" inputMode="decimal" placeholder="0" value={form.totalAmount} onChange={set('totalAmount')} className="field" />
               </div>
             </div>
 
             {(() => {
-              const hasTotal = Number(form.totalAmount) > 0
+              const hasTotal = parsePrice(form.totalAmount) > 0
               const isSolde  = hasTotal && reste <= 0
               const bg    = isSolde ? 'rgba(16,185,129,0.08)' : hasTotal ? 'rgba(255,240,181,0.35)' : 'rgba(67,47,46,0.04)'
               const iconBg = isSolde ? '#D1FAE5' : hasTotal ? '#FFF0B5' : 'rgba(67,47,46,0.08)'

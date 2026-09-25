@@ -5,6 +5,9 @@ import {
 import { parseISO } from 'date-fns'
 import { db } from './firebase'
 
+// Accepte "12,50" comme "12.50" (clavier français)
+export const parsePrice = (v) => Number(String(v ?? '').replace(',', '.').replace(/\s/g, '')) || 0
+
 export const STATUS = {
   TODO: 'todo',
   INPROGRESS: 'inprogress',

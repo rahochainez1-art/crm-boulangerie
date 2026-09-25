@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import toast from 'react-hot-toast'
-import { updateOrder, STATUS_LABELS } from '../../lib/orders'
+import { updateOrder, parsePrice, STATUS_LABELS } from '../../lib/orders'
 import AppLayout from '../../components/layout/AppLayout'
 import StatusBadge from '../../components/ui/StatusBadge'
 
@@ -21,8 +21,8 @@ export default function OrderDetail({ order, onBack }) {
         clientPhone: form.clientPhone,
         articles: form.articles,
         pickupDate: `${form.pickupDate.slice(0, 10)}T${form.pickupTime || '10:00'}:00`,
-        deposit: Number(form.deposit) || 0,
-        totalAmount: Number(form.totalAmount) || 0,
+        deposit: parsePrice(form.deposit),
+        totalAmount: parsePrice(form.totalAmount),
         notes: form.notes,
         assignedTo: form.assignedTo,
         status: form.status,
@@ -134,11 +134,11 @@ export default function OrderDetail({ order, onBack }) {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs text-eerie/40 mb-1 block">Acompte (€)</label>
-                  <input type="number" value={form.deposit} onChange={set('deposit')} className="field" />
+                  <input type="text" inputMode="decimal" value={form.deposit} onChange={set('deposit')} className="field" />
                 </div>
                 <div>
                   <label className="text-xs text-eerie/40 mb-1 block">Total (€)</label>
-                  <input type="number" value={form.totalAmount} onChange={set('totalAmount')} className="field" />
+                  <input type="text" inputMode="decimal" value={form.totalAmount} onChange={set('totalAmount')} className="field" />
                 </div>
               </div>
               <textarea value={form.notes} onChange={set('notes')} rows={3} className="field resize-none" placeholder="Notes..." />
