@@ -33,14 +33,14 @@ function buildMessage(event, order) {
   if (event === 'new') {
     return {
       roles: [...asArray(order.assignedTo), 'manager', 'vendeur'],
-      title: gateau,
+      title: `🔥 ${gateau}`,
       body: `Retrait ${retrait}`,
     }
   }
   if (event === 'ready') {
     return {
       roles: ['vendeur', 'manager'],
-      title: gateau,
+      title: `🔥 ${gateau}`,
       body: `Prête · retrait ${retrait}`,
     }
   }
