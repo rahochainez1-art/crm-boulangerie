@@ -24,14 +24,17 @@ async function registerServiceWorker() {
 // Récupère le token FCM et l'enregistre dans Firestore, associé au rôle.
 // askPermission=false : rafraîchit seulement si la permission est déjà accordée (pas de popup).
 export async function registerFCMToken(role, deviceId, { askPermission = true } = {}) {
-  const messaging = await getMessagingInstance()
-  if (!messaging || !('serviceWorker' in navigator)) return null
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return null
 
   try {
+    // iOS : la demande doit partir AVANT tout await, sinon Safari n'affiche pas la fenêtre « Autoriser »
     const permission = askPermission
       ? await Notification.requestPermission()
       : Notification.permission
     if (permission !== 'granted') return null
+
+    const messaging = await getMessagingInstance()
+    if (!messaging) return null
 
     const serviceWorkerRegistration = await registerServiceWorker()
     const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration })
