@@ -10,31 +10,38 @@ if (!getApps().length) {
 }
 const db = getFirestore()
 
-const POLE_LABELS = { patissiere: 'Pâtisserie', boulangerie: 'Boulangerie' }
-
-// "2026-09-25T10:00:00" → "25/09 à 10h00" (l'heure est déjà l'heure locale saisie)
+// "2026-09-25T10:00:00" → "aujourd'hui à 10h00" / "demain à 10h00" / "sam. 27/09 à 10h00"
+// (l'heure est déjà l'heure locale saisie ; « aujourd'hui » est calculé à l'heure de Paris)
 const formatPickup = (iso) => {
   const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(iso ?? '')
-  return m ? `${m[3]}/${m[2]} à ${m[4]}h${m[5]}` : ''
+  if (!m) return ''
+  const heure = `${m[4]}h${m[5]}`
+  const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' })
+  const diff = Math.round((Date.UTC(m[1], m[2] - 1, m[3]) - Date.parse(`${today}T00:00:00Z`)) / 86400000)
+  if (diff === 0) return `aujourd'hui à ${heure}`
+  if (diff === 1) return `demain à ${heure}`
+  const jour = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'][new Date(Date.UTC(m[1], m[2] - 1, m[3])).getUTCDay()]
+  return `${jour} ${m[3]}/${m[2]} à ${heure}`
 }
 
 const asArray = (v) => (Array.isArray(v) ? v : v ? [v] : [])
 
+// Notification volontairement minimale : le gâteau + la date de retrait
 function buildMessage(event, order) {
-  const articles = (order.articles ?? '').split('\n')[0].slice(0, 80)
+  const gateau = (order.articles ?? '').split('\n')[0].slice(0, 80) || 'Commande'
+  const retrait = formatPickup(order.pickupDate)
   if (event === 'new') {
-    const poles = asArray(order.assignedTo).map((p) => POLE_LABELS[p] ?? p).join(' + ')
     return {
       roles: [...asArray(order.assignedTo), 'manager', 'vendeur'],
-      title: `🧁 Nouvelle commande${poles ? ` · ${poles}` : ''}`,
-      body: `${order.clientName} — ${articles}\nRetrait le ${formatPickup(order.pickupDate)}`,
+      title: gateau,
+      body: `Retrait ${retrait}`,
     }
   }
   if (event === 'ready') {
     return {
       roles: ['vendeur', 'manager'],
-      title: '✅ Commande prête',
-      body: `${order.clientName} — ${articles}`,
+      title: gateau,
+      body: `Prête · retrait ${retrait}`,
     }
   }
   return null
