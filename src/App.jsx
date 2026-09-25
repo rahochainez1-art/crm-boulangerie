@@ -1,7 +1,9 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { Toaster } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import { RoleProvider, useRole } from './context/RoleContext'
 import BottomNav from './components/layout/BottomNav'
+import { registerFCMToken, onForegroundMessage, getDeviceId } from './lib/notifications'
 
 import RoleSelector from './pages/RoleSelector'
 import Settings from './pages/Settings'
@@ -68,6 +70,37 @@ function AppRoutes() {
   )
 }
 
+// Garde le token push à jour (rotation, changement de rôle) + affiche les push reçus app ouverte
+function PushSync() {
+  const { role } = useRole()
+
+  useEffect(() => {
+    if (role) registerFCMToken(role, getDeviceId(), { askPermission: false })
+  }, [role])
+
+  useEffect(() => {
+    let unsub = () => {}
+    // App ouverte : Firebase n'affiche rien tout seul → on affiche la notification système (avec son)
+    onForegroundMessage(async ({ notification }) => {
+      if (!notification?.title) return
+      try {
+        const reg = await navigator.serviceWorker.ready
+        await reg.showNotification(notification.title, {
+          body: notification.body,
+          icon: '/icon-192.png',
+          badge: '/badge-96.png',
+          vibrate: [300, 100, 300, 100, 300],
+        })
+      } catch {
+        toast(`${notification.title}\n${notification.body ?? ''}`, { duration: 6000 })
+      }
+    }).then((u) => { unsub = u })
+    return () => unsub()
+  }, [])
+
+  return null
+}
+
 function BackgroundBlobs() {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
@@ -83,6 +116,7 @@ export default function App() {
     <RoleProvider>
       <BrowserRouter>
         <BackgroundBlobs />
+        <PushSync />
         <AppRoutes />
         <BottomNav />
         <Toaster

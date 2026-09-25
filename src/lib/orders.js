@@ -4,6 +4,7 @@ import {
 } from 'firebase/firestore'
 import { parseISO } from 'date-fns'
 import { db } from './firebase'
+import { sendPushNotification } from './notifications'
 
 // Accepte "12,50" comme "12.50" (clavier français)
 export const parsePrice = (v) => Number(String(v ?? '').replace(',', '.').replace(/\s/g, '')) || 0
@@ -38,14 +39,17 @@ export const cancelOrder = (id) =>
     updatedAt: serverTimestamp(),
   })
 
-export const createOrder = (data) =>
-  addDoc(collection(db, 'orders'), {
+export const createOrder = async (data) => {
+  const ref = await addDoc(collection(db, 'orders'), {
     ...data,
     status: STATUS.TODO,
     statusHistory: [{ status: STATUS.TODO, at: new Date().toISOString() }],
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
+  sendPushNotification(ref.id, 'new')
+  return ref
+}
 
 export const updateOrder = (id, data) =>
   updateDoc(doc(db, 'orders', id), { ...data, updatedAt: serverTimestamp() })
@@ -54,22 +58,20 @@ export const updateOrder = (id, data) =>
 export const advanceStatus = (id, currentStatus) => {
   const next = STATUS_NEXT[currentStatus]
   if (!next) return Promise.resolve()
-  return updateDoc(doc(db, 'orders', id), {
-    status: next,
-    statusChangedAt: serverTimestamp(),
-    statusHistory: arrayUnion({ status: next, at: new Date().toISOString() }),
-    updatedAt: serverTimestamp(),
-  })
+  return setStatus(id, next)
 }
 
 // Définit un statut arbitraire (usage pâtissière)
-export const setStatus = (id, newStatus) =>
-  updateDoc(doc(db, 'orders', id), {
+// notify=false : pas de push (ex. annulation d'une récupération qui remet « Prête »)
+export const setStatus = async (id, newStatus, { notify = true } = {}) => {
+  await updateDoc(doc(db, 'orders', id), {
     status: newStatus,
     statusChangedAt: serverTimestamp(),
     statusHistory: arrayUnion({ status: newStatus, at: new Date().toISOString() }),
     updatedAt: serverTimestamp(),
   })
+  if (notify && newStatus === STATUS.READY) sendPushNotification(id, 'ready')
+}
 
 export const deleteOrder = (id) => deleteDoc(doc(db, 'orders', id))
 

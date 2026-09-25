@@ -396,7 +396,7 @@ function OrderCard({ order, index, onOpen }) {
     setBusy(true)
     try {
       const prevStatus = getPreviousStatus(order)
-      await setStatus(order.id, prevStatus)
+      await setStatus(order.id, prevStatus, { notify: false })
       toast(`Statut annulé — commande remise « ${STATUS_LABEL[prevStatus]} »`)
     } finally { setBusy(false) }
   }
@@ -575,7 +575,7 @@ function OrderSheet({ order, onClose }) {
       toast.success(`${order.clientName} — commande récupérée`)
     } else {
       const prevStatus = getPreviousStatus(order)
-      await setStatus(order.id, prevStatus)
+      await setStatus(order.id, prevStatus, { notify: false })
       toast(`Statut annulé — commande remise « ${STATUS_LABEL[prevStatus]} »`)
     }
   }

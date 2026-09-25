@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { format, parseISO, isSameMonth } from 'date-fns'
 import { useRole } from '../context/RoleContext'
-import { registerFCMToken, getDeviceId } from '../lib/notifications'
+import { registerFCMToken, getDeviceId, sendTestNotification, isIOS, isStandalone } from '../lib/notifications'
 import { seedFakeOrders, subscribeOrders, clearAllOrders } from '../lib/orders'
 import {
   getPrenom, savePrenom,
@@ -80,6 +80,9 @@ export default function Settings() {
   const [soundEnabled, setSoundEnabled] = useState(() => getSoundEnabled())
   const [notifStatus, setNotifStatus]   = useState(safeNotifPermission)
   const [notifLoading, setNotifLoading] = useState(false)
+  const [testLoading, setTestLoading]   = useState(false)
+  // Sur iPhone, les notifications ne marchent que dans l'app installée sur l'écran d'accueil
+  const needsInstall = isIOS() && !isStandalone()
   const [seeding, setSeeding]           = useState(false)
   const [clearing, setClearing]         = useState(false)
   const [csvLoading, setCsvLoading]     = useState(false)
@@ -111,6 +114,15 @@ export default function Settings() {
     setNotifLoading(false)
     if (token) alert('Notifications activées ✓')
     else alert("Impossible d'activer les notifications. Vérifie les permissions.")
+  }
+
+  const handleTestNotif = async () => {
+    setTestLoading(true)
+    // Ré-inscrit l'appareil (au cas où le token a changé) avant d'envoyer le test
+    await registerFCMToken(role, getDeviceId(), { askPermission: false })
+    const ok = await sendTestNotification()
+    setTestLoading(false)
+    if (!ok) alert("Le test n'a pas pu être envoyé. Réessaie dans un instant.")
   }
 
   const handleExportCSV = () => {
@@ -288,6 +300,22 @@ export default function Settings() {
         {/* ── NOTIFICATIONS ────────────────────────────────────── */}
         <div>
           <SectionLabel>Notifications</SectionLabel>
+          {needsInstall ? (
+          <SectionCard bg="#FFF8E1" border="rgba(237,216,61,0.4)">
+            <div className="px-4 py-4">
+              <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi', marginBottom: 8 }}>
+                Sur iPhone : installe d'abord l'app
+              </p>
+              <ol style={{ fontSize: '0.8125rem', color: '#5C4A3D', fontFamily: 'Satoshi', lineHeight: 1.6, paddingLeft: 18, listStyle: 'decimal' }}>
+                <li>Ouvre ce site dans <b>Safari</b></li>
+                <li>Appuie sur le bouton <b>Partager</b> (carré avec une flèche ↑)</li>
+                <li>Choisis <b>« Sur l'écran d'accueil »</b> puis <b>Ajouter</b></li>
+                <li>Ouvre l'app depuis la nouvelle icône <b>AGJ</b></li>
+                <li>Reviens ici dans Réglages et appuie sur <b>Activer</b></li>
+              </ol>
+            </div>
+          </SectionCard>
+          ) : (
           <SectionCard bg={notifStatus === 'granted' ? '#F0FDF4' : '#FFFFFF'} border={notifStatus === 'granted' ? 'rgba(34,197,94,0.2)' : 'rgba(67,47,46,0.07)'}>
             <button
               onClick={notifStatus === 'default' ? handleEnableNotifs : undefined}
@@ -303,7 +331,7 @@ export default function Settings() {
               <div className="flex-1 text-left">
                 <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>Notifications push</p>
                 <p style={{ fontSize: '0.8125rem', color: '#8A7060', fontFamily: 'Satoshi', marginTop: 1 }}>
-                  {notifStatus === 'granted' ? 'Activées sur cet appareil' : notifStatus === 'denied' ? 'Bloquées — autorise dans les réglages' : 'Alerte quand une commande est prête'}
+                  {notifStatus === 'granted' ? 'Activées sur cet appareil' : notifStatus === 'denied' ? 'Bloquées — autorise dans les réglages du téléphone' : 'Sonnerie à chaque nouvelle commande'}
                 </p>
               </div>
               {notifStatus === 'granted' && <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#15803D', fontFamily: 'Satoshi' }}>Activées</span>}
@@ -311,7 +339,26 @@ export default function Settings() {
               {notifStatus === 'default' && <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#432F2E', fontFamily: 'Satoshi', marginRight: 4 }}>{notifLoading ? '...' : 'Activer'}</span>}
               {notifStatus !== 'denied' && <Chevron color={notifStatus === 'granted' ? '#15803D' : '#8A7060'} />}
             </button>
+            {notifStatus === 'granted' && (
+              <>
+                <Divider />
+                <button
+                  onClick={handleTestNotif}
+                  disabled={testLoading}
+                  className="w-full flex items-center gap-3 px-4 py-3.5 active:opacity-70 transition-opacity disabled:opacity-60"
+                >
+                  <IconBadge bg="rgba(34,197,94,0.15)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15803D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                    </svg>
+                  </IconBadge>
+                  <p style={{ flex: 1, textAlign: 'left', fontSize: '0.9375rem', fontWeight: 600, color: '#111111', fontFamily: 'Satoshi' }}>Tester le son</p>
+                  <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#15803D', fontFamily: 'Satoshi', marginRight: 4 }}>{testLoading ? '...' : 'Envoyer'}</span>
+                </button>
+              </>
+            )}
           </SectionCard>
+          )}
         </div>
 
         {/* ── PRODUCTION ──────────────────────────────────────── */}
