@@ -1,7 +1,6 @@
 {
   "name": "Au Grand Jour — Commandes",
   "short_name": "Au Grand Jour",
-  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#F5F2EB",
