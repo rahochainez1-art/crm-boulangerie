@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 
 const STORAGE_KEY = 'agj_role'
+const QR_ROLES = ['vendeur', 'patissiere', 'boulangerie'] // pas « manager » : sa vue reste à choisir
 
 const RoleContext = createContext(null)
 
@@ -8,10 +9,11 @@ export function RoleProvider({ children }) {
   const [role, setRoleState] = useState(() => {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored) return stored
-    // Lien / QR code « vendeuses » (/vendeur…) : ouvre directement en mode vendeur
-    if (window.location.pathname.startsWith('/vendeur')) {
-      localStorage.setItem(STORAGE_KEY, 'vendeur')
-      return 'vendeur'
+    // Liens / QR codes d'équipe (/vendeur, /patissiere, /boulangerie) : ouvre directement dans la bonne vue
+    const fromUrl = QR_ROLES.find((r) => window.location.pathname.startsWith(`/${r}`))
+    if (fromUrl) {
+      localStorage.setItem(STORAGE_KEY, fromUrl)
+      return fromUrl
     }
     return null
   })
