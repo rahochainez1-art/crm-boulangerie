@@ -1,14 +1,29 @@
 // Fonction serveur Vercel : envoie une notification push (avec son) aux téléphones concernés.
 // Appelée par l'app après la création d'une commande ou son passage en « Prête ».
 // Nécessite la variable d'environnement Vercel FIREBASE_SERVICE_ACCOUNT_KEY (JSON du compte de service).
-import { initializeApp, cert, getApps } from 'firebase-admin/app'
-import { getFirestore } from 'firebase-admin/firestore'
-import { getMessaging } from 'firebase-admin/messaging'
+let db, messaging
 
-if (!getApps().length) {
-  initializeApp({ credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)) })
+// Init paresseuse : une erreur (clé absente, JSON abîmé, module introuvable) est renvoyée
+// dans la réponse au lieu de faire planter la fonction sans explication.
+async function init() {
+  if (db) return
+  const { initializeApp, cert, getApps } = await import('firebase-admin/app')
+  const { getFirestore } = await import('firebase-admin/firestore')
+  const { getMessaging } = await import('firebase-admin/messaging')
+  if (!getApps().length) {
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
+    if (!raw) throw new Error('variable FIREBASE_SERVICE_ACCOUNT_KEY absente')
+    let serviceAccount
+    try {
+      serviceAccount = JSON.parse(raw)
+    } catch {
+      throw new Error(`FIREBASE_SERVICE_ACCOUNT_KEY n'est pas un JSON valide (${raw.length} caractères)`)
+    }
+    initializeApp({ credential: cert(serviceAccount) })
+  }
+  db = getFirestore()
+  messaging = getMessaging()
 }
-const db = getFirestore()
 
 // "2026-09-25T10:00:00" → "aujourd'hui à 10h00" / "demain à 10h00" / "sam. 27/09 à 10h00"
 // (l'heure est déjà l'heure locale saisie ; « aujourd'hui » est calculé à l'heure de Paris)
@@ -49,6 +64,12 @@ function buildMessage(event, order) {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST uniquement' })
+  try {
+    await init()
+  } catch (err) {
+    console.error('[notify] init', err)
+    return res.status(500).json({ error: `init : ${err.message}` })
+  }
 
   const { orderId, event, fromDeviceId } = req.body ?? {}
   let msg, targets
@@ -75,7 +96,7 @@ export default async function handler(req, res) {
   if (!targets.length) return res.status(200).json({ sent: 0 })
 
   const origin = `https://${req.headers['x-forwarded-host'] ?? req.headers.host}`
-  const result = await getMessaging().sendEachForMulticast({
+  const result = await messaging.sendEachForMulticast({
     tokens: targets.map((d) => d.data().token),
     webpush: {
       headers: { Urgency: 'high', TTL: '3600' },
