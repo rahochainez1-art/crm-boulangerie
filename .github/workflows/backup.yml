@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '0 3 * * *' # 05:00 heure de Paris (été)
   workflow_dispatch:
+  # Relance immédiate quand la sauvegarde elle-même est modifiée (pour vérifier qu'elle marche)
+  push:
+    branches: [main]
+    paths: ['.github/workflows/backup.yml', 'scripts/backup-firestore.mjs']
 
 permissions:
   contents: write
@@ -12,11 +16,11 @@ jobs:
   backup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24 # firebase-admin 14 exige Node 22+
 
       - run: npm install firebase-admin
 
