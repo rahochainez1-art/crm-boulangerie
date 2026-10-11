@@ -504,6 +504,35 @@
     }
   },
   {
+    "id": "QhTGpQeQLtmvZXlvIsit",
+    "clientName": "Justine ",
+    "clientPhone": "0689202647",
+    "pickupDate": "2026-10-11T14:00:00",
+    "pickupTime": "14:00",
+    "articles": "3 fois plus de chocolat ",
+    "deposit": 18,
+    "totalAmount": 18,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-10-10T13:08:59.434Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1791637739,
+      "_nanoseconds": 724000000
+    },
+    "updatedAt": {
+      "_seconds": 1791637739,
+      "_nanoseconds": 724000000
+    }
+  },
+  {
     "id": "RVE5NMJoNrMk0adHSHb4",
     "clientName": "Cisse",
     "clientPhone": "0650042874",
