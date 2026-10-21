@@ -1512,6 +1512,35 @@
     }
   },
   {
+    "id": "zFsSmbKGfKrI2z3mas3x",
+    "clientName": "Mahemba",
+    "clientPhone": "0659599192",
+    "pickupDate": "2026-10-21T16:00:00",
+    "pickupTime": "16:00",
+    "articles": "Flan vanille pour 4 personnes ",
+    "deposit": 16,
+    "totalAmount": 0,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-10-20T17:54:02.502Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1792518842,
+      "_nanoseconds": 578000000
+    },
+    "updatedAt": {
+      "_seconds": 1792518842,
+      "_nanoseconds": 578000000
+    }
+  },
+  {
     "id": "zT87uYs0UOEH8BqaseCA",
     "status": "todo",
     "totalAmount": 26,
