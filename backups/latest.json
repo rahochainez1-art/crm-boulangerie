@@ -1198,6 +1198,35 @@
     }
   },
   {
+    "id": "nh28YfZyG5PsYLiAIqEj",
+    "clientName": "Mr ",
+    "clientPhone": "",
+    "pickupDate": "2026-10-22T15:00:00",
+    "pickupTime": "15:00",
+    "articles": "Fraisier 4 pers + trois fois chocolat 6 personnes ",
+    "deposit": 0,
+    "totalAmount": 48,
+    "notes": "Joyeux anniversaire Ali \nCommande par téléphone ",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-10-22T11:31:21.758Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1792668681,
+      "_nanoseconds": 840000000
+    },
+    "updatedAt": {
+      "_seconds": 1792668681,
+      "_nanoseconds": 840000000
+    }
+  },
+  {
     "id": "oE6FooZa3TbfOHocY2Oi",
     "clientName": "Lhomme",
     "clientPhone": "0660491063",
