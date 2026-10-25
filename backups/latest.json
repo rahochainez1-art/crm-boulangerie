@@ -533,6 +533,35 @@
     }
   },
   {
+    "id": "MIfrCHowItXXSq6hBJRH",
+    "clientName": "Al shaher",
+    "clientPhone": "0634316429",
+    "pickupDate": "2026-10-25T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Fraisier 6personnes",
+    "deposit": 0,
+    "totalAmount": 0,
+    "notes": "Déjà régler ",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-10-24T17:43:45.671Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1792863825,
+      "_nanoseconds": 743000000
+    },
+    "updatedAt": {
+      "_seconds": 1792863825,
+      "_nanoseconds": 743000000
+    }
+  },
+  {
     "id": "QhTGpQeQLtmvZXlvIsit",
     "clientName": "Justine ",
     "clientPhone": "0689202647",
