@@ -545,20 +545,28 @@
     "assignedTo": [
       "patissiere"
     ],
-    "status": "todo",
-    "statusHistory": [
-      {
-        "status": "todo",
-        "at": "2026-10-24T17:43:45.671Z"
-      }
-    ],
     "createdAt": {
       "_seconds": 1792863825,
       "_nanoseconds": 743000000
     },
+    "statusChangedAt": {
+      "_seconds": 1792924725,
+      "_nanoseconds": 505000000
+    },
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-10-24T17:43:45.671Z"
+      },
+      {
+        "status": "done",
+        "at": "2026-10-25T10:38:45.364Z"
+      }
+    ],
+    "status": "done",
     "updatedAt": {
-      "_seconds": 1792863825,
-      "_nanoseconds": 743000000
+      "_seconds": 1792924725,
+      "_nanoseconds": 505000000
     }
   },
   {
