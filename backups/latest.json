@@ -702,6 +702,35 @@
     }
   },
   {
+    "id": "TLpb02agoivSoLrPFqvK",
+    "clientName": "Mr ",
+    "clientPhone": "",
+    "pickupDate": "2026-10-27T12:00:00",
+    "pickupTime": "12:00",
+    "articles": "2 Baguettes norvégiennes \n",
+    "deposit": 3.8,
+    "totalAmount": 0,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-10-26T15:07:09.909Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1793027230,
+      "_nanoseconds": 151000000
+    },
+    "updatedAt": {
+      "_seconds": 1793027230,
+      "_nanoseconds": 151000000
+    }
+  },
+  {
     "id": "Tb811d3fnprYlJWVuTSL",
     "clientName": "Madame ",
     "clientPhone": "",
