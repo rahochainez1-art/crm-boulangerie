@@ -1293,6 +1293,43 @@
     }
   },
   {
+    "id": "l1AR2mGIu9CgAqJglqOc",
+    "clientName": "Louisa ",
+    "clientPhone": "0641996772",
+    "pickupDate": "2026-10-30T15:00:00",
+    "pickupTime": "15:00",
+    "articles": "3 fois plus de chocolat 8 pers ",
+    "deposit": 0,
+    "totalAmount": 0,
+    "notes": "Joyeux anniversaire Melina ",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "createdAt": {
+      "_seconds": 1793205213,
+      "_nanoseconds": 355000000
+    },
+    "statusChangedAt": {
+      "_seconds": 1793224561,
+      "_nanoseconds": 632000000
+    },
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-10-28T16:33:33.292Z"
+      },
+      {
+        "status": "done",
+        "at": "2026-10-28T21:56:01.600Z"
+      }
+    ],
+    "status": "done",
+    "updatedAt": {
+      "_seconds": 1793224561,
+      "_nanoseconds": 632000000
+    }
+  },
+  {
     "id": "nh28YfZyG5PsYLiAIqEj",
     "clientName": "Mr ",
     "clientPhone": "",
