@@ -87,6 +87,35 @@
     }
   },
   {
+    "id": "3NtWtF9sKFXOHbOSJqgm",
+    "clientName": "Kamdem",
+    "clientPhone": "+32467730476",
+    "pickupDate": "2026-11-01T11:00:00",
+    "pickupTime": "11:00",
+    "articles": "10 choco aux amandes ",
+    "deposit": 0,
+    "totalAmount": 0,
+    "notes": "Déjà réglé ",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-10-31T17:32:21.226Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1793467941,
+      "_nanoseconds": 433000000
+    },
+    "updatedAt": {
+      "_seconds": 1793467941,
+      "_nanoseconds": 433000000
+    }
+  },
+  {
     "id": "4tEkVW6zSRpJAob5coyH",
     "clientName": "Hachemi fatima",
     "clientPhone": "0618527222",
