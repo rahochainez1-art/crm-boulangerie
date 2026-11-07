@@ -261,6 +261,35 @@
     }
   },
   {
+    "id": "8P7QoGL8Yj38KwzI60hR",
+    "clientName": "Laurence ",
+    "clientPhone": "0753820197",
+    "pickupDate": "2026-11-07T12:00:00",
+    "pickupTime": "12:00",
+    "articles": "Dame fraise 6/8\nJoyeux anniversaire alba",
+    "deposit": 40,
+    "totalAmount": 40,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-06T12:09:12.368Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1793966953,
+      "_nanoseconds": 867000000
+    },
+    "updatedAt": {
+      "_seconds": 1793966953,
+      "_nanoseconds": 867000000
+    }
+  },
+  {
     "id": "AWHzTYO238XflnjlSjcL",
     "clientName": "Mr ",
     "clientPhone": "",
@@ -1253,6 +1282,35 @@
     "updatedAt": {
       "_seconds": 1790666832,
       "_nanoseconds": 161000000
+    }
+  },
+  {
+    "id": "aK2kn0xo6GD5uQ5Ya6jU",
+    "clientName": "Fabienne",
+    "clientPhone": "0627381694",
+    "pickupDate": "2026-11-07T15:00:00",
+    "pickupTime": "15:00",
+    "articles": "Fraisier de 6 ja fabienne\n3 chocolat 6 personnes (sans amandes hachees) ja hanna\n",
+    "deposit": 56,
+    "totalAmount": 56,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-06T14:43:24.023Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1793976206,
+      "_nanoseconds": 120000000
+    },
+    "updatedAt": {
+      "_seconds": 1793976206,
+      "_nanoseconds": 120000000
     }
   },
   {
