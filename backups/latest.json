@@ -1541,6 +1541,35 @@
     }
   },
   {
+    "id": "mmuMgQYHCiqbmafUP7sC",
+    "clientName": "Norvégien ",
+    "clientPhone": "",
+    "pickupDate": "2026-11-08T13:00:00",
+    "pickupTime": "13:00",
+    "articles": "2 baguette norvégienne ",
+    "deposit": 3.8,
+    "totalAmount": 3.8,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-07T16:43:38.026Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1794069818,
+      "_nanoseconds": 243000000
+    },
+    "updatedAt": {
+      "_seconds": 1794069818,
+      "_nanoseconds": 243000000
+    }
+  },
+  {
     "id": "nh28YfZyG5PsYLiAIqEj",
     "clientName": "Mr ",
     "clientPhone": "",
