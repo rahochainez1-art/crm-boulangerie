@@ -290,6 +290,35 @@
     }
   },
   {
+    "id": "8soGUdTkSFIqYRecdiG1",
+    "clientName": "Cristophe ",
+    "clientPhone": "",
+    "pickupDate": "2026-11-11T12:00:00",
+    "pickupTime": "12:00",
+    "articles": "16 choux vanille ",
+    "deposit": 19.2,
+    "totalAmount": 0,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-10T14:19:25.894Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1794320366,
+      "_nanoseconds": 372000000
+    },
+    "updatedAt": {
+      "_seconds": 1794320366,
+      "_nanoseconds": 372000000
+    }
+  },
+  {
     "id": "AWHzTYO238XflnjlSjcL",
     "clientName": "Mr ",
     "clientPhone": "",
