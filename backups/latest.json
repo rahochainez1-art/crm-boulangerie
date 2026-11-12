@@ -302,20 +302,28 @@
     "assignedTo": [
       "patissiere"
     ],
-    "status": "todo",
-    "statusHistory": [
-      {
-        "status": "todo",
-        "at": "2026-11-10T14:19:25.894Z"
-      }
-    ],
     "createdAt": {
       "_seconds": 1794320366,
       "_nanoseconds": 372000000
     },
+    "statusChangedAt": {
+      "_seconds": 1794401964,
+      "_nanoseconds": 579000000
+    },
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-10T14:19:25.894Z"
+      },
+      {
+        "status": "done",
+        "at": "2026-11-11T12:59:24.548Z"
+      }
+    ],
+    "status": "done",
     "updatedAt": {
-      "_seconds": 1794320366,
-      "_nanoseconds": 372000000
+      "_seconds": 1794401964,
+      "_nanoseconds": 579000000
     }
   },
   {
@@ -411,6 +419,35 @@
     "updatedAt": {
       "_seconds": 1788938191,
       "_nanoseconds": 3000000
+    }
+  },
+  {
+    "id": "E6SJ48cFcktjtY3nGMYc",
+    "clientName": "Laura ",
+    "clientPhone": "0758174772",
+    "pickupDate": "2026-11-21T12:00:00",
+    "pickupTime": "12:00",
+    "articles": "Fraisier 6 perso ",
+    "deposit": 26,
+    "totalAmount": 26,
+    "notes": "Joyeux anniversaire Sofia 8 ans ",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-11T16:45:44.433Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1794415544,
+      "_nanoseconds": 512000000
+    },
+    "updatedAt": {
+      "_seconds": 1794415544,
+      "_nanoseconds": 512000000
     }
   },
   {
@@ -1844,6 +1881,35 @@
     "updatedAt": {
       "_seconds": 1790438753,
       "_nanoseconds": 550000000
+    }
+  },
+  {
+    "id": "vC0GM2lrtn3chR7Z6cpr",
+    "clientName": "Bachiuen",
+    "clientPhone": "0647382610",
+    "pickupDate": "2026-11-14T12:00:00",
+    "pickupTime": "12:00",
+    "articles": "Tarte pistache 6 pers ",
+    "deposit": 26,
+    "totalAmount": 26,
+    "notes": "Joyeuse naissance Asouma",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-11T12:58:57.124Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1794401937,
+      "_nanoseconds": 337000000
+    },
+    "updatedAt": {
+      "_seconds": 1794401937,
+      "_nanoseconds": 337000000
     }
   },
   {
