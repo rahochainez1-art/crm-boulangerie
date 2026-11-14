@@ -1760,6 +1760,35 @@
     }
   },
   {
+    "id": "pq1zAWOMrGJURRykU0Qb",
+    "clientName": "Dia ",
+    "clientPhone": "0744241272",
+    "pickupDate": "2026-11-17T13:00:00",
+    "pickupTime": "13:00",
+    "articles": "Fraisier 6 personne ",
+    "deposit": 10,
+    "totalAmount": 26,
+    "notes": "Joyeux anniversaire hanifa",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-13T14:24:35.201Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1794579875,
+      "_nanoseconds": 795000000
+    },
+    "updatedAt": {
+      "_seconds": 1794579875,
+      "_nanoseconds": 795000000
+    }
+  },
+  {
     "id": "qC82cKveYiahlpVZkuhQ",
     "clientName": "Monsieur",
     "clientPhone": "",
