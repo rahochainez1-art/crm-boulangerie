@@ -232,6 +232,35 @@
     }
   },
   {
+    "id": "74b2A0moJn9rYWbpD6KU",
+    "clientName": "Kayi",
+    "clientPhone": "0658081561",
+    "pickupDate": "2026-11-16T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Trois chocolat 4 personnes ",
+    "deposit": 18,
+    "totalAmount": 0,
+    "notes": "Happy birthday chéri ❤️",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-16T09:39:39.985Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1794821980,
+      "_nanoseconds": 218000000
+    },
+    "updatedAt": {
+      "_seconds": 1794821980,
+      "_nanoseconds": 218000000
+    }
+  },
+  {
     "id": "7LZ2mapknhaHxfEwvbLM",
     "clientName": "Cristina ",
     "clientPhone": "0749806887",
