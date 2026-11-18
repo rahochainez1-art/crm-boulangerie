@@ -261,6 +261,35 @@
     }
   },
   {
+    "id": "7JpPYSN6Gu5uTNw9XgPz",
+    "clientName": "DUBOIS",
+    "clientPhone": "0611046563",
+    "pickupDate": "2026-11-28T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Fraisier 25 pers boite bleue\n",
+    "deposit": 60,
+    "totalAmount": 120,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-18T09:35:31.315Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1794994534,
+      "_nanoseconds": 287000000
+    },
+    "updatedAt": {
+      "_seconds": 1794994534,
+      "_nanoseconds": 287000000
+    }
+  },
+  {
     "id": "7LZ2mapknhaHxfEwvbLM",
     "clientName": "Cristina ",
     "clientPhone": "0749806887",
@@ -382,6 +411,35 @@
     "updatedAt": {
       "_seconds": 1793632304,
       "_nanoseconds": 676000000
+    }
+  },
+  {
+    "id": "CEnlOoK5LaX5o28eoA0g",
+    "clientName": "Chakim",
+    "clientPhone": "0767712322",
+    "pickupDate": "2026-11-19T08:00:00",
+    "pickupTime": "08:00",
+    "articles": "Fraisier 6 personnes avec vagues ",
+    "deposit": 0,
+    "totalAmount": 0,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-17T17:05:48.047Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1794935148,
+      "_nanoseconds": 324000000
+    },
+    "updatedAt": {
+      "_seconds": 1794935148,
+      "_nanoseconds": 324000000
     }
   },
   {
