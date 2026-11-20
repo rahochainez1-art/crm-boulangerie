@@ -649,6 +649,35 @@
     }
   },
   {
+    "id": "IGU4efhXf0zmyRLtZI5b",
+    "clientName": "Nadia ",
+    "clientPhone": "0661349108",
+    "pickupDate": "2026-11-20T16:00:00",
+    "pickupTime": "16:00",
+    "articles": "Fraisier 4 pers",
+    "deposit": 20,
+    "totalAmount": 20,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-19T16:11:10.287Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795104670,
+      "_nanoseconds": 394000000
+    },
+    "updatedAt": {
+      "_seconds": 1795104670,
+      "_nanoseconds": 394000000
+    }
+  },
+  {
     "id": "JWmtKfAaEsXNM0O9GMcY",
     "clientPhone": "0766784856",
     "pickupDate": "2026-09-09T10:00:00",
@@ -1446,6 +1475,35 @@
     }
   },
   {
+    "id": "aCvJD0VJXRMAEf86O113",
+    "clientName": "Mr ",
+    "clientPhone": "",
+    "pickupDate": "2026-11-20T13:00:00",
+    "pickupTime": "13:00",
+    "articles": "Deux Baguettes norvégiennes",
+    "deposit": 3.8,
+    "totalAmount": 0,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-19T14:11:51.334Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795097511,
+      "_nanoseconds": 497000000
+    },
+    "updatedAt": {
+      "_seconds": 1795097511,
+      "_nanoseconds": 497000000
+    }
+  },
+  {
     "id": "aK2ATCC2lgxIPFbx4BTN",
     "clientName": "Storr",
     "clientPhone": "0783141735",
@@ -1567,6 +1625,35 @@
     "updatedAt": {
       "_seconds": 1793370831,
       "_nanoseconds": 625000000
+    }
+  },
+  {
+    "id": "dWmJ9FWUEzisvyJivvgt",
+    "clientName": "Elisabeth ",
+    "clientPhone": "0626867429",
+    "pickupDate": "2026-11-20T18:30:00",
+    "pickupTime": "18:30",
+    "articles": "3 fois plus de chocolat 4 pers \nJoyeux anniversaire Maël ",
+    "deposit": 18,
+    "totalAmount": 18,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-19T19:07:14.218Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795115234,
+      "_nanoseconds": 734000000
+    },
+    "updatedAt": {
+      "_seconds": 1795115234,
+      "_nanoseconds": 734000000
     }
   },
   {
