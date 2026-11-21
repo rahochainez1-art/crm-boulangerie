@@ -1847,6 +1847,35 @@
     }
   },
   {
+    "id": "mtKCFX8ot2RySKz6oGUR",
+    "clientName": "Rahma ",
+    "clientPhone": "0744883566",
+    "pickupDate": "2026-11-21T09:00:00",
+    "pickupTime": "09:00",
+    "articles": "Trois fois chocolat 4 personnes ",
+    "deposit": 12.6,
+    "totalAmount": 0,
+    "notes": "Two Twins, One Love ❤️",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-20T15:21:41.150Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795188101,
+      "_nanoseconds": 342000000
+    },
+    "updatedAt": {
+      "_seconds": 1795188101,
+      "_nanoseconds": 342000000
+    }
+  },
+  {
     "id": "nh28YfZyG5PsYLiAIqEj",
     "clientName": "Mr ",
     "clientPhone": "",
