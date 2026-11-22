@@ -116,6 +116,35 @@
     }
   },
   {
+    "id": "4UHf1v7jeGWgGTMBXnKq",
+    "clientName": "Petit ",
+    "clientPhone": "004915756291397",
+    "pickupDate": "2026-11-22T15:00:00",
+    "pickupTime": "15:00",
+    "articles": "Flan",
+    "deposit": 16,
+    "totalAmount": 16,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-21T15:29:35.319Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795274975,
+      "_nanoseconds": 399000000
+    },
+    "updatedAt": {
+      "_seconds": 1795274975,
+      "_nanoseconds": 399000000
+    }
+  },
+  {
     "id": "4tEkVW6zSRpJAob5coyH",
     "clientName": "Hachemi fatima",
     "clientPhone": "0618527222",
@@ -2063,6 +2092,35 @@
     "updatedAt": {
       "_seconds": 1786012996,
       "_nanoseconds": 937000000
+    }
+  },
+  {
+    "id": "sApvG9VdYXc1yQ4spst7",
+    "clientName": "Lacombe",
+    "clientPhone": "0667033606",
+    "pickupDate": "2026-11-22T08:00:00",
+    "pickupTime": "08:00",
+    "articles": "Trois fois plus de chocolat pour 6 personnes ",
+    "deposit": 0,
+    "totalAmount": 0,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-21T14:52:33.311Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795272753,
+      "_nanoseconds": 543000000
+    },
+    "updatedAt": {
+      "_seconds": 1795272753,
+      "_nanoseconds": 543000000
     }
   },
   {
