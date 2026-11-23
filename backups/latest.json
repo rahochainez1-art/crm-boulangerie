@@ -2457,5 +2457,34 @@
       "_seconds": 1788540996,
       "_nanoseconds": 891000000
     }
+  },
+  {
+    "id": "zip7lI4woWyBHrStq94p",
+    "clientName": "Cherchalli",
+    "clientPhone": "0674488840",
+    "pickupDate": "2026-11-26T10:00:00",
+    "pickupTime": "10:00",
+    "articles": "Fraisier 6 pers",
+    "deposit": 26,
+    "totalAmount": 26,
+    "notes": "Joyeux anniversaire ❤️❤️",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-23T09:50:26.186Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795427426,
+      "_nanoseconds": 484000000
+    },
+    "updatedAt": {
+      "_seconds": 1795427426,
+      "_nanoseconds": 484000000
+    }
   }
 ]
