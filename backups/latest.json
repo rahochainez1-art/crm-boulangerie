@@ -1971,6 +1971,35 @@
     }
   },
   {
+    "id": "omy6V82bdTuMCtREdi9q",
+    "clientName": "Manelli",
+    "clientPhone": "0148261648",
+    "pickupDate": "2026-11-27T14:00:00",
+    "pickupTime": "14:00",
+    "articles": "Saint honoré 20cm\n1 norvegien \n1 cereal tranché \nJoyeux anniversaire nicole\n",
+    "deposit": 27,
+    "totalAmount": 27,
+    "notes": "",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-24T08:47:48.769Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795510072,
+      "_nanoseconds": 269000000
+    },
+    "updatedAt": {
+      "_seconds": 1795510072,
+      "_nanoseconds": 269000000
+    }
+  },
+  {
     "id": "p5LEp0rYaTCvadYLyNnQ",
     "clientName": "Aliana ",
     "clientPhone": "0753417751",
