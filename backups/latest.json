@@ -905,6 +905,35 @@
     }
   },
   {
+    "id": "MvI0lQmcQjJQA8PpaGGK",
+    "clientName": "KANTT Safiatou",
+    "clientPhone": "0782757346",
+    "pickupDate": "2026-11-28T12:00:00",
+    "pickupTime": "12:00",
+    "articles": "Millefeuille 10 personnes ",
+    "deposit": 40,
+    "totalAmount": 0,
+    "notes": "Joyeux anniversaire Djena ❤️",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-26T07:18:35.044Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795677515,
+      "_nanoseconds": 134000000
+    },
+    "updatedAt": {
+      "_seconds": 1795677515,
+      "_nanoseconds": 134000000
+    }
+  },
+  {
     "id": "QhTGpQeQLtmvZXlvIsit",
     "clientName": "Justine ",
     "clientPhone": "0689202647",
