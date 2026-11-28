@@ -2116,6 +2116,35 @@
     }
   },
   {
+    "id": "pDoJQFrvGCvqufEZIBE8",
+    "clientName": "Aicha ",
+    "clientPhone": "0769172192",
+    "pickupDate": "2026-11-28T11:00:00",
+    "pickupTime": "11:00",
+    "articles": "Fraisier 10 personnes ",
+    "deposit": 40,
+    "totalAmount": 0,
+    "notes": "Sélimata Succès Sérénité.Félicitations à notre futur EJE ",
+    "assignedTo": [
+      "patissiere"
+    ],
+    "status": "todo",
+    "statusHistory": [
+      {
+        "status": "todo",
+        "at": "2026-11-27T16:22:08.079Z"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1795796528,
+      "_nanoseconds": 287000000
+    },
+    "updatedAt": {
+      "_seconds": 1795796528,
+      "_nanoseconds": 287000000
+    }
+  },
+  {
     "id": "pbMfHSMyUGAf3fVJNkPT",
     "clientName": "Client x",
     "clientPhone": "",
